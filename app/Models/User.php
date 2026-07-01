@@ -26,6 +26,7 @@ class User extends Authenticatable
         'commission_pct',
         'phone',
         'active',
+        'must_change_password',
     ];
 
     protected $hidden = [
@@ -40,7 +41,8 @@ class User extends Authenticatable
             'password'          => 'hashed',
             'salary_amount'     => 'decimal:2',
             'commission_pct'    => 'decimal:2',
-            'active'            => 'boolean',
+            'active'                => 'boolean',
+            'must_change_password'  => 'boolean',
         ];
     }
 

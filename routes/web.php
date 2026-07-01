@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
+use App\Http\Controllers\Owner\BarberoController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
+use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +38,10 @@ Route::prefix('owner')
     ->name('owner.')
     ->group(function () {
         Route::get('/dashboard', [OwnerDashboard::class, 'index'])->name('dashboard');
+
+        Route::resource('barberos', BarberoController::class)->except(['destroy', 'show']);
+        Route::patch('barberos/{barbero}/deactivate', [BarberoController::class, 'deactivate'])->name('barberos.deactivate');
+        Route::patch('barberos/{barbero}/reset-password', [BarberoController::class, 'resetPassword'])->name('barberos.resetPassword');
     });
 
 Route::prefix('barber')
@@ -51,6 +57,13 @@ Route::prefix('admin')
     ->group(function () {
         Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
     });
+
+// --- Cambio de contraseña forzado ---
+
+Route::middleware('auth')->group(function () {
+    Route::get('/password/change', [PasswordChangeController::class, 'show'])->name('password.change');
+    Route::post('/password/change', [PasswordChangeController::class, 'update'])->name('password.change.update');
+});
 
 // --- Perfil (Breeze) ---
 

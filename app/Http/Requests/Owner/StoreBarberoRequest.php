@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Http\Requests\Owner;
+
+use App\Services\PlanLimitService;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+
+class StoreBarberoRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return Auth::user()->isOwner();
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name'           => ['required', 'string', 'max:255'],
+            'email'          => ['required', 'string', 'email', 'max:255', Rule::unique('users')],
+            'phone'          => ['nullable', 'string', 'max:30'],
+            'barberia_id'    => ['required', 'integer', Rule::exists('barberias', 'id')->where('owner_id', Auth::id())],
+            'salary_type'    => ['required', Rule::in(['fixed', 'commission'])],
+            'salary_amount'  => ['required_if:salary_type,fixed', 'nullable', 'numeric', 'min:0'],
+            'commission_pct' => ['required_if:salary_type,commission', 'nullable', 'numeric', 'min:0', 'max:100'],
+        ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $owner = Auth::user();
+            $service = app(PlanLimitService::class);
+
+            if (! $service->canAddBarbero($owner)) {
+                $max = $service->maxBarberos($owner);
+                $validator->errors()->add(
+                    'plan_limit',
+                    "Tu plan no permite más de {$max} barbero(s) activo(s). Actualizá tu plan para agregar más."
+                );
+            }
+        });
+    }
+
+    public function messages(): array
+    {
+        return [
+            'salary_amount.required_if'  => 'El monto fijo es obligatorio cuando el tipo de sueldo es fijo.',
+            'commission_pct.required_if' => 'El porcentaje de comisión es obligatorio cuando el tipo de sueldo es por comisión.',
+            'barberia_id.exists'         => 'La barbería seleccionada no es válida.',
+        ];
+    }
+}
