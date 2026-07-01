@@ -39,6 +39,24 @@ export default function AuthenticatedLayout({ header, children }) {
                                         Barberos
                                     </NavLink>
                                 )}
+
+                                {user.role === 'owner' && (
+                                    <NavLink
+                                        href={route('owner.servicios.index')}
+                                        active={route().current('owner.servicios.*')}
+                                    >
+                                        Servicios
+                                    </NavLink>
+                                )}
+
+                                {user.role === 'owner' && (
+                                    <NavLink
+                                        href={route('owner.medios-pago.index')}
+                                        active={route().current('owner.medios-pago.*')}
+                                    >
+                                        Medios de pago
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -150,6 +168,24 @@ export default function AuthenticatedLayout({ header, children }) {
                                 active={route().current('owner.barberos.*')}
                             >
                                 Barberos
+                            </ResponsiveNavLink>
+                        )}
+
+                        {user.role === 'owner' && (
+                            <ResponsiveNavLink
+                                href={route('owner.servicios.index')}
+                                active={route().current('owner.servicios.*')}
+                            >
+                                Servicios
+                            </ResponsiveNavLink>
+                        )}
+
+                        {user.role === 'owner' && (
+                            <ResponsiveNavLink
+                                href={route('owner.medios-pago.index')}
+                                active={route().current('owner.medios-pago.*')}
+                            >
+                                Medios de pago
                             </ResponsiveNavLink>
                         )}
                     </div>

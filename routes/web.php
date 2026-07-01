@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
 use App\Http\Controllers\Owner\BarberoController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
+use App\Http\Controllers\Owner\MedioPagoController;
+use App\Http\Controllers\Owner\ServicioController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -42,6 +44,14 @@ Route::prefix('owner')
         Route::resource('barberos', BarberoController::class)->except(['destroy', 'show']);
         Route::patch('barberos/{barbero}/deactivate', [BarberoController::class, 'deactivate'])->name('barberos.deactivate');
         Route::patch('barberos/{barbero}/reset-password', [BarberoController::class, 'resetPassword'])->name('barberos.resetPassword');
+
+        Route::resource('servicios', ServicioController::class)->except(['destroy', 'show']);
+        Route::patch('servicios/{servicio}/deactivate', [ServicioController::class, 'deactivate'])->name('servicios.deactivate');
+
+        Route::resource('medios-pago', MedioPagoController::class, [
+            'parameters' => ['medios-pago' => 'medioPago'],
+        ])->except(['destroy', 'show']);
+        Route::patch('medios-pago/{medioPago}/deactivate', [MedioPagoController::class, 'deactivate'])->name('medios-pago.deactivate');
     });
 
 Route::prefix('barber')
