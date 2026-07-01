@@ -77,3 +77,27 @@ routes/web.php (rutas agrupadas por prefijo de rol + middleware)
 El proyecto avanza por funcionalidades completas de punta a punta (migración + modelo + controlador + vista), no por capas. Fases: 0-Setup, 1-Fundación (auth/roles/tenancy), 2-Gestión de barberos, 3-Catálogos (servicios/medios de pago), 4-Clientes, 5-Registro de cortes, 6-Dashboard y métricas, 7-Módulo financiero, 8-Multi-barbería, 9-Panel admin, 10-Pulido y testing.
 
 Cuando te pida implementar una fase, ceñite estrictamente a su alcance — no adelantes funcionalidad de fases posteriores.
+
+## Definición de hecho (Definition of Done)
+
+Una funcionalidad está terminada cuando cumple **todos** los puntos siguientes:
+
+### Backend
+- Migración existe, corre limpia y tiene `down()` correcto.
+- Modelo con `$fillable`, `casts()` y relaciones definidas.
+- Controlador con todas las acciones requeridas por la fase, **scopeado** por owner/barbería (ningún owner puede tocar datos de otro).
+- Form Request con validación server-side completa; nunca validación solo en frontend.
+- Límites de plan chequeados server-side vía `PlanLimitService` donde aplica.
+- Rutas registradas en `routes/web.php` bajo el grupo de rol correcto con middleware `role:X`.
+
+### Frontend
+- Vistas necesarias implementadas en `resources/js/Pages/{Rol}/`.
+- **Link en el menú de navegación** del layout del rol correspondiente (`AuthenticatedLayout` con lógica por rol) — ninguna pantalla queda accesible solo por URL directa.
+- Estado activo del ítem de menú resuelto con `route().current(...)`.
+- Errores de validación del servidor mostrados en el formulario con `InputError`.
+- Acciones destructivas o irreversibles con confirmación antes de ejecutar.
+
+### Seguridad y calidad
+- Ninguna ruta o acción permite leer/modificar datos de otro owner (verificado en controller, no solo en middleware).
+- Sin código de fases futuras introducido.
+- Sin `console.log`, `dd()` ni `dump()` en el código entregado.

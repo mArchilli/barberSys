@@ -24,7 +24,7 @@ export default function Create({ barberias, canAdd }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                <h2 className="text-xl font-semibold leading-tight text-brand-text">
                     Nuevo barbero
                 </h2>
             }
@@ -33,18 +33,17 @@ export default function Create({ barberias, canAdd }) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-2xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                    <div className="overflow-hidden bg-brand-surface shadow-sm sm:rounded-lg">
                         <div className="p-8">
                             {! canAdd && (
-                                <div className="mb-6 rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+                                <div className="mb-6 rounded-lg bg-brand-danger/10 border border-brand-danger/30 p-4 text-sm text-brand-danger">
                                     Alcanzaste el límite de barberos de tu plan. Actualizá tu plan para agregar más.
                                 </div>
                             )}
 
                             <form onSubmit={submit} className="space-y-6">
-                                {/* Plan limit error (from backend) */}
                                 {errors.plan_limit && (
-                                    <div className="rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+                                    <div className="rounded-lg bg-brand-danger/10 border border-brand-danger/30 p-4 text-sm text-brand-danger">
                                         {errors.plan_limit}
                                     </div>
                                 )}
@@ -92,7 +91,7 @@ export default function Create({ barberias, canAdd }) {
                                             id="barberia_id"
                                             value={data.barberia_id}
                                             onChange={(e) => setData('barberia_id', e.target.value)}
-                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                            className="mt-1 block w-full rounded-md border-brand-border py-2.5 shadow-sm focus:border-brand-primary focus:ring-brand-primary"
                                         >
                                             <option value="">Seleccioná una barbería</option>
                                             {barberias.map((b) => (
@@ -110,7 +109,7 @@ export default function Create({ barberias, canAdd }) {
                                 )}
 
                                 <fieldset>
-                                    <legend className="block text-sm font-medium text-gray-700 mb-2">
+                                    <legend className="block text-sm font-medium text-brand-text mb-2">
                                         Tipo de sueldo *
                                     </legend>
                                     <div className="flex gap-6">
@@ -121,9 +120,9 @@ export default function Create({ barberias, canAdd }) {
                                                 value="fixed"
                                                 checked={data.salary_type === 'fixed'}
                                                 onChange={() => setData('salary_type', 'fixed')}
-                                                className="text-indigo-600 focus:ring-indigo-500"
+                                                className="text-brand-primary focus:ring-brand-primary"
                                             />
-                                            <span className="text-sm text-gray-700">Sueldo fijo</span>
+                                            <span className="text-sm text-brand-text">Sueldo fijo</span>
                                         </label>
                                         <label className="flex items-center gap-2 cursor-pointer">
                                             <input
@@ -132,9 +131,9 @@ export default function Create({ barberias, canAdd }) {
                                                 value="commission"
                                                 checked={data.salary_type === 'commission'}
                                                 onChange={() => setData('salary_type', 'commission')}
-                                                className="text-indigo-600 focus:ring-indigo-500"
+                                                className="text-brand-primary focus:ring-brand-primary"
                                             />
-                                            <span className="text-sm text-gray-700">Comisión</span>
+                                            <span className="text-sm text-brand-text">Comisión</span>
                                         </label>
                                     </div>
                                     <InputError message={errors.salary_type} className="mt-1" />
@@ -173,14 +172,14 @@ export default function Create({ barberias, canAdd }) {
                                     </div>
                                 )}
 
-                                <div className="flex items-center justify-end gap-4 pt-2">
+                                <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
                                     <Link
                                         href={route('owner.barberos.index')}
-                                        className="text-sm text-gray-600 hover:text-gray-900"
+                                        className="flex min-h-[44px] items-center justify-center text-sm text-brand-text-secondary hover:text-brand-text sm:min-h-0"
                                     >
                                         Cancelar
                                     </Link>
-                                    <PrimaryButton disabled={processing || ! canAdd}>
+                                    <PrimaryButton disabled={processing || ! canAdd} className="w-full sm:w-auto">
                                         Crear barbero
                                     </PrimaryButton>
                                 </div>

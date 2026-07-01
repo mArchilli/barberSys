@@ -7,7 +7,7 @@ export default function Dashboard({ barberia }) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                <h2 className="text-xl font-semibold leading-tight text-brand-text">
                     Dashboard
                 </h2>
             }
@@ -16,21 +16,21 @@ export default function Dashboard({ barberia }) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                    <div className="overflow-hidden bg-brand-surface shadow-sm sm:rounded-lg">
                         <div className="p-8">
-                            <h1 className="text-2xl font-bold text-gray-900">
+                            <h1 className="text-2xl font-bold text-brand-text">
                                 Bienvenido a BarberSys, {auth.user.name}
                             </h1>
 
                             {barberia ? (
-                                <p className="mt-2 text-gray-600">
+                                <p className="mt-2 text-brand-text-secondary">
                                     Estás gestionando{' '}
-                                    <span className="font-semibold text-gray-800">
+                                    <span className="font-semibold text-brand-text">
                                         {barberia.name}
                                     </span>
                                 </p>
                             ) : (
-                                <p className="mt-2 text-gray-500">
+                                <p className="mt-2 text-brand-text-secondary">
                                     No tenés barberías activas cargadas.
                                 </p>
                             )}

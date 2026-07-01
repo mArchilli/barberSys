@@ -20,7 +20,7 @@ export default function ChangePassword() {
         <GuestLayout>
             <Head title="Cambiá tu contraseña" />
 
-            <div className="mb-6 text-sm text-gray-600">
+            <div className="mb-6 text-sm text-brand-text-secondary">
                 Por seguridad, necesitás establecer una nueva contraseña antes de continuar.
             </div>
 
