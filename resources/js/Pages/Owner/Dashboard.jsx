@@ -16,7 +16,7 @@ export default function Dashboard({ barberia }) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-brand-surface shadow-sm sm:rounded-lg">
+                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
                         <div className="p-8">
                             <h1 className="text-2xl font-bold text-brand-text">
                                 Bienvenido a BarberSys, {auth.user.name}

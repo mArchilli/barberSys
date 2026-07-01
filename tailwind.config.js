@@ -17,21 +17,28 @@ export default {
             },
             colors: {
                 brand: {
-                    'bg':            '#fafafa', // zinc-50
-                    'surface':       '#ffffff', // white
-                    'nav-bg':        '#18181b', // zinc-900
-                    'nav-text':      '#a1a1aa', // zinc-400  — inactive links
-                    'nav-active':    '#f4f4f5', // zinc-100  — active / hovered links
-                    'primary':       '#7c3aed', // violet-600
-                    'primary-hover': '#6d28d9', // violet-700
-                    'accent':        '#8b5cf6', // violet-500
-                    'text':          '#18181b', // zinc-900
-                    'text-secondary':'#71717a', // zinc-500
-                    'border':        '#e4e4e7', // zinc-200
-                    'success':       '#10b981', // emerald-500
-                    'danger':        '#ef4444', // red-500
-                    'warning':       '#f59e0b', // amber-500
+                    'bg':                '#f6f5fb', // violeta muy sutil
+                    'surface':           '#ffffff',
+                    'nav-bg':            '#18181b',
+                    'nav-text':          '#a1a1aa',
+                    'nav-active':        '#f4f4f5',
+                    'primary':           '#7c3aed',
+                    'primary-hover':     '#6d28d9',
+                    'accent':            '#8b5cf6',
+                    'accent-soft':       '#ede9fe',
+                    'accent-soft-text':  '#6d28d9',
+                    'text':              '#18181b',
+                    'text-secondary':    '#71717a',
+                    'border':            '#ececf3',
+                    'success':           '#10b981',
+                    'success-soft':      '#ecfdf5',
+                    'success-soft-text': '#047857',
+                    'danger':            '#ef4444',
+                    'warning':           '#f59e0b',
                 },
+            },
+            boxShadow: {
+                'card': '0 1px 2px rgba(24,24,27,0.04), 0 2px 8px rgba(24,24,27,0.05)',
             },
         },
     },

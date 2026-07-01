@@ -34,7 +34,7 @@ export default function Edit({ barbero, barberias }) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-2xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-brand-surface shadow-sm sm:rounded-lg">
+                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
                         <div className="p-8">
                             <form onSubmit={submit} className="space-y-6">
                                 <div>

@@ -1,6 +1,47 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { IconEdit, IconKey, IconUserX } from '@tabler/icons-react';
 import { useState } from 'react';
+
+function initials(name) {
+    return name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+}
+
+function Avatar({ name }) {
+    return (
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-accent-soft text-xs font-semibold text-brand-accent-soft-text">
+            {initials(name)}
+        </span>
+    );
+}
+
+function SalaryBadge({ barbero }) {
+    if (barbero.salary_type === 'fixed') {
+        return (
+            <span className="inline-flex items-center rounded-full bg-brand-border px-2 py-0.5 text-xs font-medium text-brand-text-secondary">
+                Fijo: ${Number(barbero.salary_amount).toLocaleString('es-AR')}
+            </span>
+        );
+    }
+    return (
+        <span className="inline-flex items-center rounded-full bg-brand-success-soft px-2 py-0.5 text-xs font-medium text-brand-success-soft-text">
+            Comisión {barbero.commission_pct}%
+        </span>
+    );
+}
+
+function ActionButton({ onClick, label, icon: Icon, colorClass }) {
+    return (
+        <button
+            onClick={onClick}
+            aria-label={label}
+            title={label}
+            className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 transition hover:bg-brand-bg ${colorClass}`}
+        >
+            <Icon size={16} />
+        </button>
+    );
+}
 
 export default function Index({ barberos, planLimit }) {
     const { flash } = usePage().props;
@@ -18,11 +59,7 @@ export default function Index({ barberos, planLimit }) {
     }
 
     const atLimit = planLimit.max !== null && planLimit.current >= planLimit.max;
-
-    const salaryLabel = (b) =>
-        b.salary_type === 'fixed'
-            ? `Fijo: $${Number(b.salary_amount).toLocaleString('es-AR')}`
-            : `Comisión: ${b.commission_pct}%`;
+    const pct = planLimit.max ? Math.min(100, (planLimit.current / planLimit.max) * 100) : 0;
 
     return (
         <AuthenticatedLayout
@@ -33,7 +70,7 @@ export default function Index({ barberos, planLimit }) {
                     </h2>
                     <Link
                         href={route('owner.barberos.create')}
-                        className={`inline-flex items-center justify-center rounded-md px-4 py-3 text-sm font-medium text-white shadow-sm transition sm:py-2 ${
+                        className={`inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-medium text-white shadow-sm transition sm:py-2 ${
                             atLimit
                                 ? 'cursor-not-allowed bg-brand-text-secondary'
                                 : 'bg-brand-primary hover:bg-brand-primary-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2'
@@ -52,7 +89,7 @@ export default function Index({ barberos, planLimit }) {
 
                     {/* Contraseña generada — se muestra una sola vez */}
                     {showCredential && credentialFlash && (
-                        <div className="rounded-lg border border-brand-success/30 bg-brand-success/10 p-4">
+                        <div className="rounded-xl border border-brand-success/30 bg-brand-success/10 p-4">
                             <div className="flex items-start justify-between gap-4">
                                 <div className="min-w-0">
                                     <p className="font-semibold text-brand-success">
@@ -61,9 +98,9 @@ export default function Index({ barberos, planLimit }) {
                                     <p className="mt-1 text-sm text-brand-text-secondary">
                                         Pasale esta contraseña a{' '}
                                         <span className="font-medium text-brand-text">{credentialFlash.name}</span>.
-                                        No se va a mostrar de nuevo.
+                                        No se va a volver a mostrar.
                                     </p>
-                                    <p className="mt-2 inline-block rounded border border-brand-success/20 bg-brand-surface px-3 py-2 font-mono text-lg font-bold tracking-widest text-brand-text">
+                                    <p className="mt-2 inline-block rounded-lg border border-brand-success/20 bg-brand-surface px-3 py-2 font-mono text-lg font-bold tracking-widest text-brand-text">
                                         {credentialFlash.password}
                                     </p>
                                 </div>
@@ -78,21 +115,35 @@ export default function Index({ barberos, planLimit }) {
                         </div>
                     )}
 
-                    <div className="overflow-hidden bg-brand-surface shadow-sm sm:rounded-lg">
-                        {/* Indicador de plan */}
-                        <div className="flex items-center justify-between border-b border-brand-border px-4 py-3 sm:px-6">
-                            <span className="text-sm text-brand-text-secondary">
-                                Barberos activos:{' '}
-                                <span className={`font-semibold ${atLimit ? 'text-brand-danger' : 'text-brand-text'}`}>
+                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
+
+                        {/* Barra de progreso del plan */}
+                        <div className="border-b border-brand-border px-4 py-4 sm:px-6">
+                            <div className="mb-2 flex items-center justify-between">
+                                <span className="text-sm text-brand-text-secondary">Barberos activos</span>
+                                <span className="text-sm font-semibold text-brand-text">
                                     {planLimit.current}
-                                    {planLimit.max !== null && ` / ${planLimit.max}`}
+                                    {planLimit.max !== null ? ` / ${planLimit.max}` : (
+                                        <span className="ml-1 text-xs font-normal text-brand-text-secondary">sin límite</span>
+                                    )}
                                 </span>
-                                {planLimit.max === null && ' (sin límite)'}
-                            </span>
-                            {atLimit && (
-                                <span className="rounded-full bg-brand-danger/10 px-2 py-1 text-xs font-medium text-brand-danger">
-                                    Límite alcanzado
-                                </span>
+                            </div>
+                            {planLimit.max !== null ? (
+                                <>
+                                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-brand-accent-soft">
+                                        <div
+                                            className={`h-1.5 rounded-full transition-all ${atLimit ? 'bg-brand-danger' : 'bg-brand-primary'}`}
+                                            style={{ width: `${pct}%` }}
+                                        />
+                                    </div>
+                                    {atLimit && (
+                                        <p className="mt-1.5 text-xs text-brand-danger">
+                                            Límite alcanzado — actualizá tu plan para agregar más barberos
+                                        </p>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="h-1.5 w-full rounded-full bg-brand-accent-soft" />
                             )}
                         </div>
 
@@ -111,35 +162,40 @@ export default function Index({ barberos, planLimit }) {
                         ) : (
                             <>
                                 {/* ── Mobile: cards ── */}
-                                <ul className="divide-y divide-brand-border/50 md:hidden">
+                                <ul className="divide-y divide-brand-border md:hidden">
                                     {barberos.map((b) => (
                                         <li key={b.id} className="px-4 py-4">
-                                            <div className="flex items-start justify-between gap-3">
-                                                <div className="min-w-0">
-                                                    <p className="font-medium text-brand-text">{b.name}</p>
-                                                    <p className="text-sm text-brand-text-secondary">{b.barberia.name}</p>
-                                                    <p className="mt-0.5 text-sm text-brand-text-secondary">{salaryLabel(b)}</p>
+                                            <div className="flex items-start gap-3">
+                                                <Avatar name={b.name} />
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="truncate font-medium text-brand-text">{b.name}</p>
+                                                    <p className="truncate text-sm text-brand-text-secondary">{b.barberia.name}</p>
+                                                    <div className="mt-1.5">
+                                                        <SalaryBadge barbero={b} />
+                                                    </div>
                                                 </div>
                                                 <Link
                                                     href={route('owner.barberos.edit', b.id)}
-                                                    className="shrink-0 text-sm font-medium text-brand-primary"
+                                                    aria-label={`Editar ${b.name}`}
+                                                    title={`Editar ${b.name}`}
+                                                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-accent-soft"
                                                 >
-                                                    Editar
+                                                    <IconEdit size={16} />
                                                 </Link>
                                             </div>
-                                            <div className="mt-3 flex gap-2 border-t border-brand-border/50 pt-3">
-                                                <button
+                                            <div className="mt-3 flex gap-1 border-t border-brand-border pt-3">
+                                                <ActionButton
                                                     onClick={() => handleResetPassword(b)}
-                                                    className="min-h-[44px] flex-1 text-sm text-brand-text-secondary"
-                                                >
-                                                    Resetear clave
-                                                </button>
-                                                <button
+                                                    label={`Resetear contraseña de ${b.name}`}
+                                                    icon={IconKey}
+                                                    colorClass="text-brand-text-secondary"
+                                                />
+                                                <ActionButton
                                                     onClick={() => handleDeactivate(b)}
-                                                    className="min-h-[44px] flex-1 text-sm text-brand-danger"
-                                                >
-                                                    Dar de baja
-                                                </button>
+                                                    label={`Dar de baja a ${b.name}`}
+                                                    icon={IconUserX}
+                                                    colorClass="text-brand-danger"
+                                                />
                                             </div>
                                         </li>
                                     ))}
@@ -150,41 +206,53 @@ export default function Index({ barberos, planLimit }) {
                                     <thead className="bg-brand-bg text-xs uppercase text-brand-text-secondary">
                                         <tr>
                                             <th className="px-6 py-3">Nombre</th>
-                                            <th className="px-6 py-3">Email</th>
-                                            <th className="px-6 py-3">Teléfono</th>
+                                            <th className="px-6 py-3">Contacto</th>
                                             <th className="px-6 py-3">Barbería</th>
                                             <th className="px-6 py-3">Sueldo</th>
                                             <th className="px-6 py-3 text-right">Acciones</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-brand-border/50">
+                                    <tbody className="divide-y divide-brand-border">
                                         {barberos.map((b) => (
                                             <tr key={b.id} className="hover:bg-brand-bg">
-                                                <td className="px-6 py-4 font-medium text-brand-text">{b.name}</td>
-                                                <td className="px-6 py-4 text-brand-text-secondary">{b.email}</td>
-                                                <td className="px-6 py-4 text-brand-text-secondary">{b.phone ?? '—'}</td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <Avatar name={b.name} />
+                                                        <span className="font-medium text-brand-text">{b.name}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <p className="text-brand-text-secondary">{b.email}</p>
+                                                    {b.phone && (
+                                                        <p className="text-xs text-brand-text-secondary">{b.phone}</p>
+                                                    )}
+                                                </td>
                                                 <td className="px-6 py-4 text-brand-text-secondary">{b.barberia.name}</td>
-                                                <td className="px-6 py-4 text-brand-text-secondary">{salaryLabel(b)}</td>
-                                                <td className="px-6 py-4 text-right">
-                                                    <div className="flex items-center justify-end gap-3">
+                                                <td className="px-6 py-4">
+                                                    <SalaryBadge barbero={b} />
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center justify-end gap-1">
                                                         <Link
                                                             href={route('owner.barberos.edit', b.id)}
-                                                            className="font-medium text-brand-primary hover:underline"
+                                                            aria-label={`Editar ${b.name}`}
+                                                            title={`Editar ${b.name}`}
+                                                            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-accent-soft"
                                                         >
-                                                            Editar
+                                                            <IconEdit size={16} />
                                                         </Link>
-                                                        <button
+                                                        <ActionButton
                                                             onClick={() => handleResetPassword(b)}
-                                                            className="font-medium text-brand-text-secondary hover:underline"
-                                                        >
-                                                            Resetear clave
-                                                        </button>
-                                                        <button
+                                                            label={`Resetear contraseña de ${b.name}`}
+                                                            icon={IconKey}
+                                                            colorClass="text-brand-text-secondary"
+                                                        />
+                                                        <ActionButton
                                                             onClick={() => handleDeactivate(b)}
-                                                            className="font-medium text-brand-danger hover:underline"
-                                                        >
-                                                            Dar de baja
-                                                        </button>
+                                                            label={`Dar de baja a ${b.name}`}
+                                                            icon={IconUserX}
+                                                            colorClass="text-brand-danger"
+                                                        />
                                                     </div>
                                                 </td>
                                             </tr>
