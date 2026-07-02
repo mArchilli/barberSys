@@ -5,6 +5,7 @@ use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
 use App\Http\Controllers\CorteController;
 use App\Http\Controllers\Owner\BarberiaController;
 use App\Http\Controllers\Owner\BarberoController;
+use App\Http\Controllers\Owner\ConsolidadoController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
 use App\Http\Controllers\Owner\ClienteController;
 use App\Http\Controllers\Owner\MedioPagoController;
@@ -44,6 +45,10 @@ Route::prefix('owner')
 
         // Selector de barberías (redirige automáticamente si solo hay una)
         Route::get('/barberias', [BarberiaController::class, 'index'])->name('barberias.index');
+
+        // Vista consolidada multi-barbería (solo aplica con 2+ barberías activas;
+        // el propio controller redirige si no corresponde)
+        Route::get('/consolidado', [ConsolidadoController::class, 'index'])->name('consolidado');
 
         // Gestión anidada por barbería activa
         Route::prefix('barberias/{barberia}')

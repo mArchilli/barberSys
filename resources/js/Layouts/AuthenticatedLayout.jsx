@@ -90,12 +90,20 @@ export default function AuthenticatedLayout({ header, children }) {
                                         {currentBarberia.name}
                                     </span>
                                     {ownerBarberiaCount > 1 && (
-                                        <Link
-                                            href={route('owner.barberias.index')}
-                                            className="text-xs text-brand-nav-text transition hover:text-brand-nav-active"
-                                        >
-                                            Cambiar
-                                        </Link>
+                                        <>
+                                            <Link
+                                                href={route('owner.barberias.index')}
+                                                className="text-xs text-brand-nav-text transition hover:text-brand-nav-active"
+                                            >
+                                                Cambiar
+                                            </Link>
+                                            <Link
+                                                href={route('owner.consolidado')}
+                                                className="text-xs text-brand-nav-text transition hover:text-brand-nav-active"
+                                            >
+                                                Ver consolidado
+                                            </Link>
+                                        </>
                                     )}
                                 </div>
                             )}
@@ -249,9 +257,17 @@ export default function AuthenticatedLayout({ header, children }) {
                         )}
 
                         {user.role === 'owner' && currentBarberia && ownerBarberiaCount > 1 && (
-                            <ResponsiveNavLink href={route('owner.barberias.index')}>
-                                Cambiar barbería
-                            </ResponsiveNavLink>
+                            <>
+                                <ResponsiveNavLink href={route('owner.barberias.index')}>
+                                    Cambiar barbería
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route('owner.consolidado')}
+                                    active={route().current('owner.consolidado')}
+                                >
+                                    Ver consolidado
+                                </ResponsiveNavLink>
+                            </>
                         )}
                     </div>
 
