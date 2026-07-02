@@ -8,6 +8,9 @@ use App\Http\Controllers\Owner\BarberoController;
 use App\Http\Controllers\Owner\ConsolidadoController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
 use App\Http\Controllers\Owner\ClienteController;
+use App\Http\Controllers\Owner\FinanzasController;
+use App\Http\Controllers\Owner\GastoController;
+use App\Http\Controllers\Owner\GastoRegistroController;
 use App\Http\Controllers\Owner\MedioPagoController;
 use App\Http\Controllers\Owner\ServicioController;
 use App\Http\Controllers\PasswordChangeController;
@@ -76,6 +79,16 @@ Route::prefix('owner')
                 Route::get('clientes/search', [ClienteController::class, 'search'])->name('clientes.search');
                 Route::resource('clientes', ClienteController::class)->except(['destroy', 'show', 'create']);
                 Route::patch('clientes/{cliente}/deactivate', [ClienteController::class, 'deactivate'])->name('clientes.deactivate');
+
+                Route::get('/finanzas', [FinanzasController::class, 'index'])->name('finanzas');
+
+                Route::resource('gastos', GastoController::class)->except(['destroy', 'show']);
+                Route::patch('gastos/{gasto}/deactivate', [GastoController::class, 'deactivate'])->name('gastos.deactivate');
+
+                // gasto-registros: modifican la INSTANCIA de un mes puntual,
+                // nunca la plantilla (Gasto) ni meses futuros.
+                Route::patch('gasto-registros/{gastoRegistro}', [GastoRegistroController::class, 'update'])->name('gasto-registros.update');
+                Route::patch('gasto-registros/{gastoRegistro}/excluir', [GastoRegistroController::class, 'excluir'])->name('gasto-registros.excluir');
             });
     });
 

@@ -24,4 +24,9 @@ class Barberia extends Model
     {
         return $this->hasMany(User::class, 'barberia_id');
     }
+
+    public function gastos(): HasMany
+    {
+        return $this->hasMany(Gasto::class);
+    }
 }

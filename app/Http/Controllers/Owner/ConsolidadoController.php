@@ -6,6 +6,9 @@ use App\Http\Controllers\Concerns\EnsuresMultipleBarberias;
 use App\Http\Controllers\Concerns\ResolvesPeriod;
 use App\Http\Controllers\Controller;
 use App\Models\Corte;
+use App\Models\GastoRegistro;
+use App\Models\User;
+use App\Services\ComisionCalculator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,7 +18,7 @@ class ConsolidadoController extends Controller
 {
     use EnsuresMultipleBarberias, ResolvesPeriod;
 
-    public function index(Request $request): Response|RedirectResponse
+    public function index(Request $request, ComisionCalculator $comisionCalculator): Response|RedirectResponse
     {
         if ($redirect = $this->redirectIfConsolidadoNoAplica($request)) {
             return $redirect;
@@ -40,14 +43,41 @@ class ConsolidadoController extends Controller
             ->get()
             ->keyBy('barberia_id');
 
-        $comparativa = $barberias->map(function ($barberia) use ($facturacionPorBarberia) {
-            $fila = $facturacionPorBarberia->get($barberia->id);
+        $gastosPorBarberia = GastoRegistro::query()
+            ->join('barberias', 'barberias.id', '=', 'gasto_registros.barberia_id')
+            ->where('barberias.owner_id', $owner->id)
+            ->where('gasto_registros.month', $inicio->toDateString())
+            ->where('gasto_registros.is_deleted_for_month', false)
+            ->selectRaw('gasto_registros.barberia_id as barberia_id, SUM(gasto_registros.amount) as total')
+            ->groupBy('gasto_registros.barberia_id')
+            ->get()
+            ->keyBy('barberia_id');
+
+        // Los sueldos no se pueden agregar con un simple SUM en SQL porque la
+        // comisión depende de commission_pct por barbero: se calculan uno por
+        // uno con ComisionCalculator y después se agrupan por barbería.
+        $sueldosPorBarberia = User::query()
+            ->join('barberias', 'barberias.id', '=', 'users.barberia_id')
+            ->where('barberias.owner_id', $owner->id)
+            ->where('users.role', 'barber')
+            ->where('users.active', true)
+            ->get(['users.*'])
+            ->groupBy('barberia_id')
+            ->map(fn ($barberos) => $barberos->sum(fn ($barbero) => $comisionCalculator->calcular($barbero, $inicio, $fin)));
+
+        $comparativa = $barberias->map(function ($barberia) use ($facturacionPorBarberia, $gastosPorBarberia, $sueldosPorBarberia) {
+            $facturado = (float) ($facturacionPorBarberia->get($barberia->id)->total ?? 0);
+            $gastos = (float) ($gastosPorBarberia->get($barberia->id)->total ?? 0);
+            $sueldos = (float) ($sueldosPorBarberia->get($barberia->id) ?? 0);
 
             return [
                 'id' => $barberia->id,
                 'name' => $barberia->name,
-                'total' => (float) ($fila->total ?? 0),
-                'cantidad' => (int) ($fila->cantidad ?? 0),
+                'total' => $facturado,
+                'cantidad' => (int) ($facturacionPorBarberia->get($barberia->id)->cantidad ?? 0),
+                'sueldos' => $sueldos,
+                'gastos' => $gastos,
+                'neto' => $facturado - $sueldos - $gastos,
             ];
         })->sortByDesc('total')->values();
 
@@ -55,6 +85,9 @@ class ConsolidadoController extends Controller
             'period' => ['month' => $inicio->format('Y-m')],
             'totalFacturado' => (float) $comparativa->sum('total'),
             'totalCortes' => (int) $comparativa->sum('cantidad'),
+            'totalSueldos' => (float) $comparativa->sum('sueldos'),
+            'totalGastos' => (float) $comparativa->sum('gastos'),
+            'totalNeto' => (float) $comparativa->sum('neto'),
             'comparativa' => $comparativa,
         ]);
     }

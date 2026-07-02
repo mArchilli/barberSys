@@ -68,6 +68,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                         >
                                             Clientes
                                         </NavLink>
+
+                                        <NavLink
+                                            href={route('owner.barberias.finanzas', { barberia: currentBarberia.id })}
+                                            active={route().current('owner.barberias.finanzas') || route().current('owner.barberias.gastos.*') || route().current('owner.barberias.gasto-registros.*')}
+                                        >
+                                            Finanzas
+                                        </NavLink>
                                     </>
                                 )}
 
@@ -243,6 +250,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                     active={route().current('owner.barberias.clientes.*')}
                                 >
                                     Clientes
+                                </ResponsiveNavLink>
+
+                                <ResponsiveNavLink
+                                    href={route('owner.barberias.finanzas', { barberia: currentBarberia.id })}
+                                    active={route().current('owner.barberias.finanzas') || route().current('owner.barberias.gastos.*') || route().current('owner.barberias.gasto-registros.*')}
+                                >
+                                    Finanzas
                                 </ResponsiveNavLink>
                             </>
                         )}

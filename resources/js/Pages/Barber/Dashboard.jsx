@@ -9,7 +9,7 @@ function monthLabel(month) {
     return new Date(year, m - 1, 1).toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
 }
 
-export default function Dashboard({ period, totalFacturado, totalCortes, porServicio }) {
+export default function Dashboard({ period, totalFacturado, totalCortes, porServicio, liquidacion }) {
     return (
         <AuthenticatedLayout
             header={
@@ -31,6 +31,12 @@ export default function Dashboard({ period, totalFacturado, totalCortes, porServ
                         <MetricCard label="Tu facturación del período" value={`$${totalFacturado.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} tone="success" />
                         <MetricCard label="Tus cortes" value={totalCortes} />
                     </div>
+
+                    <MetricCard
+                        label={liquidacion.salaryType === 'fixed' ? 'Tu liquidación estimada (sueldo fijo)' : 'Tu liquidación estimada (comisión)'}
+                        value={`$${liquidacion.monto.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                        tone="success"
+                    />
 
                     <section className="space-y-3">
                         <h3 className="font-display text-lg font-bold text-brand-text">Tus servicios más prestados</h3>

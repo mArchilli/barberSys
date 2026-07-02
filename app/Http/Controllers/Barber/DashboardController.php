@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Barber;
 use App\Http\Controllers\Concerns\ResolvesPeriod;
 use App\Http\Controllers\Controller;
 use App\Models\Corte;
+use App\Services\ComisionCalculator;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -13,7 +14,7 @@ class DashboardController extends Controller
 {
     use ResolvesPeriod;
 
-    public function index(Request $request): Response
+    public function index(Request $request, ComisionCalculator $comisionCalculator): Response
     {
         $user = $request->user();
         $inicio = $this->resolvePeriod($request);
@@ -44,6 +45,12 @@ class DashboardController extends Controller
                 'total' => (float) $fila->total,
                 'cantidad' => (int) $fila->cantidad,
             ]),
+            // Liquidación estimada propia únicamente: nunca se exponen datos
+            // de otros barberos, gastos o neto de la barbería a este rol.
+            'liquidacion' => [
+                'salaryType' => $user->salary_type,
+                'monto' => $comisionCalculator->calcular($user, $inicio, $fin),
+            ],
         ]);
     }
 }

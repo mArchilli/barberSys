@@ -2,7 +2,7 @@ function formatPrice(price) {
     return Number(price).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export default function RankingList({ items, emptyLabel, hrefFor }) {
+export default function RankingList({ items, emptyLabel, hrefFor, unitLabel = 'corte', unitLabelPlural }) {
     if (items.length === 0) {
         return (
             <p className="rounded-brand-md border border-dashed border-brand-border bg-brand-surface-alt p-4 text-sm text-brand-text-secondary">
@@ -31,10 +31,16 @@ export default function RankingList({ items, emptyLabel, hrefFor }) {
                             </div>
                             <div className="shrink-0 text-right">
                                 <p className="text-sm font-semibold text-brand-text">${formatPrice(item.total)}</p>
-                                <p className="text-xs text-brand-text-secondary">
-                                    {item.cantidad} {item.cantidad === 1 ? 'corte' : 'cortes'}
-                                    {item.pct !== undefined && ` · ${item.pct}%`}
-                                </p>
+                                {(item.cantidad !== undefined || item.pct !== undefined) && (
+                                    <p className="text-xs text-brand-text-secondary">
+                                        {item.cantidad !== undefined && (
+                                            <>
+                                                {item.cantidad} {item.cantidad === 1 ? unitLabel : (unitLabelPlural ?? `${unitLabel}s`)}
+                                            </>
+                                        )}
+                                        {item.pct !== undefined && ` · ${item.pct}%`}
+                                    </p>
+                                )}
                             </div>
                         </Wrapper>
                     </li>
