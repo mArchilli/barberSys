@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Admin\OwnerController as AdminOwnerController;
+use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
 use App\Http\Controllers\CorteController;
 use App\Http\Controllers\Owner\BarberiaController;
@@ -117,6 +119,10 @@ Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+
+        Route::get('/owners', [AdminOwnerController::class, 'index'])->name('owners.index');
+        Route::get('/owners/{owner}', [AdminOwnerController::class, 'show'])->name('owners.show');
+        Route::patch('/owners/{owner}/subscription', [AdminSubscriptionController::class, 'update'])->name('subscriptions.update');
     });
 
 // --- Cambio de contraseña forzado ---

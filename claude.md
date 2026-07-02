@@ -55,6 +55,7 @@ id, gasto_id (FK, nullable), barberia_id (FK), amount (decimal), month (date), i
 
 ## Reglas de negocio clave
 - **Multi-tenancy**: modelos que cuelgan de `barberia_id` (Servicio, Cliente, Corte, Gasto, MedioPago) usan un Global Scope de Eloquent que filtra automáticamente por las barberías accesibles al usuario autenticado.
+- **Única excepción al Global Scope**: `App\Http\Controllers\Admin\OwnerController` (vista de soporte de solo lectura, Fase 9) es el ÚNICO lugar del proyecto donde está permitido bypasear `BelongsToBarberiaScope` (vía `withoutGlobalScope`), porque el admin necesita ver datos across todos los tenants por diseño. Cada bypass debe ir documentado con un comentario explícito en la query. Ningún otro controller (Owner, Barber, ni futuros) debe tomar esto como precedente — si otro lugar del código necesita bypasear el scope, es señal de un bug de tenancy, no de un caso legítimo nuevo.
 - **Límites de plan**: se validan en el momento de crear una barbería o un barbero (Form Request o middleware `CheckPlanLimits`), comparando contra `subscriptions` (con fallback a `plans` si no hay override custom). Nunca es una restricción solo visual.
 - **Sueldo fijo**: se resta `salary_amount` del total facturado del mes, sin importar cuánto facturó el barbero.
 - **Sueldo por comisión**: `commission_pct` sobre la suma de `cortes.price` de ese barbero en el período.
