@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Owner\StoreBarberoRequest;
 use App\Http\Requests\Owner\UpdateBarberoRequest;
+use App\Models\Barberia;
 use App\Models\User;
 use App\Services\PlanLimitService;
 use Illuminate\Support\Facades\Auth;
@@ -16,15 +17,13 @@ class BarberoController extends Controller
 {
     public function __construct(private PlanLimitService $planLimitService) {}
 
-    public function index(): Response
+    public function index(Barberia $barberia): Response
     {
         $owner = Auth::user();
-        $barberiaIds = $owner->barberias()->pluck('id');
 
-        $barberos = User::whereIn('barberia_id', $barberiaIds)
+        $barberos = User::where('barberia_id', $barberia->id)
             ->where('role', 'barber')
             ->where('active', true)
-            ->with('barberia')
             ->orderBy('name')
             ->get()
             ->map(fn (User $b) => [
@@ -35,30 +34,26 @@ class BarberoController extends Controller
                 'salary_type'    => $b->salary_type,
                 'salary_amount'  => $b->salary_amount,
                 'commission_pct' => $b->commission_pct,
-                'barberia'       => ['id' => $b->barberia->id, 'name' => $b->barberia->name],
             ]);
 
         return Inertia::render('Owner/Barberos/Index', [
             'barberos'  => $barberos,
             'planLimit' => [
-                'max'     => $this->planLimitService->maxBarberos($owner),
-                'current' => $this->planLimitService->currentBarberos($owner),
+                'max'        => $this->planLimitService->maxBarberos($owner),
+                'totalOwner' => $this->planLimitService->currentBarberos($owner),
+                'inBarberia' => $barberos->count(),
             ],
         ]);
     }
 
-    public function create(): Response
+    public function create(Barberia $barberia): Response
     {
-        $owner = Auth::user();
-        $barberias = $owner->barberias()->where('active', true)->get(['id', 'name']);
-
         return Inertia::render('Owner/Barberos/Create', [
-            'barberias' => $barberias,
-            'canAdd'    => $this->planLimitService->canAddBarbero($owner),
+            'canAdd' => $this->planLimitService->canAddBarbero(Auth::user()),
         ]);
     }
 
-    public function store(StoreBarberoRequest $request)
+    public function store(StoreBarberoRequest $request, Barberia $barberia)
     {
         $password = Str::random(12);
 
@@ -67,7 +62,7 @@ class BarberoController extends Controller
             'email'                => $request->email,
             'password'             => $password,
             'role'                 => 'barber',
-            'barberia_id'          => $request->barberia_id,
+            'barberia_id'          => $barberia->id,
             'phone'                => $request->phone,
             'salary_type'          => $request->salary_type,
             'salary_amount'        => $request->salary_type === 'fixed' ? $request->salary_amount : null,
@@ -76,22 +71,19 @@ class BarberoController extends Controller
             'must_change_password' => true,
         ]);
 
-        return redirect()->route('owner.barberos.index')
+        return redirect()->route('owner.barberias.barberos.index', $barberia->id)
             ->with('newBarbero', [
                 'name'     => $barbero->name,
                 'password' => $password,
             ]);
     }
 
-    public function edit(User $barbero): Response
+    public function edit(Barberia $barberia, User $barbero): Response
     {
-        $this->authorizeBarbero($barbero);
-
-        $owner = Auth::user();
-        $barberias = $owner->barberias()->where('active', true)->get(['id', 'name']);
+        $this->authorizeBarbero($barbero, $barberia);
 
         return Inertia::render('Owner/Barberos/Edit', [
-            'barbero'   => [
+            'barbero' => [
                 'id'             => $barbero->id,
                 'name'           => $barbero->name,
                 'email'          => $barbero->email,
@@ -99,42 +91,39 @@ class BarberoController extends Controller
                 'salary_type'    => $barbero->salary_type,
                 'salary_amount'  => $barbero->salary_amount,
                 'commission_pct' => $barbero->commission_pct,
-                'barberia_id'    => $barbero->barberia_id,
                 'active'         => $barbero->active,
             ],
-            'barberias' => $barberias,
         ]);
     }
 
-    public function update(UpdateBarberoRequest $request, User $barbero)
+    public function update(UpdateBarberoRequest $request, Barberia $barberia, User $barbero)
     {
-        $this->authorizeBarbero($barbero);
+        $this->authorizeBarbero($barbero, $barberia);
 
         $barbero->update([
             'name'           => $request->name,
             'email'          => $request->email,
             'phone'          => $request->phone,
-            'barberia_id'    => $request->barberia_id,
             'salary_type'    => $request->salary_type,
             'salary_amount'  => $request->salary_type === 'fixed' ? $request->salary_amount : null,
             'commission_pct' => $request->salary_type === 'commission' ? $request->commission_pct : null,
             'active'         => $request->active,
         ]);
 
-        return redirect()->route('owner.barberos.index');
+        return redirect()->route('owner.barberias.barberos.index', $barberia->id);
     }
 
-    public function deactivate(User $barbero)
+    public function deactivate(Barberia $barberia, User $barbero)
     {
-        $this->authorizeBarbero($barbero);
+        $this->authorizeBarbero($barbero, $barberia);
         $barbero->update(['active' => false]);
 
-        return redirect()->route('owner.barberos.index');
+        return redirect()->route('owner.barberias.barberos.index', $barberia->id);
     }
 
-    public function resetPassword(User $barbero)
+    public function resetPassword(Barberia $barberia, User $barbero)
     {
-        $this->authorizeBarbero($barbero);
+        $this->authorizeBarbero($barbero, $barberia);
 
         $password = Str::random(12);
 
@@ -143,18 +132,16 @@ class BarberoController extends Controller
             'must_change_password' => true,
         ]);
 
-        return redirect()->route('owner.barberos.index')
+        return redirect()->route('owner.barberias.barberos.index', $barberia->id)
             ->with('resetPassword', [
                 'name'     => $barbero->name,
                 'password' => $password,
             ]);
     }
 
-    private function authorizeBarbero(User $barbero): void
+    private function authorizeBarbero(User $barbero, Barberia $barberia): void
     {
-        $barberiaIds = Auth::user()->barberias()->pluck('id');
-
-        if (! $barberiaIds->contains($barbero->barberia_id) || $barbero->role !== 'barber') {
+        if ($barbero->barberia_id !== $barberia->id || $barbero->role !== 'barber') {
             abort(403);
         }
     }

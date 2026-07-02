@@ -1,8 +1,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 
-export default function Dashboard({ barberia }) {
-    const { auth } = usePage().props;
+export default function Dashboard() {
+    const { auth, currentBarberia } = usePage().props;
 
     return (
         <AuthenticatedLayout
@@ -19,19 +19,14 @@ export default function Dashboard({ barberia }) {
                     <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
                         <div className="p-8">
                             <h1 className="text-2xl font-bold text-brand-text">
-                                Bienvenido a BarberSys, {auth.user.name}
+                                Bienvenido, {auth.user.name}
                             </h1>
-
-                            {barberia ? (
+                            {currentBarberia && (
                                 <p className="mt-2 text-brand-text-secondary">
                                     Estás gestionando{' '}
                                     <span className="font-semibold text-brand-text">
-                                        {barberia.name}
+                                        {currentBarberia.name}
                                     </span>
-                                </p>
-                            ) : (
-                                <p className="mt-2 text-brand-text-secondary">
-                                    No tenés barberías activas cargadas.
                                 </p>
                             )}
                         </div>

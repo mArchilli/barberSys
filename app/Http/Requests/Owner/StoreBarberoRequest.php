@@ -20,7 +20,6 @@ class StoreBarberoRequest extends FormRequest
             'name'           => ['required', 'string', 'max:255'],
             'email'          => ['required', 'string', 'email', 'max:255', Rule::unique('users')],
             'phone'          => ['nullable', 'string', 'max:30'],
-            'barberia_id'    => ['required', 'integer', Rule::exists('barberias', 'id')->where('owner_id', Auth::id())],
             'salary_type'    => ['required', Rule::in(['fixed', 'commission'])],
             'salary_amount'  => ['required_if:salary_type,fixed', 'nullable', 'numeric', 'min:0'],
             'commission_pct' => ['required_if:salary_type,commission', 'nullable', 'numeric', 'min:0', 'max:100'],
@@ -34,10 +33,11 @@ class StoreBarberoRequest extends FormRequest
             $service = app(PlanLimitService::class);
 
             if (! $service->canAddBarbero($owner)) {
-                $max = $service->maxBarberos($owner);
+                $total = $service->currentBarberos($owner);
+                $max   = $service->maxBarberos($owner);
                 $validator->errors()->add(
                     'plan_limit',
-                    "Tu plan no permite más de {$max} barbero(s) activo(s). Actualizá tu plan para agregar más."
+                    "Alcanzaste el límite de tu plan ({$total}/{$max} barberos en total entre todas tus barberías)."
                 );
             }
         });
@@ -48,7 +48,6 @@ class StoreBarberoRequest extends FormRequest
         return [
             'salary_amount.required_if'  => 'El monto fijo es obligatorio cuando el tipo de sueldo es fijo.',
             'commission_pct.required_if' => 'El porcentaje de comisión es obligatorio cuando el tipo de sueldo es por comisión.',
-            'barberia_id.exists'         => 'La barbería seleccionada no es válida.',
         ];
     }
 }

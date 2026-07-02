@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
+use App\Http\Controllers\Owner\BarberiaController;
 use App\Http\Controllers\Owner\BarberoController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
 use App\Http\Controllers\Owner\MedioPagoController;
@@ -15,44 +16,56 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
+        'canLogin'       => Route::has('login'),
+        'canRegister'    => Route::has('register'),
         'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
+        'phpVersion'     => PHP_VERSION,
     ]);
 });
 
-// Redirige /dashboard al panel del rol correspondiente
+// Redirige /dashboard al landing del rol correspondiente
 Route::get('/dashboard', function () {
-    $role = Auth::user()->role;
-    return match ($role) {
-        'owner'  => redirect()->route('owner.dashboard'),
+    return match (Auth::user()->role) {
+        'owner'  => redirect()->route('owner.barberias.index'),
         'barber' => redirect()->route('barber.dashboard'),
         'admin'  => redirect()->route('admin.dashboard'),
         default  => abort(403),
     };
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// --- Rutas por rol ---
+// --- Rutas owner ---
 
 Route::prefix('owner')
     ->middleware(['auth', 'verified', 'role:owner'])
     ->name('owner.')
     ->group(function () {
-        Route::get('/dashboard', [OwnerDashboard::class, 'index'])->name('dashboard');
 
-        Route::resource('barberos', BarberoController::class)->except(['destroy', 'show']);
-        Route::patch('barberos/{barbero}/deactivate', [BarberoController::class, 'deactivate'])->name('barberos.deactivate');
-        Route::patch('barberos/{barbero}/reset-password', [BarberoController::class, 'resetPassword'])->name('barberos.resetPassword');
+        // Selector de barberías (redirige automáticamente si solo hay una)
+        Route::get('/barberias', [BarberiaController::class, 'index'])->name('barberias.index');
 
-        Route::resource('servicios', ServicioController::class)->except(['destroy', 'show']);
-        Route::patch('servicios/{servicio}/deactivate', [ServicioController::class, 'deactivate'])->name('servicios.deactivate');
+        // Gestión anidada por barbería activa
+        Route::prefix('barberias/{barberia}')
+            ->middleware('checkBarberiaOwnership')
+            ->name('barberias.')
+            ->group(function () {
 
-        Route::resource('medios-pago', MedioPagoController::class, [
-            'parameters' => ['medios-pago' => 'medioPago'],
-        ])->except(['destroy', 'show']);
-        Route::patch('medios-pago/{medioPago}/deactivate', [MedioPagoController::class, 'deactivate'])->name('medios-pago.deactivate');
+                Route::get('/dashboard', [OwnerDashboard::class, 'index'])->name('dashboard');
+
+                Route::resource('barberos', BarberoController::class)->except(['destroy', 'show']);
+                Route::patch('barberos/{barbero}/deactivate', [BarberoController::class, 'deactivate'])->name('barberos.deactivate');
+                Route::patch('barberos/{barbero}/reset-password', [BarberoController::class, 'resetPassword'])->name('barberos.resetPassword');
+
+                Route::resource('servicios', ServicioController::class)->except(['destroy', 'show']);
+                Route::patch('servicios/{servicio}/deactivate', [ServicioController::class, 'deactivate'])->name('servicios.deactivate');
+
+                Route::resource('medios-pago', MedioPagoController::class, [
+                    'parameters' => ['medios-pago' => 'medioPago'],
+                ])->except(['destroy', 'show']);
+                Route::patch('medios-pago/{medioPago}/deactivate', [MedioPagoController::class, 'deactivate'])->name('medios-pago.deactivate');
+            });
     });
+
+// --- Rutas barber ---
 
 Route::prefix('barber')
     ->middleware(['auth', 'verified', 'role:barber'])
@@ -60,6 +73,8 @@ Route::prefix('barber')
     ->group(function () {
         Route::get('/dashboard', [BarberDashboard::class, 'index'])->name('dashboard');
     });
+
+// --- Rutas admin ---
 
 Route::prefix('admin')
     ->middleware(['auth', 'verified', 'role:admin'])

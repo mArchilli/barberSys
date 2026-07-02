@@ -3,14 +3,16 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
-export default function Edit({ barbero, barberias }) {
+export default function Edit({ barbero }) {
+    const { currentBarberia } = usePage().props;
+    const barbId = currentBarberia?.id;
+
     const { data, setData, patch, processing, errors } = useForm({
         name: barbero.name,
         email: barbero.email,
         phone: barbero.phone ?? '',
-        barberia_id: String(barbero.barberia_id),
         salary_type: barbero.salary_type,
         salary_amount: barbero.salary_amount ?? '',
         commission_pct: barbero.commission_pct ?? '',
@@ -19,7 +21,7 @@ export default function Edit({ barbero, barberias }) {
 
     function submit(e) {
         e.preventDefault();
-        patch(route('owner.barberos.update', barbero.id));
+        patch(route('owner.barberias.barberos.update', { barberia: barbId, barbero: barbero.id }));
     }
 
     return (
@@ -73,29 +75,12 @@ export default function Edit({ barbero, barberias }) {
                                     <InputError message={errors.phone} className="mt-1" />
                                 </div>
 
-                                <div>
-                                    <InputLabel htmlFor="barberia_id" value="Barbería *" />
-                                    <select
-                                        id="barberia_id"
-                                        value={data.barberia_id}
-                                        onChange={(e) => setData('barberia_id', e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-brand-border py-2.5 shadow-sm focus:border-brand-primary focus:ring-brand-primary"
-                                    >
-                                        {barberias.map((b) => (
-                                            <option key={b.id} value={b.id}>
-                                                {b.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <InputError message={errors.barberia_id} className="mt-1" />
-                                </div>
-
                                 <fieldset>
-                                    <legend className="block text-sm font-medium text-brand-text mb-2">
+                                    <legend className="mb-2 block text-sm font-medium text-brand-text">
                                         Tipo de sueldo *
                                     </legend>
                                     <div className="flex gap-6">
-                                        <label className="flex items-center gap-2 cursor-pointer">
+                                        <label className="flex cursor-pointer items-center gap-2">
                                             <input
                                                 type="radio"
                                                 name="salary_type"
@@ -106,7 +91,7 @@ export default function Edit({ barbero, barberias }) {
                                             />
                                             <span className="text-sm text-brand-text">Sueldo fijo</span>
                                         </label>
-                                        <label className="flex items-center gap-2 cursor-pointer">
+                                        <label className="flex cursor-pointer items-center gap-2">
                                             <input
                                                 type="radio"
                                                 name="salary_type"
@@ -160,14 +145,16 @@ export default function Edit({ barbero, barberias }) {
                                         type="checkbox"
                                         checked={data.active}
                                         onChange={(e) => setData('active', e.target.checked)}
-                                        className="rounded border-brand-border text-brand-primary focus:ring-brand-primary"
+                                        className="h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
                                     />
-                                    <InputLabel htmlFor="active" value="Cuenta activa" className="mb-0" />
+                                    <label htmlFor="active" className="cursor-pointer text-sm font-medium text-brand-text">
+                                        Cuenta activa
+                                    </label>
                                 </div>
 
                                 <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
                                     <Link
-                                        href={route('owner.barberos.index')}
+                                        href={route('owner.barberias.barberos.index', { barberia: barbId })}
                                         className="flex min-h-[44px] items-center justify-center text-sm text-brand-text-secondary hover:text-brand-text sm:min-h-0"
                                     >
                                         Cancelar

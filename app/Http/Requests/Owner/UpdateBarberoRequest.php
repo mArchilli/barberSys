@@ -21,7 +21,6 @@ class UpdateBarberoRequest extends FormRequest
             'name'           => ['required', 'string', 'max:255'],
             'email'          => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($barberoId)],
             'phone'          => ['nullable', 'string', 'max:30'],
-            'barberia_id'    => ['required', 'integer', Rule::exists('barberias', 'id')->where('owner_id', Auth::id())],
             'salary_type'    => ['required', Rule::in(['fixed', 'commission'])],
             'salary_amount'  => ['required_if:salary_type,fixed', 'nullable', 'numeric', 'min:0'],
             'commission_pct' => ['required_if:salary_type,commission', 'nullable', 'numeric', 'min:0', 'max:100'],
@@ -34,7 +33,6 @@ class UpdateBarberoRequest extends FormRequest
         return [
             'salary_amount.required_if'  => 'El monto fijo es obligatorio cuando el tipo de sueldo es fijo.',
             'commission_pct.required_if' => 'El porcentaje de comisión es obligatorio cuando el tipo de sueldo es por comisión.',
-            'barberia_id.exists'         => 'La barbería seleccionada no es válida.',
         ];
     }
 }

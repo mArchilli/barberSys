@@ -15,18 +15,7 @@ class StoreMedioPagoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'barberia_id' => ['required', 'integer', 'exists:barberias,id'],
-            'name'        => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
         ];
-    }
-
-    public function withValidator($validator): void
-    {
-        $validator->after(function ($validator) {
-            $barberiaIds = Auth::user()->barberias()->pluck('id');
-            if (! $barberiaIds->contains((int) $this->barberia_id)) {
-                $validator->errors()->add('barberia_id', 'La barbería seleccionada no te pertenece.');
-            }
-        });
     }
 }

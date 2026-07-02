@@ -38,6 +38,20 @@ class HandleInertiaRequests extends Middleware
                 'newBarbero'    => $request->session()->get('newBarbero'),
                 'resetPassword' => $request->session()->get('resetPassword'),
             ],
+            'currentBarberia' => function () use ($request) {
+                $barberia = $request->route('barberia');
+                if ($barberia instanceof \App\Models\Barberia) {
+                    return ['id' => $barberia->id, 'name' => $barberia->name];
+                }
+                return null;
+            },
+            'ownerBarberiaCount' => function () use ($request) {
+                $user = $request->user();
+                if ($user && $user->isOwner()) {
+                    return $user->barberias()->where('active', true)->count();
+                }
+                return null;
+            },
         ];
     }
 }

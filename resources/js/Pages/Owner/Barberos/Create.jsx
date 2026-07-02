@@ -3,14 +3,16 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
-export default function Create({ barberias, canAdd }) {
+export default function Create({ canAdd }) {
+    const { currentBarberia } = usePage().props;
+    const barbId = currentBarberia?.id;
+
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         email: '',
         phone: '',
-        barberia_id: barberias.length === 1 ? String(barberias[0].id) : '',
         salary_type: 'fixed',
         salary_amount: '',
         commission_pct: '',
@@ -18,7 +20,7 @@ export default function Create({ barberias, canAdd }) {
 
     function submit(e) {
         e.preventDefault();
-        post(route('owner.barberos.store'));
+        post(route('owner.barberias.barberos.store', { barberia: barbId }));
     }
 
     return (
@@ -36,14 +38,14 @@ export default function Create({ barberias, canAdd }) {
                     <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
                         <div className="p-8">
                             {! canAdd && (
-                                <div className="mb-6 rounded-lg bg-brand-danger/10 border border-brand-danger/30 p-4 text-sm text-brand-danger">
+                                <div className="mb-6 rounded-lg border border-brand-danger/30 bg-brand-danger/10 p-4 text-sm text-brand-danger">
                                     Alcanzaste el límite de barberos de tu plan. Actualizá tu plan para agregar más.
                                 </div>
                             )}
 
                             <form onSubmit={submit} className="space-y-6">
                                 {errors.plan_limit && (
-                                    <div className="rounded-lg bg-brand-danger/10 border border-brand-danger/30 p-4 text-sm text-brand-danger">
+                                    <div className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 p-4 text-sm text-brand-danger">
                                         {errors.plan_limit}
                                     </div>
                                 )}
@@ -84,36 +86,12 @@ export default function Create({ barberias, canAdd }) {
                                     <InputError message={errors.phone} className="mt-1" />
                                 </div>
 
-                                {barberias.length > 1 && (
-                                    <div>
-                                        <InputLabel htmlFor="barberia_id" value="Barbería *" />
-                                        <select
-                                            id="barberia_id"
-                                            value={data.barberia_id}
-                                            onChange={(e) => setData('barberia_id', e.target.value)}
-                                            className="mt-1 block w-full rounded-md border-brand-border py-2.5 shadow-sm focus:border-brand-primary focus:ring-brand-primary"
-                                        >
-                                            <option value="">Seleccioná una barbería</option>
-                                            {barberias.map((b) => (
-                                                <option key={b.id} value={b.id}>
-                                                    {b.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <InputError message={errors.barberia_id} className="mt-1" />
-                                    </div>
-                                )}
-
-                                {barberias.length === 1 && (
-                                    <input type="hidden" name="barberia_id" value={barberias[0].id} />
-                                )}
-
                                 <fieldset>
-                                    <legend className="block text-sm font-medium text-brand-text mb-2">
+                                    <legend className="mb-2 block text-sm font-medium text-brand-text">
                                         Tipo de sueldo *
                                     </legend>
                                     <div className="flex gap-6">
-                                        <label className="flex items-center gap-2 cursor-pointer">
+                                        <label className="flex cursor-pointer items-center gap-2">
                                             <input
                                                 type="radio"
                                                 name="salary_type"
@@ -124,7 +102,7 @@ export default function Create({ barberias, canAdd }) {
                                             />
                                             <span className="text-sm text-brand-text">Sueldo fijo</span>
                                         </label>
-                                        <label className="flex items-center gap-2 cursor-pointer">
+                                        <label className="flex cursor-pointer items-center gap-2">
                                             <input
                                                 type="radio"
                                                 name="salary_type"
@@ -174,7 +152,7 @@ export default function Create({ barberias, canAdd }) {
 
                                 <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
                                     <Link
-                                        href={route('owner.barberos.index')}
+                                        href={route('owner.barberias.barberos.index', { barberia: barbId })}
                                         className="flex min-h-[44px] items-center justify-center text-sm text-brand-text-secondary hover:text-brand-text sm:min-h-0"
                                     >
                                         Cancelar

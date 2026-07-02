@@ -18,7 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'role' => \App\Http\Middleware\CheckRole::class,
+            'role'                   => \App\Http\Middleware\CheckRole::class,
+            'checkBarberiaOwnership' => \App\Http\Middleware\CheckBarberiaOwnership::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

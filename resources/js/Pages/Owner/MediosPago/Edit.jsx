@@ -3,23 +3,21 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
-export default function Edit({ medioPago, barberias }) {
+export default function Edit({ medioPago }) {
+    const { currentBarberia } = usePage().props;
+    const barbId = currentBarberia?.id;
+
     const { data, setData, patch, processing, errors } = useForm({
-        barberia_id: String(medioPago.barberia_id),
         name: medioPago.name,
         active: medioPago.active,
     });
 
     function submit(e) {
         e.preventDefault();
-        patch(route('owner.medios-pago.update', medioPago.id));
+        patch(route('owner.barberias.medios-pago.update', { barberia: barbId, medioPago: medioPago.id }));
     }
-
-    const indexHref = barberias.length > 1
-        ? route('owner.medios-pago.index', { barberia_id: medioPago.barberia_id })
-        : route('owner.medios-pago.index');
 
     return (
         <AuthenticatedLayout
@@ -36,24 +34,6 @@ export default function Edit({ medioPago, barberias }) {
                     <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
                         <div className="p-8">
                             <form onSubmit={submit} className="space-y-6">
-
-                                {barberias.length > 1 && (
-                                    <div>
-                                        <InputLabel htmlFor="barberia_id" value="Barbería *" />
-                                        <select
-                                            id="barberia_id"
-                                            value={data.barberia_id}
-                                            onChange={(e) => setData('barberia_id', e.target.value)}
-                                            className="mt-1 block w-full rounded-md border-brand-border py-2.5 shadow-sm focus:border-brand-primary focus:ring-brand-primary"
-                                        >
-                                            {barberias.map((b) => (
-                                                <option key={b.id} value={b.id}>{b.name}</option>
-                                            ))}
-                                        </select>
-                                        <InputError message={errors.barberia_id} className="mt-1" />
-                                    </div>
-                                )}
-
                                 <div>
                                     <InputLabel htmlFor="name" value="Nombre *" />
                                     <TextInput
@@ -68,20 +48,20 @@ export default function Edit({ medioPago, barberias }) {
 
                                 <div className="flex items-center gap-3">
                                     <input
-                                        type="checkbox"
                                         id="active"
+                                        type="checkbox"
                                         checked={data.active}
                                         onChange={(e) => setData('active', e.target.checked)}
                                         className="h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
                                     />
                                     <label htmlFor="active" className="cursor-pointer text-sm font-medium text-brand-text">
-                                        Activo
+                                        Medio de pago activo
                                     </label>
                                 </div>
 
                                 <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
                                     <Link
-                                        href={indexHref}
+                                        href={route('owner.barberias.medios-pago.index', { barberia: barbId })}
                                         className="flex min-h-[44px] items-center justify-center text-sm text-brand-text-secondary hover:text-brand-text sm:min-h-0"
                                     >
                                         Cancelar

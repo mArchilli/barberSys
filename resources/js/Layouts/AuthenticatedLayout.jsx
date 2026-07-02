@@ -6,7 +6,8 @@ import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
-    const user = usePage().props.auth.user;
+    const { auth, currentBarberia, ownerBarberiaCount } = usePage().props;
+    const user = auth.user;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -26,42 +27,57 @@ export default function AuthenticatedLayout({ header, children }) {
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
                                     href={route('dashboard')}
-                                    active={route().current('dashboard')}
+                                    active={route().current('dashboard') || route().current('owner.barberias.dashboard')}
                                 >
                                     Dashboard
                                 </NavLink>
 
-                                {user.role === 'owner' && (
-                                    <NavLink
-                                        href={route('owner.barberos.index')}
-                                        active={route().current('owner.barberos.*')}
-                                    >
-                                        Barberos
-                                    </NavLink>
-                                )}
+                                {user.role === 'owner' && currentBarberia && (
+                                    <>
+                                        <NavLink
+                                            href={route('owner.barberias.barberos.index', { barberia: currentBarberia.id })}
+                                            active={route().current('owner.barberias.barberos.*')}
+                                        >
+                                            Barberos
+                                        </NavLink>
 
-                                {user.role === 'owner' && (
-                                    <NavLink
-                                        href={route('owner.servicios.index')}
-                                        active={route().current('owner.servicios.*')}
-                                    >
-                                        Servicios
-                                    </NavLink>
-                                )}
+                                        <NavLink
+                                            href={route('owner.barberias.servicios.index', { barberia: currentBarberia.id })}
+                                            active={route().current('owner.barberias.servicios.*')}
+                                        >
+                                            Servicios
+                                        </NavLink>
 
-                                {user.role === 'owner' && (
-                                    <NavLink
-                                        href={route('owner.medios-pago.index')}
-                                        active={route().current('owner.medios-pago.*')}
-                                    >
-                                        Medios de pago
-                                    </NavLink>
+                                        <NavLink
+                                            href={route('owner.barberias.medios-pago.index', { barberia: currentBarberia.id })}
+                                            active={route().current('owner.barberias.medios-pago.*')}
+                                        >
+                                            Medios de pago
+                                        </NavLink>
+                                    </>
                                 )}
                             </div>
                         </div>
 
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="relative ms-3">
+                        <div className="hidden sm:ms-6 sm:flex sm:items-center sm:gap-4">
+                            {/* Indicador de barbería activa */}
+                            {user.role === 'owner' && currentBarberia && (
+                                <div className="flex items-center gap-2">
+                                    <span className="rounded-full bg-brand-accent-soft px-3 py-1 text-xs font-medium text-brand-accent-soft-text">
+                                        {currentBarberia.name}
+                                    </span>
+                                    {ownerBarberiaCount > 1 && (
+                                        <Link
+                                            href={route('owner.barberias.index')}
+                                            className="text-xs text-brand-nav-text transition hover:text-brand-nav-active"
+                                        >
+                                            Cambiar
+                                        </Link>
+                                    )}
+                                </div>
+                            )}
+
+                            <div className="relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
@@ -88,9 +104,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
-                                        <Dropdown.Link
-                                            href={route('profile.edit')}
-                                        >
+                                        <Dropdown.Link href={route('profile.edit')}>
                                             Perfil
                                         </Dropdown.Link>
                                         <Dropdown.Link
@@ -148,6 +162,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     </div>
                 </div>
 
+                {/* Mobile nav */}
                 <div
                     className={
                         (showingNavigationDropdown ? 'block' : 'hidden') +
@@ -157,40 +172,51 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
                             href={route('dashboard')}
-                            active={route().current('dashboard')}
+                            active={route().current('dashboard') || route().current('owner.barberias.dashboard')}
                         >
                             Dashboard
                         </ResponsiveNavLink>
 
-                        {user.role === 'owner' && (
-                            <ResponsiveNavLink
-                                href={route('owner.barberos.index')}
-                                active={route().current('owner.barberos.*')}
-                            >
-                                Barberos
-                            </ResponsiveNavLink>
+                        {user.role === 'owner' && currentBarberia && (
+                            <>
+                                <ResponsiveNavLink
+                                    href={route('owner.barberias.barberos.index', { barberia: currentBarberia.id })}
+                                    active={route().current('owner.barberias.barberos.*')}
+                                >
+                                    Barberos
+                                </ResponsiveNavLink>
+
+                                <ResponsiveNavLink
+                                    href={route('owner.barberias.servicios.index', { barberia: currentBarberia.id })}
+                                    active={route().current('owner.barberias.servicios.*')}
+                                >
+                                    Servicios
+                                </ResponsiveNavLink>
+
+                                <ResponsiveNavLink
+                                    href={route('owner.barberias.medios-pago.index', { barberia: currentBarberia.id })}
+                                    active={route().current('owner.barberias.medios-pago.*')}
+                                >
+                                    Medios de pago
+                                </ResponsiveNavLink>
+                            </>
                         )}
 
-                        {user.role === 'owner' && (
-                            <ResponsiveNavLink
-                                href={route('owner.servicios.index')}
-                                active={route().current('owner.servicios.*')}
-                            >
-                                Servicios
-                            </ResponsiveNavLink>
-                        )}
-
-                        {user.role === 'owner' && (
-                            <ResponsiveNavLink
-                                href={route('owner.medios-pago.index')}
-                                active={route().current('owner.medios-pago.*')}
-                            >
-                                Medios de pago
+                        {user.role === 'owner' && currentBarberia && ownerBarberiaCount > 1 && (
+                            <ResponsiveNavLink href={route('owner.barberias.index')}>
+                                Cambiar barbería
                             </ResponsiveNavLink>
                         )}
                     </div>
 
                     <div className="border-t border-brand-border/20 pb-1 pt-4">
+                        {user.role === 'owner' && currentBarberia && (
+                            <div className="px-4 pb-2">
+                                <span className="text-xs font-medium text-brand-nav-text/60">Barbería activa: </span>
+                                <span className="text-xs font-semibold text-brand-nav-active">{currentBarberia.name}</span>
+                            </div>
+                        )}
+
                         <div className="px-4">
                             <div className="text-base font-medium text-brand-nav-active">
                                 {user.name}

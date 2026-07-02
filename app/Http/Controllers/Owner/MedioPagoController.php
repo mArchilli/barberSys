@@ -5,106 +5,72 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Owner\StoreMedioPagoRequest;
 use App\Http\Requests\Owner\UpdateMedioPagoRequest;
+use App\Models\Barberia;
 use App\Models\MedioPago;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class MedioPagoController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Barberia $barberia): Response
     {
-        $owner = Auth::user();
-        $barberias = $owner->barberias()->where('active', true)->get(['id', 'name']);
-        $selectedBarberiaId = $this->resolveBarberiaId($request, $barberias);
-
-        $mediosPago = $selectedBarberiaId
-            ? MedioPago::where('barberia_id', $selectedBarberiaId)
-                ->where('active', true)
-                ->orderBy('name')
-                ->get(['id', 'barberia_id', 'name'])
-            : collect();
+        $mediosPago = MedioPago::where('barberia_id', $barberia->id)
+            ->where('active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         return Inertia::render('Owner/MediosPago/Index', [
-            'mediosPago'         => $mediosPago,
-            'barberias'          => $barberias,
-            'selectedBarberiaId' => $selectedBarberiaId,
+            'mediosPago' => $mediosPago,
         ]);
     }
 
-    public function create(Request $request): Response
+    public function create(Barberia $barberia): Response
     {
-        $owner = Auth::user();
-        $barberias = $owner->barberias()->where('active', true)->get(['id', 'name']);
-        $selectedBarberiaId = $this->resolveBarberiaId($request, $barberias);
+        return Inertia::render('Owner/MediosPago/Create');
+    }
 
-        return Inertia::render('Owner/MediosPago/Create', [
-            'barberias'          => $barberias,
-            'selectedBarberiaId' => $selectedBarberiaId,
+    public function store(StoreMedioPagoRequest $request, Barberia $barberia)
+    {
+        MedioPago::create([
+            'barberia_id' => $barberia->id,
+            'name'        => $request->name,
         ]);
+
+        return redirect()->route('owner.barberias.medios-pago.index', $barberia->id);
     }
 
-    public function store(StoreMedioPagoRequest $request)
+    public function edit(Barberia $barberia, MedioPago $medioPago): Response
     {
-        $medioPago = MedioPago::create($request->validated());
-
-        return redirect()->route('owner.medios-pago.index', ['barberia_id' => $medioPago->barberia_id]);
-    }
-
-    public function edit(MedioPago $medioPago): Response
-    {
-        $this->authorizeMedioPago($medioPago);
-
-        $owner = Auth::user();
-        $barberias = $owner->barberias()->where('active', true)->get(['id', 'name']);
+        $this->authorizeMedioPago($medioPago, $barberia);
 
         return Inertia::render('Owner/MediosPago/Edit', [
-            'medioPago' => $medioPago->only(['id', 'barberia_id', 'name', 'active']),
-            'barberias' => $barberias,
+            'medioPago' => $medioPago->only(['id', 'name', 'active']),
         ]);
     }
 
-    public function update(UpdateMedioPagoRequest $request, MedioPago $medioPago)
+    public function update(UpdateMedioPagoRequest $request, Barberia $barberia, MedioPago $medioPago)
     {
-        $this->authorizeMedioPago($medioPago);
-        $medioPago->update($request->validated());
+        $this->authorizeMedioPago($medioPago, $barberia);
 
-        return redirect()->route('owner.medios-pago.index', ['barberia_id' => $medioPago->barberia_id]);
+        $medioPago->update([
+            'name'   => $request->name,
+            'active' => $request->active,
+        ]);
+
+        return redirect()->route('owner.barberias.medios-pago.index', $barberia->id);
     }
 
-    public function deactivate(MedioPago $medioPago)
+    public function deactivate(Barberia $barberia, MedioPago $medioPago)
     {
-        $this->authorizeMedioPago($medioPago);
+        $this->authorizeMedioPago($medioPago, $barberia);
         $medioPago->update(['active' => false]);
 
-        return redirect()->route('owner.medios-pago.index', ['barberia_id' => $medioPago->barberia_id]);
+        return redirect()->route('owner.barberias.medios-pago.index', $barberia->id);
     }
 
-    private function resolveBarberiaId(Request $request, $barberias): ?int
+    private function authorizeMedioPago(MedioPago $medioPago, Barberia $barberia): void
     {
-        if ($barberias->isEmpty()) {
-            return null;
-        }
-
-        if ($barberias->count() === 1) {
-            return $barberias->first()->id;
-        }
-
-        $id = (int) $request->query('barberia_id', 0);
-
-        if ($id && $barberias->contains('id', $id)) {
-            return $id;
-        }
-
-        return $barberias->first()->id;
-    }
-
-    private function authorizeMedioPago(MedioPago $medioPago): void
-    {
-        $barberiaIds = Auth::user()->barberias()->pluck('id');
-
-        if (! $barberiaIds->contains($medioPago->barberia_id)) {
+        if ($medioPago->barberia_id !== $barberia->id) {
             abort(403);
         }
     }

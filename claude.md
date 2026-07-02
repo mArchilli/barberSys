@@ -63,15 +63,40 @@ id, gasto_id (FK, nullable), barberia_id (FK), amount (decimal), month (date), i
 
 ## Estructura de carpetas
 app/Http/Controllers/{Owner,Barber,Admin}/
-app/Http/Middleware/{CheckRole,CheckPlanLimits}.php
+app/Http/Middleware/{CheckRole,CheckPlanLimits,CheckBarberiaOwnership}.php
 app/Http/Requests/
 app/Models/
 app/Policies/
 app/Scopes/BelongsToBarberiaScope.php
-app/Services/{ComisionCalculator,GastoRecurrenteGenerator}.php
+app/Services/{ComisionCalculator,GastoRecurrenteGenerator,PlanLimitService}.php
 app/Console/Commands/GenerarGastosMensuales.php
 resources/js/Pages/{Owner,Barber,Admin}/
 routes/web.php (rutas agrupadas por prefijo de rol + middleware)
+
+## Patrón de rutas anidadas por barbería (owner)
+
+Todas las rutas de gestión del owner viven bajo `/owner/barberias/{barberia}/...`. La barbería es un parámetro de ruta resuelto por route model binding, no un query param.
+
+```
+GET  /owner/barberias                    → selector (o redirect si solo hay 1)
+GET  /owner/barberias/{barberia}/dashboard
+GET  /owner/barberias/{barberia}/barberos
+GET  /owner/barberias/{barberia}/servicios
+GET  /owner/barberias/{barberia}/medios-pago
+```
+
+**Naming convention**: `owner.barberias.{seccion}.{accion}`, ej. `owner.barberias.barberos.index`.
+
+**Middleware `checkBarberiaOwnership`**: valida que `$barberia->owner_id === Auth::id()`. Se aplica a todo el grupo nested.
+
+**`currentBarberia`**: se inyecta como shared prop lazy en `HandleInertiaRequests` leyendo el route param `barberia`. Las páginas lo consumen con `usePage().props.currentBarberia` — nunca lo reciben como prop explícita.
+
+**Rutas en frontend**: siempre pasar `{ barberia: currentBarberia.id }` como segundo argumento a `route()`.
+
+**Seguridad en capas**:
+1. `BelongsToBarberiaScope` filtra colecciones (solo barberías del owner autenticado).
+2. `checkBarberiaOwnership` middleware bloquea acceso directo por ID a barberías ajenas.
+3. Controllers verifican explícitamente que la entidad pertenece a la barbería del parámetro de ruta (no solo al owner).
 
 ## Plan de desarrollo por fases
 El proyecto avanza por funcionalidades completas de punta a punta (migración + modelo + controlador + vista), no por capas. Fases: 0-Setup, 1-Fundación (auth/roles/tenancy), 2-Gestión de barberos, 3-Catálogos (servicios/medios de pago), 4-Clientes, 5-Registro de cortes, 6-Dashboard y métricas, 7-Módulo financiero, 8-Multi-barbería, 9-Panel admin, 10-Pulido y testing.

@@ -44,22 +44,23 @@ function ActionButton({ onClick, label, icon: Icon, colorClass }) {
 }
 
 export default function Index({ barberos, planLimit }) {
-    const { flash } = usePage().props;
+    const { flash, currentBarberia } = usePage().props;
     const credentialFlash = flash.newBarbero || flash.resetPassword;
     const [showCredential, setShowCredential] = useState(!!credentialFlash);
 
+    const barbId = currentBarberia?.id;
+
     function handleResetPassword(barbero) {
         if (! confirm(`¿Resetear la contraseña de ${barbero.name}? Se generará una nueva contraseña aleatoria y el barbero deberá cambiarla al ingresar.`)) return;
-        router.patch(route('owner.barberos.resetPassword', barbero.id));
+        router.patch(route('owner.barberias.barberos.resetPassword', { barberia: barbId, barbero: barbero.id }));
     }
 
     function handleDeactivate(barbero) {
         if (! confirm(`¿Dar de baja a ${barbero.name}? Su cuenta quedará inactiva.`)) return;
-        router.patch(route('owner.barberos.deactivate', barbero.id));
+        router.patch(route('owner.barberias.barberos.deactivate', { barberia: barbId, barbero: barbero.id }));
     }
 
-    const atLimit = planLimit.max !== null && planLimit.current >= planLimit.max;
-    const pct = planLimit.max ? Math.min(100, (planLimit.current / planLimit.max) * 100) : 0;
+    const atLimit = planLimit.max !== null && planLimit.totalOwner >= planLimit.max;
 
     return (
         <AuthenticatedLayout
@@ -69,7 +70,7 @@ export default function Index({ barberos, planLimit }) {
                         Barberos
                     </h2>
                     <Link
-                        href={route('owner.barberos.create')}
+                        href={route('owner.barberias.barberos.create', { barberia: barbId })}
                         className={`inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-medium text-white shadow-sm transition sm:py-2 ${
                             atLimit
                                 ? 'cursor-not-allowed bg-brand-text-secondary'
@@ -117,42 +118,50 @@ export default function Index({ barberos, planLimit }) {
 
                     <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
 
-                        {/* Barra de progreso del plan */}
+                        {/* Contador de plan */}
                         <div className="border-b border-brand-border px-4 py-4 sm:px-6">
-                            <div className="mb-2 flex items-center justify-between">
-                                <span className="text-sm text-brand-text-secondary">Barberos activos</span>
-                                <span className="text-sm font-semibold text-brand-text">
-                                    {planLimit.current}
-                                    {planLimit.max !== null ? ` / ${planLimit.max}` : (
+                            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                                <div className="text-sm text-brand-text-secondary">
+                                    Barberos en esta barbería:{' '}
+                                    <span className="font-semibold text-brand-text">{planLimit.inBarberia}</span>
+                                </div>
+                                <div className="text-sm text-brand-text-secondary">
+                                    Total del plan:{' '}
+                                    <span className={`font-semibold ${atLimit ? 'text-brand-danger' : 'text-brand-text'}`}>
+                                        {planLimit.totalOwner}
+                                        {planLimit.max !== null ? `/${planLimit.max}` : ''}
+                                    </span>
+                                    {planLimit.max !== null && (
+                                        <span className="ml-1 text-xs text-brand-text-secondary">(todas tus barberías)</span>
+                                    )}
+                                    {planLimit.max === null && (
                                         <span className="ml-1 text-xs font-normal text-brand-text-secondary">sin límite</span>
                                     )}
-                                </span>
+                                </div>
                             </div>
-                            {planLimit.max !== null ? (
+                            {planLimit.max !== null && (
                                 <>
-                                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-brand-accent-soft">
+                                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-brand-accent-soft">
                                         <div
                                             className={`h-1.5 rounded-full transition-all ${atLimit ? 'bg-brand-danger' : 'bg-brand-primary'}`}
-                                            style={{ width: `${pct}%` }}
+                                            style={{ width: `${Math.min(100, (planLimit.totalOwner / planLimit.max) * 100)}%` }}
                                         />
                                     </div>
                                     {atLimit && (
                                         <p className="mt-1.5 text-xs text-brand-danger">
-                                            Límite alcanzado — actualizá tu plan para agregar más barberos
+                                            Alcanzaste el límite de tu plan — actualizá tu plan para agregar más barberos
                                         </p>
                                     )}
                                 </>
-                            ) : (
-                                <div className="h-1.5 w-full rounded-full bg-brand-accent-soft" />
                             )}
                         </div>
 
                         {barberos.length === 0 ? (
                             <div className="p-8 text-center text-brand-text-secondary">
-                                Todavía no hay barberos cargados.{' '}
+                                Todavía no hay barberos en esta barbería.{' '}
                                 {! atLimit && (
                                     <Link
-                                        href={route('owner.barberos.create')}
+                                        href={route('owner.barberias.barberos.create', { barberia: barbId })}
                                         className="text-brand-primary hover:underline"
                                     >
                                         Crear el primero
@@ -169,15 +178,13 @@ export default function Index({ barberos, planLimit }) {
                                                 <Avatar name={b.name} />
                                                 <div className="min-w-0 flex-1">
                                                     <p className="truncate font-medium text-brand-text">{b.name}</p>
-                                                    <p className="truncate text-sm text-brand-text-secondary">{b.barberia.name}</p>
                                                     <div className="mt-1.5">
                                                         <SalaryBadge barbero={b} />
                                                     </div>
                                                 </div>
                                                 <Link
-                                                    href={route('owner.barberos.edit', b.id)}
+                                                    href={route('owner.barberias.barberos.edit', { barberia: barbId, barbero: b.id })}
                                                     aria-label={`Editar ${b.name}`}
-                                                    title={`Editar ${b.name}`}
                                                     className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-accent-soft"
                                                 >
                                                     <IconEdit size={16} />
@@ -207,7 +214,6 @@ export default function Index({ barberos, planLimit }) {
                                         <tr>
                                             <th className="px-6 py-3">Nombre</th>
                                             <th className="px-6 py-3">Contacto</th>
-                                            <th className="px-6 py-3">Barbería</th>
                                             <th className="px-6 py-3">Sueldo</th>
                                             <th className="px-6 py-3 text-right">Acciones</th>
                                         </tr>
@@ -227,16 +233,14 @@ export default function Index({ barberos, planLimit }) {
                                                         <p className="text-xs text-brand-text-secondary">{b.phone}</p>
                                                     )}
                                                 </td>
-                                                <td className="px-6 py-4 text-brand-text-secondary">{b.barberia.name}</td>
                                                 <td className="px-6 py-4">
                                                     <SalaryBadge barbero={b} />
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center justify-end gap-1">
                                                         <Link
-                                                            href={route('owner.barberos.edit', b.id)}
+                                                            href={route('owner.barberias.barberos.edit', { barberia: barbId, barbero: b.id })}
                                                             aria-label={`Editar ${b.name}`}
-                                                            title={`Editar ${b.name}`}
                                                             className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-accent-soft"
                                                         >
                                                             <IconEdit size={16} />
