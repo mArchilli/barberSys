@@ -1,11 +1,11 @@
 ---
 name: frontend-design
-description: Guía de dirección visual para construir o rediseñar pantallas del panel de BarberSys (dashboards, tablas, formularios, navegación). Usar en cualquier tarea que implique crear o modificar UI.
+description: Guía de dirección visual para construir o rediseñar pantallas del panel de Pelito (dashboards, tablas, formularios, navegación). Usar en cualquier tarea que implique crear o modificar UI.
 ---
 
-# Frontend Design — BarberSys
+# Frontend Design — Pelito
 
-Encará cada pantalla como si fueras el diseñador líder de un estudio que se destaca por darle a cada producto una identidad visual propia, no plantillas genéricas. BarberSys es una herramienta de uso diario para dueños y barberos — no es un sitio de marketing, es una herramienta de trabajo. La belleza acá se mide en claridad, jerarquía y velocidad de uso, no en efectos.
+Encará cada pantalla como si fueras el diseñador líder de un estudio que se destaca por darle a cada producto una identidad visual propia, no plantillas genéricas. Pelito es una herramienta de uso diario para dueños y barberos — no es un sitio de marketing, es una herramienta de trabajo. La belleza acá se mide en claridad, jerarquía y velocidad de uso, no en efectos.
 
 ## Principios de diseño
 
@@ -15,7 +15,7 @@ Encará cada pantalla como si fueras el diseñador líder de un estudio que se d
 
 **Evitá los defaults reconocibles de IA**: grids de 3 cards idénticas con ícono + título + texto, azul-violeta como paleta por defecto, sombras difusas en todo, bordes redondeados exagerados en todo. Elegí una paleta acotada (2-3 colores + neutros) que tenga sentido para una barbería (considerá tonos cálidos, tierra, cuero, sobrios — no el azul SaaS genérico) y sostenela en todo el panel.
 
-**Las tablas y formularios son el corazón del producto.** BarberSys se usa para cargar cortes y ver métricas todos los días — priorizá densidad de información legible, estados vacíos con mensaje claro y accionable, y feedback inmediato ante cada acción (guardado, error, límite alcanzado) por sobre cualquier animación decorativa.
+**Las tablas y formularios son el corazón del producto.** Pelito se usa para cargar cortes y ver métricas todos los días — priorizá densidad de información legible, estados vacíos con mensaje claro y accionable, y feedback inmediato ante cada acción (guardado, error, límite alcanzado) por sobre cualquier animación decorativa.
 
 **Motion con propósito, no decoración.** Transiciones cortas en cambios de estado (loading, guardado exitoso, error) sí; animaciones de entrada elaboradas en cada card, no. Respetá `prefers-reduced-motion`.
 
@@ -33,7 +33,7 @@ Los textos son parte del diseño, no relleno. Nombrá las cosas como las nombrar
 
 Toda pantalla se construye primero para mobile (viewport ~375px) y recién después se adapta a breakpoints mayores. En Tailwind esto es literal: las clases sin prefijo (`flex-col`, `p-4`, `text-sm`) son la base mobile; `sm:`/`md:`/`lg:`/`xl:` solo agregan o sobreescriben comportamiento para pantallas más grandes. Nunca al revés — no escribas el layout de escritorio primero y le agregues `sm:` para "achicarlo" después.
 
-Esto importa especialmente para BarberSys porque los barberos van a cargar cortes desde el celular en el día a día — esa es la pantalla que más se usa y la que menos margen tiene para fallar en mobile.
+Esto importa especialmente para Pelito porque los barberos van a cargar cortes desde el celular en el día a día — esa es la pantalla que más se usa y la que menos margen tiene para fallar en mobile.
 
 Checklist antes de dar una pantalla por terminada:
 - El layout tiene sentido en ~375px de ancho sin scroll horizontal.
@@ -49,3 +49,19 @@ La paleta vigente vive en `tailwind.config.js`, bajo `theme.extend.colors.brand`
 Regla estricta: nunca uses clases de color crudas de Tailwind (`amber-500`, `violet-600`, `zinc-900`, etc.) directamente en JSX. Usá siempre los tokens semánticos (`brand-primary`, `brand-nav-bg`, `brand-danger`, etc.). Si necesitás un color que no existe como token, agregalo primero a `tailwind.config.js` con un nombre semántico, y después usalo — nunca al revés.
 
 La marca (nombre, paleta final, tipografía) todavía no está cerrada — el sistema de tokens existe justamente para que ese cambio, cuando llegue, sea una edición de un archivo y no una reescritura del panel.
+
+## Identidad de marca — Pelito
+
+Pelito es la marca oficial del producto. Toda pantalla debe sentirse como parte del mismo sistema: SaaS moderno, limpio, redondeado, celeste, amable y sobrio — nunca vintage de barbería (nada de navajas, tijeras o barber poles como recurso visual), nunca oscuro pesado, nunca genérico de IA.
+
+**Paleta**: vive exclusivamente en `tailwind.config.js` bajo `theme.extend.colors.brand`. Nunca hex crudo ni clases Tailwind sin prefijar (`sky-500`, `slate-900`, etc.) en componentes — siempre tokens `brand-*`. Si necesitás un tono que no existe como token, agregalo primero al config con nombre semántico.
+
+**Tipografía**: `font-display` (Hanken Grotesk) para títulos y headlines, peso 700/800. `font-sans` (Inter) para cuerpo y labels, peso 400-600. Nunca serif, nunca tipografías decorativas o de estética vintage/barbería.
+
+**Radius**: usar la escala `brand-sm` a `brand-xl` y `brand-pill` definida en el config — nunca menor a 10px salvo elementos internos muy pequeños (íconos, chips diminutos). En el panel interno, preferí `brand-sm`/`brand-md` para cards de datos densas (tablas, formularios) y reservá `brand-lg`/`brand-xl` para elementos destacados (cards de resumen, modales). Botones y badges siempre `brand-pill`.
+
+**Sombras**: `shadow-brand-card` para superficies flotantes estándar (cards, paneles), `shadow-brand-cta` solo en botones primarios, `shadow-brand-floating` para elementos flotantes de jerarquía alta. Nunca sombras negras duras.
+
+**Semántica de color**: celeste (`brand-primary`) para acciones principales, estados activos, info. Verde (`brand-success`) solo para métricas positivas. Rojo (`brand-danger`) solo para alertas y acciones destructivas, en dosis bajas — nunca convertir una pantalla en "agresiva" a fuerza de rojo.
+
+Esta identidad aplica al panel interno (Owner/Barber/Admin). Para la landing pública de marketing, usar el skill `landing-design` en su lugar — tiene reglas propias de hero, pricing y estructura de página que no aplican al panel logueado.

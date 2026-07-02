@@ -1,4 +1,4 @@
-# BarberSys — Contexto del proyecto
+# Pelito — Contexto del proyecto
 
 ## Descripción
 Plataforma SaaS de gestión operativa y financiera para barberías. No es un sistema de turnos ni de cobro online: es una herramienta de administración interna. Los dueños de barbería gestionan sus sucursales, sus barberos, y controlan su rentabilidad real. Los barberos cargan manualmente los servicios que van prestando.

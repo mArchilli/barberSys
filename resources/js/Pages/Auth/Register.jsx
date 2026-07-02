@@ -100,10 +100,10 @@ export default function Register({ plans }) {
                         {plans.map((plan) => (
                             <label
                                 key={plan.id}
-                                className={`cursor-pointer rounded-lg border-2 p-4 transition-colors ${
+                                className={`cursor-pointer rounded-brand-md border-2 p-4 transition-colors ${
                                     data.plan_id === plan.id
-                                        ? 'border-indigo-600 bg-indigo-50'
-                                        : 'border-gray-200 hover:border-gray-300'
+                                        ? 'border-brand-primary bg-brand-primary-soft'
+                                        : 'border-brand-border hover:border-brand-primary-muted'
                                 }`}
                             >
                                 <input
@@ -114,14 +114,14 @@ export default function Register({ plans }) {
                                     onChange={() => setData('plan_id', plan.id)}
                                     className="sr-only"
                                 />
-                                <div className="font-semibold text-gray-900">{plan.name}</div>
-                                <div className="mt-1 text-sm text-gray-500">
+                                <div className="font-semibold text-brand-text">{plan.name}</div>
+                                <div className="mt-1 text-sm text-brand-text-secondary">
                                     {formatLimit(plan.max_barberias)} barbería
                                     {plan.max_barberias !== 1 ? 's' : ''} ·{' '}
                                     {formatLimit(plan.max_barberos)} barbero
                                     {plan.max_barberos !== 1 ? 's' : ''}
                                 </div>
-                                <div className="mt-2 text-lg font-bold text-indigo-600">
+                                <div className="mt-2 text-lg font-bold text-brand-primary">
                                     {formatPrice(plan)}
                                 </div>
                             </label>
@@ -146,7 +146,7 @@ export default function Register({ plans }) {
                 <div className="mt-6 flex items-center justify-end">
                     <Link
                         href={route('login')}
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="rounded-md text-sm text-brand-text-secondary underline hover:text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
                     >
                         ¿Ya tenés cuenta?
                     </Link>

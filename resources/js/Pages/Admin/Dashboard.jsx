@@ -7,7 +7,7 @@ export default function Dashboard() {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                <h2 className="text-xl font-semibold leading-tight text-brand-text">
                     Panel de administración
                 </h2>
             }
@@ -16,12 +16,12 @@ export default function Dashboard() {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-brand-card">
                         <div className="p-8">
-                            <h1 className="text-2xl font-bold text-gray-900">
-                                Panel BarberSys Admin
+                            <h1 className="text-2xl font-bold text-brand-text">
+                                Panel Admin Pelito
                             </h1>
-                            <p className="mt-2 text-gray-600">
+                            <p className="mt-2 text-brand-text-secondary">
                                 Sesión iniciada como {auth.user.name} (admin).
                             </p>
                         </div>
