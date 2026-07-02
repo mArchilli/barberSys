@@ -37,4 +37,31 @@ class PlanLimitService
 
         return $this->currentBarberos($owner) < $max;
     }
+
+    public function maxBarberias(User $owner): ?int
+    {
+        $subscription = $owner->subscription()->with('plan')->first();
+
+        if (! $subscription) {
+            return null;
+        }
+
+        return $subscription->maxBarberias();
+    }
+
+    public function currentBarberias(User $owner): int
+    {
+        return $owner->barberias()->where('active', true)->count();
+    }
+
+    public function canAddBarberia(User $owner): bool
+    {
+        $max = $this->maxBarberias($owner);
+
+        if ($max === null) {
+            return true;
+        }
+
+        return $this->currentBarberias($owner) < $max;
+    }
 }

@@ -48,6 +48,8 @@ Route::prefix('owner')
 
         // Selector de barberías (redirige automáticamente si solo hay una)
         Route::get('/barberias', [BarberiaController::class, 'index'])->name('barberias.index');
+        Route::get('/barberias/create', [BarberiaController::class, 'create'])->name('barberias.create');
+        Route::post('/barberias', [BarberiaController::class, 'store'])->name('barberias.store');
 
         // Vista consolidada multi-barbería (solo aplica con 2+ barberías activas;
         // el propio controller redirige si no corresponde)
@@ -60,6 +62,8 @@ Route::prefix('owner')
             ->group(function () {
 
                 Route::get('/dashboard', [OwnerDashboard::class, 'index'])->name('dashboard');
+                Route::get('/edit', [BarberiaController::class, 'edit'])->name('edit');
+                Route::put('/', [BarberiaController::class, 'update'])->name('update');
 
                 Route::get('cortes', [CorteController::class, 'index'])->name('cortes.index');
                 Route::post('cortes', [CorteController::class, 'store'])->name('cortes.store');

@@ -52,39 +52,74 @@ export default function Consolidado({ period, totalFacturado, totalCortes, total
                                 Todavía no hay cortes cargados en este período.
                             </p>
                         ) : (
-                            <div className="overflow-x-auto rounded-brand-md border border-brand-border bg-brand-surface">
-                                <table className="w-full min-w-[560px] text-left text-sm">
-                                    <thead className="text-xs uppercase tracking-wide text-brand-text-secondary">
-                                        <tr className="border-b border-brand-border-subtle">
-                                            <th className="p-4 font-medium">Barbería</th>
-                                            <th className="p-4 font-medium">Facturación</th>
-                                            <th className="p-4 font-medium">Sueldos</th>
-                                            <th className="p-4 font-medium">Gastos</th>
-                                            <th className="p-4 font-medium">Neto</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-brand-border-subtle">
-                                        {comparativa.map((item) => (
-                                            <tr key={item.id} className="transition hover:bg-brand-surface-alt">
-                                                <td className="p-4">
-                                                    <Link
-                                                        href={route('owner.barberias.dashboard', item.id)}
-                                                        className="font-medium text-brand-text hover:text-brand-primary"
-                                                    >
-                                                        {item.name}
-                                                    </Link>
-                                                </td>
-                                                <td className="p-4 text-brand-text">${formatPrice(item.total)}</td>
-                                                <td className="p-4 text-brand-text-secondary">${formatPrice(item.sueldos)}</td>
-                                                <td className="p-4 text-brand-text-secondary">${formatPrice(item.gastos)}</td>
-                                                <td className={`p-4 font-semibold ${item.neto < 0 ? 'text-brand-danger' : 'text-brand-success'}`}>
+                            <>
+                                {/* ── Mobile: cards ── */}
+                                <div className="space-y-3 md:hidden">
+                                    {comparativa.map((item) => (
+                                        <Link
+                                            key={item.id}
+                                            href={route('owner.barberias.dashboard', item.id)}
+                                            className="block rounded-brand-md border border-brand-border bg-brand-surface p-4 shadow-brand-card transition hover:border-brand-primary"
+                                        >
+                                            <div className="flex items-center justify-between gap-2">
+                                                <span className="font-medium text-brand-text">{item.name}</span>
+                                                <span className={`font-semibold ${item.neto < 0 ? 'text-brand-danger' : 'text-brand-success'}`}>
                                                     ${formatPrice(item.neto)}
-                                                </td>
+                                                </span>
+                                            </div>
+                                            <dl className="mt-3 grid grid-cols-3 gap-2 text-xs text-brand-text-secondary">
+                                                <div>
+                                                    <dt>Facturación</dt>
+                                                    <dd className="mt-0.5 font-medium text-brand-text">${formatPrice(item.total)}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt>Sueldos</dt>
+                                                    <dd className="mt-0.5 font-medium text-brand-text">${formatPrice(item.sueldos)}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt>Gastos</dt>
+                                                    <dd className="mt-0.5 font-medium text-brand-text">${formatPrice(item.gastos)}</dd>
+                                                </div>
+                                            </dl>
+                                        </Link>
+                                    ))}
+                                </div>
+
+                                {/* ── Desktop: tabla ── */}
+                                <div className="hidden overflow-x-auto rounded-brand-md border border-brand-border bg-brand-surface md:block">
+                                    <table className="w-full min-w-[560px] text-left text-sm">
+                                        <thead className="text-xs uppercase tracking-wide text-brand-text-secondary">
+                                            <tr className="border-b border-brand-border-subtle">
+                                                <th className="p-4 font-medium">Barbería</th>
+                                                <th className="p-4 font-medium">Facturación</th>
+                                                <th className="p-4 font-medium">Sueldos</th>
+                                                <th className="p-4 font-medium">Gastos</th>
+                                                <th className="p-4 font-medium">Neto</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </thead>
+                                        <tbody className="divide-y divide-brand-border-subtle">
+                                            {comparativa.map((item) => (
+                                                <tr key={item.id} className="transition hover:bg-brand-surface-alt">
+                                                    <td className="p-4">
+                                                        <Link
+                                                            href={route('owner.barberias.dashboard', item.id)}
+                                                            className="font-medium text-brand-text hover:text-brand-primary"
+                                                        >
+                                                            {item.name}
+                                                        </Link>
+                                                    </td>
+                                                    <td className="p-4 text-brand-text">${formatPrice(item.total)}</td>
+                                                    <td className="p-4 text-brand-text-secondary">${formatPrice(item.sueldos)}</td>
+                                                    <td className="p-4 text-brand-text-secondary">${formatPrice(item.gastos)}</td>
+                                                    <td className={`p-4 font-semibold ${item.neto < 0 ? 'text-brand-danger' : 'text-brand-success'}`}>
+                                                        ${formatPrice(item.neto)}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </>
                         )}
                     </section>
                 </div>

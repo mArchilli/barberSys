@@ -3,7 +3,7 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SelectInput from '@/Components/SelectInput';
 import TextInput from '@/Components/TextInput';
-import { useForm, usePage } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 
@@ -16,7 +16,11 @@ function formatPrice(price) {
 }
 
 export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, routes }) {
-    const { flash } = usePage().props;
+    const { flash, auth, currentBarberia } = usePage().props;
+    const faltaServicios = servicios.length === 0;
+    const faltaMediosPago = mediosPago.length === 0;
+    const faltaCatalogo = faltaServicios || faltaMediosPago;
+    const puedeCargarCatalogo = auth.user.role === 'owner' && currentBarberia;
 
     const { data, setData, post, processing, errors, reset } = useForm({
         servicio_id: '',
@@ -99,6 +103,39 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                         </div>
                     )}
 
+                    {faltaCatalogo ? (
+                        <div className="rounded-brand-md border border-dashed border-brand-border bg-brand-surface-alt p-6 text-center text-sm text-brand-text-secondary">
+                            <p>
+                                Todavía falta cargar{' '}
+                                {faltaServicios && faltaMediosPago
+                                    ? 'servicios y medios de pago'
+                                    : faltaServicios
+                                        ? 'servicios'
+                                        : 'medios de pago'}{' '}
+                                para poder registrar cortes en esta barbería.
+                            </p>
+                            {puedeCargarCatalogo && (
+                                <div className="mt-3 flex flex-wrap justify-center gap-4">
+                                    {faltaServicios && (
+                                        <Link
+                                            href={route('owner.barberias.servicios.create', currentBarberia.id)}
+                                            className="font-medium text-brand-primary hover:underline"
+                                        >
+                                            Cargar servicios
+                                        </Link>
+                                    )}
+                                    {faltaMediosPago && (
+                                        <Link
+                                            href={route('owner.barberias.medios-pago.create', currentBarberia.id)}
+                                            className="font-medium text-brand-primary hover:underline"
+                                        >
+                                            Cargar medios de pago
+                                        </Link>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    ) : (
                     <form onSubmit={submit} className="space-y-5">
                         <div>
                             <InputLabel htmlFor="servicio_id" value="Servicio *" />
@@ -207,6 +244,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                             Cargar corte
                         </PrimaryButton>
                     </form>
+                    )}
                 </div>
             </div>
 

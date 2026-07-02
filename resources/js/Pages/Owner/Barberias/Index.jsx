@@ -1,36 +1,91 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
+import { IconEdit } from '@tabler/icons-react';
 
-export default function Index({ barberias }) {
+export default function Index({ barberias, planLimit }) {
+    const atLimit = planLimit.max !== null && planLimit.current >= planLimit.max;
+
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-brand-text">
-                    Mis barberías
-                </h2>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <h2 className="text-xl font-semibold leading-tight text-brand-text">
+                        Mis barberías
+                    </h2>
+                    <Link
+                        href={route('owner.barberias.create')}
+                        className={`inline-flex items-center justify-center rounded-brand-pill px-4 py-3 text-sm font-medium text-white shadow-sm transition sm:py-2 ${
+                            atLimit
+                                ? 'cursor-not-allowed bg-brand-text-secondary'
+                                : 'bg-brand-primary hover:bg-brand-primary-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2'
+                        }`}
+                        onClick={atLimit ? (e) => e.preventDefault() : undefined}
+                    >
+                        + Nueva barbería
+                    </Link>
+                </div>
             }
         >
             <Head title="Mis barberías" />
 
             <div className="py-6 sm:py-12">
-                <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-                    {barberias.length === 0 ? (
-                        <div className="rounded-xl border border-brand-border bg-brand-surface p-8 text-center text-brand-text-secondary shadow-card">
-                            No tenés barberías activas cargadas.
-                        </div>
-                    ) : (
-                        <>
-                            <p className="mb-4 text-sm text-brand-text-secondary">
+                <div className="mx-auto max-w-4xl space-y-4 px-4 sm:px-6 lg:px-8">
+
+                    {/* Contador de plan */}
+                    <div className="rounded-brand-md border border-brand-border bg-brand-surface px-4 py-4 shadow-brand-card sm:px-6">
+                        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                            <p className="text-sm text-brand-text-secondary">
                                 Seleccioná la barbería que querés gestionar.
                             </p>
-                            <div className="grid gap-4 sm:grid-cols-2">
-                                {barberias.map((barberia) => (
+                            <div className="text-sm text-brand-text-secondary">
+                                Barberías:{' '}
+                                <span className={`font-semibold ${atLimit ? 'text-brand-danger' : 'text-brand-text'}`}>
+                                    {planLimit.current}
+                                    {planLimit.max !== null ? `/${planLimit.max}` : ''}
+                                </span>
+                                {planLimit.max === null && (
+                                    <span className="ml-1 text-xs font-normal text-brand-text-secondary">sin límite</span>
+                                )}
+                            </div>
+                        </div>
+                        {planLimit.max !== null && (
+                            <>
+                                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-brand-primary-soft">
+                                    <div
+                                        className={`h-1.5 rounded-full transition-all ${atLimit ? 'bg-brand-danger' : 'bg-brand-primary'}`}
+                                        style={{ width: `${Math.min(100, (planLimit.current / planLimit.max) * 100)}%` }}
+                                    />
+                                </div>
+                                {atLimit && (
+                                    <p className="mt-1.5 text-xs text-brand-danger">
+                                        Alcanzaste el límite de tu plan — actualizá tu plan para agregar más barberías
+                                    </p>
+                                )}
+                            </>
+                        )}
+                    </div>
+
+                    {barberias.length === 0 ? (
+                        <div className="rounded-brand-lg border border-brand-border bg-brand-surface p-8 text-center text-brand-text-secondary shadow-brand-card">
+                            No tenés barberías activas cargadas.{' '}
+                            {! atLimit && (
+                                <Link href={route('owner.barberias.create')} className="text-brand-primary hover:underline">
+                                    Crear la primera
+                                </Link>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            {barberias.map((barberia) => (
+                                <div
+                                    key={barberia.id}
+                                    className="group relative rounded-brand-lg border border-brand-border bg-brand-surface shadow-brand-card transition hover:border-brand-primary hover:shadow-brand-card-hover"
+                                >
                                     <Link
-                                        key={barberia.id}
                                         href={route('owner.barberias.dashboard', barberia.id)}
-                                        className="group flex flex-col gap-1 rounded-xl border border-brand-border bg-brand-surface p-6 shadow-card transition hover:border-brand-primary hover:shadow-md"
+                                        className="flex flex-col gap-1 p-6"
                                     >
-                                        <h3 className="text-lg font-semibold text-brand-text group-hover:text-brand-primary transition">
+                                        <h3 className="pr-8 text-lg font-semibold text-brand-text transition group-hover:text-brand-primary">
                                             {barberia.name}
                                         </h3>
                                         {barberia.address && (
@@ -40,9 +95,17 @@ export default function Index({ barberias }) {
                                             Gestionar →
                                         </span>
                                     </Link>
-                                ))}
-                            </div>
-                        </>
+                                    <Link
+                                        href={route('owner.barberias.edit', barberia.id)}
+                                        aria-label={`Editar ${barberia.name}`}
+                                        title="Editar"
+                                        className="absolute right-2 top-2 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-brand-text-secondary transition hover:bg-brand-primary-soft hover:text-brand-primary"
+                                    >
+                                        <IconEdit size={16} />
+                                    </Link>
+                                </div>
+                            ))}
+                        </div>
                     )}
                 </div>
             </div>
