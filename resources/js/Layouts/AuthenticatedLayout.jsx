@@ -35,6 +35,13 @@ export default function AuthenticatedLayout({ header, children }) {
                                 {user.role === 'owner' && currentBarberia && (
                                     <>
                                         <NavLink
+                                            href={route('owner.barberias.cortes.index', { barberia: currentBarberia.id })}
+                                            active={route().current('owner.barberias.cortes.*')}
+                                        >
+                                            Cargar corte
+                                        </NavLink>
+
+                                        <NavLink
                                             href={route('owner.barberias.barberos.index', { barberia: currentBarberia.id })}
                                             active={route().current('owner.barberias.barberos.*')}
                                         >
@@ -62,6 +69,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                             Clientes
                                         </NavLink>
                                     </>
+                                )}
+
+                                {user.role === 'barber' && (
+                                    <NavLink
+                                        href={route('barber.cortes.index')}
+                                        active={route().current('barber.cortes.*')}
+                                    >
+                                        Cargar corte
+                                    </NavLink>
                                 )}
                             </div>
                         </div>
@@ -187,6 +203,13 @@ export default function AuthenticatedLayout({ header, children }) {
                         {user.role === 'owner' && currentBarberia && (
                             <>
                                 <ResponsiveNavLink
+                                    href={route('owner.barberias.cortes.index', { barberia: currentBarberia.id })}
+                                    active={route().current('owner.barberias.cortes.*')}
+                                >
+                                    Cargar corte
+                                </ResponsiveNavLink>
+
+                                <ResponsiveNavLink
                                     href={route('owner.barberias.barberos.index', { barberia: currentBarberia.id })}
                                     active={route().current('owner.barberias.barberos.*')}
                                 >
@@ -214,6 +237,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Clientes
                                 </ResponsiveNavLink>
                             </>
+                        )}
+
+                        {user.role === 'barber' && (
+                            <ResponsiveNavLink
+                                href={route('barber.cortes.index')}
+                                active={route().current('barber.cortes.*')}
+                            >
+                                Cargar corte
+                            </ResponsiveNavLink>
                         )}
 
                         {user.role === 'owner' && currentBarberia && ownerBarberiaCount > 1 && (

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
+use App\Http\Controllers\CorteController;
 use App\Http\Controllers\Owner\BarberiaController;
 use App\Http\Controllers\Owner\BarberoController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
@@ -52,6 +53,9 @@ Route::prefix('owner')
 
                 Route::get('/dashboard', [OwnerDashboard::class, 'index'])->name('dashboard');
 
+                Route::get('cortes', [CorteController::class, 'index'])->name('cortes.index');
+                Route::post('cortes', [CorteController::class, 'store'])->name('cortes.store');
+
                 Route::resource('barberos', BarberoController::class)->except(['destroy', 'show']);
                 Route::patch('barberos/{barbero}/deactivate', [BarberoController::class, 'deactivate'])->name('barberos.deactivate');
                 Route::patch('barberos/{barbero}/reset-password', [BarberoController::class, 'resetPassword'])->name('barberos.resetPassword');
@@ -77,6 +81,11 @@ Route::prefix('barber')
     ->name('barber.')
     ->group(function () {
         Route::get('/dashboard', [BarberDashboard::class, 'index'])->name('dashboard');
+
+        Route::get('/cortes', [CorteController::class, 'index'])->name('cortes.index');
+        Route::post('/cortes', [CorteController::class, 'store'])->name('cortes.store');
+
+        Route::get('/clientes/search', [ClienteController::class, 'search'])->name('clientes.search');
     });
 
 // --- Rutas admin ---

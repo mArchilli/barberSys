@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Owner;
 
+use App\Http\Controllers\Concerns\ResolvesBarberiaContext;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Owner\StoreClienteRequest;
 use App\Http\Requests\Owner\UpdateClienteRequest;
@@ -13,6 +14,8 @@ use Inertia\Response;
 
 class ClienteController extends Controller
 {
+    use ResolvesBarberiaContext;
+
     public function index(Barberia $barberia): Response
     {
         $clientes = Cliente::where('barberia_id', $barberia->id)
@@ -75,8 +78,10 @@ class ClienteController extends Controller
             ->with('success', 'Cliente desactivado.');
     }
 
-    public function search(Request $request, Barberia $barberia)
+    public function search(Request $request, ?Barberia $barberia = null)
     {
+        $barberia = $this->resolveBarberia($request, $barberia);
+
         $q = trim($request->string('q'));
 
         $clientes = Cliente::where('barberia_id', $barberia->id)
