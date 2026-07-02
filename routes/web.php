@@ -5,6 +5,7 @@ use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
 use App\Http\Controllers\Owner\BarberiaController;
 use App\Http\Controllers\Owner\BarberoController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
+use App\Http\Controllers\Owner\ClienteController;
 use App\Http\Controllers\Owner\MedioPagoController;
 use App\Http\Controllers\Owner\ServicioController;
 use App\Http\Controllers\PasswordChangeController;
@@ -62,6 +63,10 @@ Route::prefix('owner')
                     'parameters' => ['medios-pago' => 'medioPago'],
                 ])->except(['destroy', 'show']);
                 Route::patch('medios-pago/{medioPago}/deactivate', [MedioPagoController::class, 'deactivate'])->name('medios-pago.deactivate');
+
+                Route::get('clientes/search', [ClienteController::class, 'search'])->name('clientes.search');
+                Route::resource('clientes', ClienteController::class)->except(['destroy', 'show', 'create']);
+                Route::patch('clientes/{cliente}/deactivate', [ClienteController::class, 'deactivate'])->name('clientes.deactivate');
             });
     });
 

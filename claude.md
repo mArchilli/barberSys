@@ -41,7 +41,7 @@ id, barberia_id (FK), name, price (decimal), active (boolean)
 id, barberia_id (FK), name, active (boolean)
 
 ### clientes
-id, barberia_id (FK), name, phone (nullable)
+id, barberia_id (FK), name, phone (nullable), active (boolean, default true)
 
 ### cortes (tabla transaccional central)
 id, barberia_id (FK, denormalizado), barbero_id (FK users), servicio_id (FK), cliente_id (FK), medio_pago_id (FK), price (decimal, autocompletado desde servicio pero editable), performed_at (date)
@@ -60,6 +60,7 @@ id, gasto_id (FK, nullable), barberia_id (FK), amount (decimal), month (date), i
 - **Sueldo por comisión**: `commission_pct` sobre la suma de `cortes.price` de ese barbero en el período.
 - **Gastos recurrentes**: un job mensual (Laravel Task Scheduling) genera `gasto_registros` a partir de `gastos` activos con `is_recurring=true`. El dueño puede editar o marcar `is_deleted_for_month=true` una instancia puntual sin afectar la plantilla ni meses futuros.
 - **Neto mensual**: Σ(cortes.price) − Σ(sueldos calculados) − Σ(gasto_registros.amount, excluyendo is_deleted_for_month).
+- **Clientes implícitos**: los clientes se crean de forma implícita al cargar un corte (autocompletar un cliente existente vía search, o crear uno nuevo con el nombre tipeado en el mismo request). No existe alta manual de clientes como flujo principal — el CRUD de Clientes es solo de consulta, edición y baja.
 
 ## Estructura de carpetas
 app/Http/Controllers/{Owner,Barber,Admin}/
