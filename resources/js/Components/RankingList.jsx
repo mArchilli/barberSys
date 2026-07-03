@@ -11,7 +11,7 @@ function initials(name) {
         .join('');
 }
 
-export default function RankingList({ items, emptyLabel, hrefFor, unitLabel = 'corte', unitLabelPlural, avatars = false }) {
+export default function RankingList({ items, emptyLabel, hrefFor, unitLabel = 'corte', unitLabelPlural, avatars = false, columns }) {
     if (items.length === 0) {
         return (
             <p className="rounded-brand-md border border-dashed border-brand-border bg-brand-surface-alt p-4 text-sm text-brand-text-secondary">
@@ -20,14 +20,23 @@ export default function RankingList({ items, emptyLabel, hrefFor, unitLabel = 'c
         );
     }
 
+    const isGrid = Boolean(columns);
+    const gridColsClass = columns === 3 ? 'sm:grid-cols-3' : columns === 2 ? 'sm:grid-cols-2' : '';
+
     return (
-        <ul className="divide-y divide-brand-border-subtle overflow-hidden rounded-brand-md border border-brand-border bg-brand-surface">
+        <ul
+            className={
+                isGrid
+                    ? `grid grid-cols-1 gap-3 ${gridColsClass}`
+                    : 'divide-y divide-brand-border-subtle overflow-hidden rounded-brand-md border border-brand-border bg-brand-surface'
+            }
+        >
             {items.map((item, index) => {
                 const href = hrefFor?.(item);
                 const Wrapper = href ? 'a' : 'div';
 
                 return (
-                    <li key={item.id}>
+                    <li key={item.id} className={isGrid ? 'overflow-hidden rounded-brand-md border border-brand-border bg-brand-surface' : undefined}>
                         <Wrapper
                             {...(href ? { href } : {})}
                             className="flex flex-col gap-2 p-4 transition hover:bg-brand-surface-alt"

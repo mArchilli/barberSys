@@ -1,6 +1,6 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const STATUS_LABELS = {
     trial: 'Trial',
@@ -37,11 +37,20 @@ export default function Index({ owners, filters, statusOptions, plans }) {
     const [search, setSearch] = useState(filters.search ?? '');
     const [status, setStatus] = useState(filters.status ?? '');
     const [plan, setPlan] = useState(filters.plan ?? '');
+    const isFirstRender = useRef(true);
 
-    function submit(e) {
-        e.preventDefault();
-        router.get(route('admin.owners.index'), { search, status, plan }, { preserveState: true, replace: true });
-    }
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        const timeout = setTimeout(() => {
+            router.get(route('admin.owners.index'), { search, status, plan }, { preserveState: true, replace: true });
+        }, 350);
+
+        return () => clearTimeout(timeout);
+    }, [search, status, plan]);
 
     return (
         <AdminLayout
@@ -61,7 +70,7 @@ export default function Index({ owners, filters, statusOptions, plans }) {
                         </div>
                     )}
 
-                    <form onSubmit={submit} className="flex flex-col gap-3 rounded-brand-md border border-brand-border bg-brand-surface p-4 shadow-brand-card sm:flex-row sm:items-end">
+                    <div className="flex flex-col gap-3 rounded-brand-md border border-brand-border bg-brand-surface p-4 shadow-brand-card sm:flex-row sm:items-end">
                         <div className="flex-1">
                             <label className="block text-xs font-medium text-brand-text-secondary">Buscar</label>
                             <input
@@ -98,13 +107,7 @@ export default function Index({ owners, filters, statusOptions, plans }) {
                                 ))}
                             </select>
                         </div>
-                        <button
-                            type="submit"
-                            className="inline-flex items-center justify-center rounded-brand-sm bg-brand-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-primary-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
-                        >
-                            Filtrar
-                        </button>
-                    </form>
+                    </div>
 
                     {owners.length === 0 ? (
                         <div className="rounded-brand-md border border-brand-border bg-brand-surface p-8 text-center text-brand-text-secondary shadow-brand-card">

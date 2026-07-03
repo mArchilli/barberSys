@@ -136,7 +136,7 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
             <Head title="Finanzas" />
 
             <div className="py-6 sm:py-12">
-                <div className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <p className="text-sm capitalize text-brand-text-secondary">{monthLabel(period.month)}</p>
                         <MonthSelector month={period.month} url={route('owner.barberias.finanzas', barbId)} />
@@ -160,37 +160,39 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
                         <MetricCard label="Gastos" value={`$${formatPrice(totalGastos)}`} />
                     </div>
 
-                    <section className="space-y-3">
-                        <h3 className="font-display text-lg font-bold text-brand-text">Sueldos por barbero</h3>
-                        <RankingList
-                            items={sueldosPorBarbero}
-                            emptyLabel="Todavía no hay barberos activos en esta barbería."
-                        />
-                    </section>
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <section className="space-y-3">
+                            <h3 className="font-display text-lg font-bold text-brand-text">Sueldos por barbero</h3>
+                            <RankingList
+                                items={sueldosPorBarbero}
+                                emptyLabel="Todavía no hay barberos activos en esta barbería."
+                            />
+                        </section>
 
-                    <section className="space-y-3">
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                            <h3 className="font-display text-lg font-bold text-brand-text">Gastos</h3>
-                            <Link
-                                href={route('owner.barberias.gastos.create', { barberia: barbId })}
-                                className="inline-flex items-center justify-center rounded-brand-pill bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-brand-cta transition hover:bg-brand-primary-hover"
-                            >
-                                + Nuevo gasto
-                            </Link>
-                        </div>
+                        <section className="space-y-3">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <h3 className="font-display text-lg font-bold text-brand-text">Gastos</h3>
+                                <Link
+                                    href={route('owner.barberias.gastos.create', { barberia: barbId })}
+                                    className="inline-flex items-center justify-center rounded-brand-pill bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-brand-cta transition hover:bg-brand-primary-hover"
+                                >
+                                    + Nuevo gasto
+                                </Link>
+                            </div>
 
-                        {gastos.length === 0 ? (
-                            <p className="rounded-brand-md border border-dashed border-brand-border bg-brand-surface-alt p-4 text-sm text-brand-text-secondary">
-                                Todavía no cargaste ningún gasto para esta barbería.
-                            </p>
-                        ) : (
-                            <ul className="divide-y divide-brand-border-subtle overflow-hidden rounded-brand-md border border-brand-border bg-brand-surface">
-                                {gastos.map((gasto) => (
-                                    <GastoRow key={gasto.id} gasto={gasto} barbId={barbId} />
-                                ))}
-                            </ul>
-                        )}
-                    </section>
+                            {gastos.length === 0 ? (
+                                <p className="rounded-brand-md border border-dashed border-brand-border bg-brand-surface-alt p-4 text-sm text-brand-text-secondary">
+                                    Todavía no cargaste ningún gasto para esta barbería.
+                                </p>
+                            ) : (
+                                <ul className="divide-y divide-brand-border-subtle overflow-hidden rounded-brand-md border border-brand-border bg-brand-surface">
+                                    {gastos.map((gasto) => (
+                                        <GastoRow key={gasto.id} gasto={gasto} barbId={barbId} />
+                                    ))}
+                                </ul>
+                            )}
+                        </section>
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>

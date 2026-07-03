@@ -42,6 +42,16 @@ Checklist antes de dar una pantalla por terminada:
 - La navegación mobile (probablemente un menú hamburguesa o tab bar) está resuelta explícitamente, no es el menú de escritorio comprimido.
 - Recién después de validar mobile, se agregan los breakpoints `md:`/`lg:` para aprovechar el espacio extra de escritorio (más columnas visibles, navegación lateral en vez de hamburguesa, etc.).
 
+## Layout de pantallas dashboard (múltiples secciones de listado)
+
+Patrón estándar para pantallas tipo dashboard que combinan una card hero (resumen/facturación) con varias secciones de listado o ranking apiladas debajo (ej. Dashboard, Finanzas y Consolidado del owner). Aplicalo por defecto en pantallas nuevas de este tipo:
+
+- **Contenedor**: el `max-w-*` pensado para mobile/tablet se mantiene como base, pero agregá `lg:max-w-7xl` (o similar) para que en desktop el contenido use el ancho real disponible en vez de dejar columnas angostas con espacio vacío a los costados. Ej: `mx-auto max-w-5xl px-4 sm:px-6 lg:max-w-7xl lg:px-8`.
+- **Hero**: la card de resumen (facturación del período, neto, etc.) siempre a ancho completo, sin grid.
+- **Secciones de listado/ranking**: en mobile van apiladas en una sola columna (comportamiento por defecto, sin prefijo). A partir de `lg:` se agrupan en `grid grid-cols-1 lg:grid-cols-2 gap-6`. Si el número de secciones es impar, la última ocupa el ancho completo con `lg:col-span-2`.
+- **Listas cortas dentro de una card** (3-4 ítems, ej. medios de pago): en vez de forzar una lista vertical dividida cuando sobra espacio horizontal, usá `RankingList` con el prop `columns={3}` (o `columns={2}`) para que se acomoden en fila — se leen mejor en paralelo cuando son pocos.
+- Este reordenamiento es puramente aditivo vía breakpoints: el comportamiento mobile (`< lg`) no debe cambiar respecto al que ya está validado.
+
 ## Paleta de marca
 
 La paleta vigente vive en `tailwind.config.js`, bajo `theme.extend.colors.brand`. Es la única fuente de verdad — no repliques valores hex en componentes ni en este documento.

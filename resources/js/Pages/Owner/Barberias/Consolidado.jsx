@@ -24,7 +24,7 @@ export default function Consolidado({ period, totalFacturado, totalCortes, total
             <Head title="Consolidado" />
 
             <div className="py-6 sm:py-12">
-                <div className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <p className="text-sm capitalize text-brand-text-secondary">{monthLabel(period.month)}</p>
                         <MonthSelector month={period.month} url={route('owner.consolidado')} />

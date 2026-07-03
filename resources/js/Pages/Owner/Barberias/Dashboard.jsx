@@ -31,7 +31,7 @@ export default function Dashboard({
             <Head title="Dashboard" />
 
             <div className="pt-6 pb-24 sm:pt-12 sm:pb-16">
-                <div className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
                     <div className="flex justify-end">
                         <MonthSelector
                             month={period.month}
@@ -64,40 +64,46 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    <section className="space-y-3">
-                        <h3 className="font-display text-lg font-bold text-brand-text">Facturación por barbero</h3>
-                        {rankingBarberosEnabled ? (
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <section className="space-y-3">
+                            <h3 className="font-display text-lg font-bold text-brand-text">Facturación por barbero</h3>
+                            {rankingBarberosEnabled ? (
+                                <RankingList
+                                    items={porBarbero}
+                                    emptyLabel="Todavía no hay cortes cargados en este período."
+                                    avatars
+                                />
+                            ) : (
+                                <div className="flex flex-col items-center gap-2 rounded-brand-md border border-dashed border-brand-border bg-brand-surface-alt p-6 text-center">
+                                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-primary-soft text-brand-primary-soft-text">
+                                        <IconLock size={20} stroke={1.75} />
+                                    </span>
+                                    <p className="text-sm font-semibold text-brand-text">Disponible desde el plan Crecimiento</p>
+                                    <p className="max-w-sm text-xs text-brand-text-secondary">
+                                        Descubrí qué barbero factura más y tomá mejores decisiones sobre tu equipo.
+                                    </p>
+                                    {/* Placeholder: todavía no existe un flujo de upgrade de plan dentro del panel */}
+                                    <a href="#" className="text-sm font-semibold text-brand-primary hover:text-brand-primary-hover">
+                                        Ver planes →
+                                    </a>
+                                </div>
+                            )}
+                        </section>
+
+                        <section className="space-y-3">
+                            <h3 className="font-display text-lg font-bold text-brand-text">Servicios más vendidos</h3>
+                            <RankingList items={porServicio} emptyLabel="Todavía no hay servicios cargados en este período." />
+                        </section>
+
+                        <section className="space-y-3 lg:col-span-2">
+                            <h3 className="font-display text-lg font-bold text-brand-text">Medios de pago</h3>
                             <RankingList
-                                items={porBarbero}
+                                items={porMedioPago}
                                 emptyLabel="Todavía no hay cortes cargados en este período."
-                                avatars
+                                columns={3}
                             />
-                        ) : (
-                            <div className="flex flex-col items-center gap-2 rounded-brand-md border border-dashed border-brand-border bg-brand-surface-alt p-6 text-center">
-                                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-primary-soft text-brand-primary-soft-text">
-                                    <IconLock size={20} stroke={1.75} />
-                                </span>
-                                <p className="text-sm font-semibold text-brand-text">Disponible desde el plan Crecimiento</p>
-                                <p className="max-w-sm text-xs text-brand-text-secondary">
-                                    Descubrí qué barbero factura más y tomá mejores decisiones sobre tu equipo.
-                                </p>
-                                {/* Placeholder: todavía no existe un flujo de upgrade de plan dentro del panel */}
-                                <a href="#" className="text-sm font-semibold text-brand-primary hover:text-brand-primary-hover">
-                                    Ver planes →
-                                </a>
-                            </div>
-                        )}
-                    </section>
-
-                    <section className="space-y-3">
-                        <h3 className="font-display text-lg font-bold text-brand-text">Servicios más vendidos</h3>
-                        <RankingList items={porServicio} emptyLabel="Todavía no hay servicios cargados en este período." />
-                    </section>
-
-                    <section className="space-y-3">
-                        <h3 className="font-display text-lg font-bold text-brand-text">Medios de pago</h3>
-                        <RankingList items={porMedioPago} emptyLabel="Todavía no hay cortes cargados en este período." />
-                    </section>
+                        </section>
+                    </div>
                 </div>
             </div>
 
