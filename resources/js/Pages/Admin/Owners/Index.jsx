@@ -32,14 +32,15 @@ function StatusBadge({ status }) {
     );
 }
 
-export default function Index({ owners, filters, statusOptions }) {
+export default function Index({ owners, filters, statusOptions, plans }) {
     const { flash } = usePage().props;
     const [search, setSearch] = useState(filters.search ?? '');
     const [status, setStatus] = useState(filters.status ?? '');
+    const [plan, setPlan] = useState(filters.plan ?? '');
 
     function submit(e) {
         e.preventDefault();
-        router.get(route('admin.owners.index'), { search, status }, { preserveState: true, replace: true });
+        router.get(route('admin.owners.index'), { search, status, plan }, { preserveState: true, replace: true });
     }
 
     return (
@@ -84,6 +85,19 @@ export default function Index({ owners, filters, statusOptions }) {
                                 ))}
                             </select>
                         </div>
+                        <div className="sm:w-56">
+                            <label className="block text-xs font-medium text-brand-text-secondary">Plan</label>
+                            <select
+                                value={plan}
+                                onChange={(e) => setPlan(e.target.value)}
+                                className="mt-1 w-full rounded-brand-sm border-brand-border text-sm focus:border-brand-primary focus:ring-brand-primary"
+                            >
+                                <option value="">Todos</option>
+                                {plans.map((p) => (
+                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                ))}
+                            </select>
+                        </div>
                         <button
                             type="submit"
                             className="inline-flex items-center justify-center rounded-brand-sm bg-brand-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-primary-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
@@ -92,74 +106,41 @@ export default function Index({ owners, filters, statusOptions }) {
                         </button>
                     </form>
 
-                    <div className="overflow-hidden rounded-brand-md border border-brand-border bg-brand-surface shadow-brand-card">
-                        {owners.length === 0 ? (
-                            <div className="p-8 text-center text-brand-text-secondary">
-                                No se encontraron owners con esos filtros.
-                            </div>
-                        ) : (
-                            <>
-                                {/* ── Mobile: cards ── */}
-                                <ul className="divide-y divide-brand-border md:hidden">
-                                    {owners.map((o) => (
-                                        <li key={o.id}>
-                                            <Link
-                                                href={route('admin.owners.show', o.id)}
-                                                className="flex flex-col gap-1 px-4 py-4 hover:bg-brand-bg"
-                                            >
-                                                <div className="flex items-center justify-between gap-2">
-                                                    <p className="truncate font-medium text-brand-text">{o.name}</p>
-                                                    <StatusBadge status={o.subscription_status} />
-                                                </div>
+                    {owners.length === 0 ? (
+                        <div className="rounded-brand-md border border-brand-border bg-brand-surface p-8 text-center text-brand-text-secondary shadow-brand-card">
+                            No se encontraron owners con esos filtros.
+                        </div>
+                    ) : (
+                        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                            {owners.map((o) => (
+                                <li key={o.id}>
+                                    <Link
+                                        href={route('admin.owners.show', o.id)}
+                                        className="flex h-full flex-col gap-3 rounded-brand-lg border border-brand-border bg-brand-surface p-5 shadow-brand-card transition hover:border-brand-primary/40 hover:shadow-brand-floating"
+                                    >
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="min-w-0">
+                                                <p className="truncate font-display font-semibold text-brand-text">{o.name}</p>
                                                 <p className="truncate text-sm text-brand-text-secondary">{o.email}</p>
-                                                <p className="text-xs text-brand-text-secondary">
-                                                    {o.plan ?? 'Sin plan'} · {o.barberias_count} barbería(s) · {o.barberos_count} barbero(s)
-                                                </p>
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
+                                            </div>
+                                            <StatusBadge status={o.subscription_status} />
+                                        </div>
 
-                                {/* ── Desktop: tabla ── */}
-                                <table className="hidden w-full text-left text-sm md:table">
-                                    <thead className="bg-brand-bg text-xs uppercase text-brand-text-secondary">
-                                        <tr>
-                                            <th className="px-6 py-3">Owner</th>
-                                            <th className="px-6 py-3">Plan</th>
-                                            <th className="px-6 py-3">Suscripción</th>
-                                            <th className="px-6 py-3">Barberías</th>
-                                            <th className="px-6 py-3">Barberos</th>
-                                            <th className="px-6 py-3">Alta</th>
-                                            <th className="px-6 py-3 text-right">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-brand-border">
-                                        {owners.map((o) => (
-                                            <tr key={o.id} className="hover:bg-brand-bg">
-                                                <td className="px-6 py-4">
-                                                    <p className="font-medium text-brand-text">{o.name}</p>
-                                                    <p className="text-xs text-brand-text-secondary">{o.email}</p>
-                                                </td>
-                                                <td className="px-6 py-4 text-brand-text-secondary">{o.plan ?? '—'}</td>
-                                                <td className="px-6 py-4"><StatusBadge status={o.subscription_status} /></td>
-                                                <td className="px-6 py-4 text-brand-text-secondary">{o.barberias_count}</td>
-                                                <td className="px-6 py-4 text-brand-text-secondary">{o.barberos_count}</td>
-                                                <td className="px-6 py-4 text-brand-text-secondary">{o.created_at}</td>
-                                                <td className="px-6 py-4 text-right">
-                                                    <Link
-                                                        href={route('admin.owners.show', o.id)}
-                                                        className="text-sm font-medium text-brand-primary hover:underline"
-                                                    >
-                                                        Ver detalle
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </>
-                        )}
-                    </div>
+                                        <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                                            <span className="inline-flex items-center rounded-brand-pill bg-brand-primary-soft px-2.5 py-1 text-xs font-medium text-brand-primary-soft-text">
+                                                {o.plan ?? 'Sin plan'}
+                                            </span>
+                                            <span className="text-brand-text-secondary">
+                                                {o.barberias_count} barbería(s) · {o.barberos_count} barbero(s)
+                                            </span>
+                                        </div>
+
+                                        <p className="text-xs text-brand-text-secondary">Alta: {o.created_at}</p>
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </div>
         </AdminLayout>

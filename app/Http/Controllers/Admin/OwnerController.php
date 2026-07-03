@@ -9,6 +9,8 @@ use App\Models\Plan;
 use App\Models\User;
 use App\Scopes\BelongsToBarberiaScope;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -18,6 +20,7 @@ class OwnerController extends Controller
     {
         $search = trim((string) $request->query('search', ''));
         $status = (string) $request->query('status', '');
+        $planId = (string) $request->query('plan', '');
 
         $owners = User::where('role', 'owner')
             ->when($search !== '', function ($query) use ($search) {
@@ -28,6 +31,9 @@ class OwnerController extends Controller
             })
             ->when($status !== '', function ($query) use ($status) {
                 $query->whereHas('subscription', fn ($q) => $q->where('status', $status));
+            })
+            ->when($planId !== '', function ($query) use ($planId) {
+                $query->whereHas('subscription', fn ($q) => $q->where('plan_id', $planId));
             })
             ->with(['subscription.plan'])
             ->withCount('barberias')
@@ -56,9 +62,36 @@ class OwnerController extends Controller
             'filters' => [
                 'search' => $search,
                 'status' => $status,
+                'plan'   => $planId,
             ],
             'statusOptions' => ['trial', 'active', 'past_due', 'cancelled'],
+            'plans' => Plan::where('active', true)->orderBy('id')->get(['id', 'name']),
         ]);
+    }
+
+    public function resetPassword(User $owner)
+    {
+        abort_unless($owner->role === 'owner', 404);
+
+        $password = Str::random(12);
+
+        $owner->update([
+            'password'             => $password,
+            'must_change_password' => true,
+        ]);
+
+        AdminActivityLog::create([
+            'admin_id'        => Auth::id(),
+            'action'          => 'owner.password_reset',
+            'target_owner_id' => $owner->id,
+        ]);
+
+        return redirect()
+            ->route('admin.owners.show', $owner)
+            ->with('resetPassword', [
+                'name'     => $owner->name,
+                'password' => $password,
+            ]);
     }
 
     public function show(User $owner): Response

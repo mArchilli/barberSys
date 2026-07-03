@@ -3,7 +3,8 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 
 const STATUS_LABELS = {
     trial: 'Trial',
@@ -23,6 +24,7 @@ function Section({ title, children }) {
 
 export default function Show({ owner, barberias, subscription, plans, recentCortes, activityLogs }) {
     const { flash } = usePage().props;
+    const [showResetPassword, setShowResetPassword] = useState(!!flash?.resetPassword);
 
     const { data, setData, patch, processing, errors } = useForm({
         plan_id: subscription?.plan_id ?? (plans[0]?.id ?? ''),
@@ -35,9 +37,17 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
         custom_price: subscription?.custom_price ?? '',
     });
 
+    const selectedPlan = plans.find((p) => String(p.id) === String(data.plan_id));
+    const isCustomPlan = !!selectedPlan?.is_custom;
+
     function submit(e) {
         e.preventDefault();
         patch(route('admin.subscriptions.update', owner.id));
+    }
+
+    function handleResetPassword() {
+        if (! confirm(`¿Restablecer la contraseña de ${owner.name}? Se generará una nueva contraseña aleatoria y deberá cambiarla al ingresar.`)) return;
+        router.patch(route('admin.owners.resetPassword', owner.id));
     }
 
     return (
@@ -66,6 +76,31 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
                         </div>
                     )}
 
+                    {showResetPassword && flash?.resetPassword && (
+                        <div className="rounded-brand-md border border-brand-success/30 bg-brand-success-soft p-4">
+                            <div className="flex items-start justify-between gap-4">
+                                <div className="min-w-0">
+                                    <p className="font-semibold text-brand-success">Contraseña reseteada</p>
+                                    <p className="mt-1 text-sm text-brand-text-secondary">
+                                        Pasale esta contraseña a{' '}
+                                        <span className="font-medium text-brand-text">{flash.resetPassword.name}</span>.
+                                        No se va a volver a mostrar.
+                                    </p>
+                                    <p className="mt-2 inline-block rounded-brand-sm border border-brand-success/20 bg-brand-surface px-3 py-2 font-mono text-lg font-bold tracking-widest text-brand-text">
+                                        {flash.resetPassword.password}
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowResetPassword(false)}
+                                    className="shrink-0 text-sm text-brand-text-secondary hover:text-brand-text"
+                                >
+                                    Cerrar
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="grid gap-6 lg:grid-cols-3">
                         {/* Columna principal */}
                         <div className="space-y-6 lg:col-span-2">
@@ -84,6 +119,16 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
                                         <dd className="font-medium text-brand-text">{owner.created_at}</dd>
                                     </div>
                                 </dl>
+
+                                <div className="mt-4 border-t border-brand-border-subtle pt-4">
+                                    <button
+                                        type="button"
+                                        onClick={handleResetPassword}
+                                        className="inline-flex items-center justify-center rounded-brand-pill border border-brand-danger/30 px-4 py-2 text-sm font-medium text-brand-danger transition hover:bg-brand-danger-soft"
+                                    >
+                                        Restablecer contraseña
+                                    </button>
+                                </div>
                             </Section>
 
                             <Section title={`Barberías (${barberias.length})`}>
@@ -176,7 +221,14 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
                                         <select
                                             id="plan_id"
                                             value={data.plan_id}
-                                            onChange={(e) => setData('plan_id', e.target.value)}
+                                            onChange={(e) => {
+                                                const nextPlan = plans.find((p) => String(p.id) === e.target.value);
+                                                setData({
+                                                    ...data,
+                                                    plan_id: e.target.value,
+                                                    custom_price: nextPlan?.is_custom ? data.custom_price : '',
+                                                });
+                                            }}
                                             className="mt-1 block w-full rounded-brand-sm border-brand-border text-sm focus:border-brand-primary focus:ring-brand-primary"
                                         >
                                             {plans.map((p) => (
@@ -242,19 +294,21 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
                                             Límites y precio custom — sólo aplican para planes a medida (ej. Plan 4). Dejar vacío para usar el valor del plan.
                                         </p>
 
-                                        <div className="mt-3">
-                                            <InputLabel htmlFor="custom_price" value="Precio mensual (custom)" />
-                                            <TextInput
-                                                id="custom_price"
-                                                type="number"
-                                                min="0"
-                                                step="0.01"
-                                                value={data.custom_price}
-                                                onChange={(e) => setData('custom_price', e.target.value)}
-                                                className="mt-1 block w-full"
-                                            />
-                                            <InputError message={errors.custom_price} className="mt-1" />
-                                        </div>
+                                        {isCustomPlan && (
+                                            <div className="mt-3">
+                                                <InputLabel htmlFor="custom_price" value="Precio mensual (custom)" />
+                                                <TextInput
+                                                    id="custom_price"
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.01"
+                                                    value={data.custom_price}
+                                                    onChange={(e) => setData('custom_price', e.target.value)}
+                                                    className="mt-1 block w-full"
+                                                />
+                                                <InputError message={errors.custom_price} className="mt-1" />
+                                            </div>
+                                        )}
 
                                         <div className="mt-3">
                                             <InputLabel htmlFor="custom_max_barberias" value="Máx. barberías (custom)" />

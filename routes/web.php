@@ -122,6 +122,7 @@ Route::prefix('admin')
 
         Route::get('/owners', [AdminOwnerController::class, 'index'])->name('owners.index');
         Route::get('/owners/{owner}', [AdminOwnerController::class, 'show'])->name('owners.show');
+        Route::patch('/owners/{owner}/reset-password', [AdminOwnerController::class, 'resetPassword'])->name('owners.resetPassword');
         Route::patch('/owners/{owner}/subscription', [AdminSubscriptionController::class, 'update'])->name('subscriptions.update');
     });
 
