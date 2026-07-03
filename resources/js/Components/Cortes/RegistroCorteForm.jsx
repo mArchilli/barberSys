@@ -1,7 +1,6 @@
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
-import SelectInput from '@/Components/SelectInput';
 import TextInput from '@/Components/TextInput';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
@@ -40,10 +39,9 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
         return () => clearTimeout(searchTimeout.current);
     }, []);
 
-    function handleServicioChange(e) {
-        const id = e.target.value;
-        const servicio = servicios.find((s) => String(s.id) === id);
-        setData('servicio_id', id);
+    function selectServicio(id) {
+        const servicio = servicios.find((s) => String(s.id) === String(id));
+        setData('servicio_id', String(id));
         if (servicio) {
             setData('price', String(servicio.price));
         }
@@ -137,27 +135,8 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                         </div>
                     ) : (
                     <form onSubmit={submit} className="space-y-5">
-                        <div>
-                            <InputLabel htmlFor="servicio_id" value="Servicio *" />
-                            <SelectInput
-                                id="servicio_id"
-                                value={data.servicio_id}
-                                onChange={handleServicioChange}
-                                className="mt-1 block w-full min-h-[48px] text-base"
-                                autoFocus
-                            >
-                                <option value="">Elegí un servicio…</option>
-                                {servicios.map((s) => (
-                                    <option key={s.id} value={s.id}>
-                                        {s.name}
-                                    </option>
-                                ))}
-                            </SelectInput>
-                            <InputError message={errors.servicio_id} className="mt-1" />
-                        </div>
-
                         <div className="relative">
-                            <InputLabel htmlFor="cliente_query" value="Cliente *" />
+                            <InputLabel htmlFor="cliente_query" value="Cliente * — Nombre y apellido" />
                             <TextInput
                                 id="cliente_query"
                                 value={clienteQuery}
@@ -165,8 +144,9 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                                 onFocus={() => setShowResults(true)}
                                 onBlur={() => setTimeout(() => setShowResults(false), 150)}
                                 className="mt-1 block min-h-[48px] w-full text-base"
-                                placeholder="Buscar o escribir nombre nuevo…"
+                                placeholder="Ej: Juan Pérez"
                                 autoComplete="off"
+                                autoFocus
                             />
                             {showResults && clienteResults.length > 0 && (
                                 <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-md border border-brand-border bg-brand-surface shadow-brand-card">
@@ -195,20 +175,55 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                         </div>
 
                         <div>
-                            <InputLabel htmlFor="medio_pago_id" value="Medio de pago *" />
-                            <SelectInput
-                                id="medio_pago_id"
-                                value={data.medio_pago_id}
-                                onChange={(e) => setData('medio_pago_id', e.target.value)}
-                                className="mt-1 block w-full min-h-[48px] text-base"
-                            >
-                                <option value="">Elegí un medio de pago…</option>
-                                {mediosPago.map((m) => (
-                                    <option key={m.id} value={m.id}>
-                                        {m.name}
-                                    </option>
-                                ))}
-                            </SelectInput>
+                            <InputLabel value="Servicio *" />
+                            <div className="mt-2 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                                {servicios.map((s) => {
+                                    const selected = String(data.servicio_id) === String(s.id);
+                                    return (
+                                        <button
+                                            key={s.id}
+                                            type="button"
+                                            onClick={() => selectServicio(s.id)}
+                                            aria-pressed={selected}
+                                            className={`flex min-h-[64px] flex-col items-start justify-center gap-0.5 rounded-brand-md border px-4 py-3 text-left transition-colors ${
+                                                selected
+                                                    ? 'border-brand-primary bg-brand-primary text-white shadow-brand-cta'
+                                                    : 'border-brand-border bg-brand-surface text-brand-text hover:border-brand-primary-muted hover:bg-brand-primary-soft'
+                                            }`}
+                                        >
+                                            <span className="text-sm font-semibold">{s.name}</span>
+                                            <span className={selected ? 'text-xs text-white/80' : 'text-xs text-brand-text-secondary'}>
+                                                ${formatPrice(s.price)}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                            <InputError message={errors.servicio_id} className="mt-1" />
+                        </div>
+
+                        <div>
+                            <InputLabel value="Medio de pago *" />
+                            <div className="mt-2 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                                {mediosPago.map((m) => {
+                                    const selected = String(data.medio_pago_id) === String(m.id);
+                                    return (
+                                        <button
+                                            key={m.id}
+                                            type="button"
+                                            onClick={() => setData('medio_pago_id', String(m.id))}
+                                            aria-pressed={selected}
+                                            className={`flex min-h-[56px] items-center justify-center rounded-brand-md border px-4 py-3 text-center text-sm font-semibold transition-colors ${
+                                                selected
+                                                    ? 'border-brand-primary bg-brand-primary text-white shadow-brand-cta'
+                                                    : 'border-brand-border bg-brand-surface text-brand-text hover:border-brand-primary-muted hover:bg-brand-primary-soft'
+                                            }`}
+                                        >
+                                            {m.name}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                             <InputError message={errors.medio_pago_id} className="mt-1" />
                         </div>
 
