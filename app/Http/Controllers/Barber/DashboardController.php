@@ -44,6 +44,7 @@ class DashboardController extends Controller
                 'name' => $fila->name,
                 'total' => (float) $fila->total,
                 'cantidad' => (int) $fila->cantidad,
+                'pct' => $totalFacturado > 0 ? round(((float) $fila->total / $totalFacturado) * 100, 1) : 0,
             ]),
             // Liquidación estimada propia únicamente: nunca se exponen datos
             // de otros barberos, gastos o neto de la barbería a este rol.

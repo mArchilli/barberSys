@@ -6,6 +6,12 @@ function shiftMonth(month, delta) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 }
 
+function monthLabel(month) {
+    const [year, m] = month.split('-').map(Number);
+    const label = new Date(year, m - 1, 1).toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+    return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
 export default function MonthSelector({ month, url }) {
     function go(newMonth) {
         router.get(
@@ -16,27 +22,24 @@ export default function MonthSelector({ month, url }) {
     }
 
     return (
-        <div className="flex items-center gap-2">
+        <div className="inline-flex items-center gap-1 rounded-brand-pill border border-brand-border bg-brand-surface p-1 shadow-brand-card">
             <button
                 type="button"
                 onClick={() => go(shiftMonth(month, -1))}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-brand-pill border border-brand-border bg-brand-surface text-brand-text-secondary transition hover:border-brand-primary hover:text-brand-primary"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-brand-pill text-brand-text-secondary transition hover:bg-brand-primary-soft hover:text-brand-primary"
                 aria-label="Mes anterior"
             >
                 &larr;
             </button>
 
-            <input
-                type="month"
-                value={month}
-                onChange={(e) => e.target.value && go(e.target.value)}
-                className="h-11 rounded-brand-sm border-brand-border text-sm text-brand-text focus:border-brand-primary focus:ring-brand-primary"
-            />
+            <span className="min-w-[8.5rem] px-1 text-center text-sm font-semibold text-brand-text">
+                {monthLabel(month)}
+            </span>
 
             <button
                 type="button"
                 onClick={() => go(shiftMonth(month, 1))}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-brand-pill border border-brand-border bg-brand-surface text-brand-text-secondary transition hover:border-brand-primary hover:text-brand-primary"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-brand-pill text-brand-text-secondary transition hover:bg-brand-primary-soft hover:text-brand-primary"
                 aria-label="Mes siguiente"
             >
                 &rarr;

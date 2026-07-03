@@ -18,6 +18,7 @@ class PlanSeeder extends Seeder
                 'price'         => 15000.00,
                 'is_custom'     => false,
                 'active'        => true,
+                'features'      => null,
             ],
             [
                 'name'          => 'Plan 2',
@@ -27,6 +28,7 @@ class PlanSeeder extends Seeder
                 'price'         => 33000.00,
                 'is_custom'     => false,
                 'active'        => true,
+                'features'      => ['ranking_barberos' => true],
             ],
             [
                 'name'          => 'Plan 3',
@@ -36,6 +38,7 @@ class PlanSeeder extends Seeder
                 'price'         => 65000.00,
                 'is_custom'     => false,
                 'active'        => true,
+                'features'      => ['ranking_barberos' => true],
             ],
             [
                 'name'          => 'Plan 4',
@@ -45,11 +48,12 @@ class PlanSeeder extends Seeder
                 'price'         => 0.00,
                 'is_custom'     => true,
                 'active'        => true,
+                'features'      => ['ranking_barberos' => true],
             ],
         ];
 
         foreach ($plans as $plan) {
-            Plan::firstOrCreate(['slug' => $plan['slug']], $plan);
+            Plan::updateOrCreate(['slug' => $plan['slug']], $plan);
         }
     }
 }

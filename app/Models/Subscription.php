@@ -15,6 +15,7 @@ class Subscription extends Model
         'plan_id',
         'custom_max_barberias',
         'custom_max_barberos',
+        'custom_features',
         'status',
         'starts_at',
         'trial_ends_at',
@@ -24,9 +25,10 @@ class Subscription extends Model
     protected function casts(): array
     {
         return [
-            'starts_at'     => 'date',
-            'trial_ends_at' => 'date',
-            'ends_at'       => 'date',
+            'starts_at'       => 'date',
+            'trial_ends_at'   => 'date',
+            'ends_at'         => 'date',
+            'custom_features' => 'array',
         ];
     }
 
@@ -48,5 +50,18 @@ class Subscription extends Model
     public function maxBarberos(): ?int
     {
         return $this->custom_max_barberos ?? $this->plan->max_barberos;
+    }
+
+    /**
+     * Resuelve primero por override puntual de esta suscripción (custom_features),
+     * y si no está definido ahí, cae al catálogo del plan contratado.
+     */
+    public function hasFeature(string $key): bool
+    {
+        if ($this->custom_features && array_key_exists($key, $this->custom_features)) {
+            return (bool) $this->custom_features[$key];
+        }
+
+        return $this->plan->hasFeature($key);
     }
 }

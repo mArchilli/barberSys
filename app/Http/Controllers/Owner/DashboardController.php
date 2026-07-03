@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\ResolvesPeriod;
 use App\Http\Controllers\Controller;
 use App\Models\Barberia;
 use App\Models\Corte;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -25,12 +26,21 @@ class DashboardController extends Controller
         $totalFacturado = (float) $baseQuery()->sum('cortes.price');
         $totalCortes = (int) $baseQuery()->count();
 
-        $porBarbero = $baseQuery()
-            ->join('users', 'users.id', '=', 'cortes.barbero_id')
-            ->selectRaw('users.id as id, users.name as name, SUM(cortes.price) as total, COUNT(*) as cantidad')
-            ->groupBy('users.id', 'users.name')
-            ->orderByDesc('total')
-            ->get();
+        $barberosActivos = User::where('barberia_id', $barberia->id)
+            ->where('role', 'barber')
+            ->where('active', true)
+            ->count();
+
+        $rankingBarberosEnabled = $barberia->owner->subscription?->hasFeature('ranking_barberos') ?? false;
+
+        $porBarbero = $rankingBarberosEnabled
+            ? $baseQuery()
+                ->join('users', 'users.id', '=', 'cortes.barbero_id')
+                ->selectRaw('users.id as id, users.name as name, SUM(cortes.price) as total, COUNT(*) as cantidad')
+                ->groupBy('users.id', 'users.name')
+                ->orderByDesc('total')
+                ->get()
+            : collect();
 
         $porServicio = $baseQuery()
             ->join('servicios', 'servicios.id', '=', 'cortes.servicio_id')
@@ -50,6 +60,8 @@ class DashboardController extends Controller
             'period' => ['month' => $inicio->format('Y-m')],
             'totalFacturado' => $totalFacturado,
             'totalCortes' => $totalCortes,
+            'barberosActivos' => $barberosActivos,
+            'rankingBarberosEnabled' => $rankingBarberosEnabled,
             'porBarbero' => $this->mapFilas($porBarbero, $totalFacturado),
             'porServicio' => $this->mapFilas($porServicio, $totalFacturado),
             'porMedioPago' => $this->mapFilas($porMedioPago, $totalFacturado),
