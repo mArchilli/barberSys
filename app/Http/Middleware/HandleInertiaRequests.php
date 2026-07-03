@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
             'currentBarberia' => function () use ($request) {
                 $barberia = $request->route('barberia');
                 if ($barberia instanceof \App\Models\Barberia) {
-                    return ['id' => $barberia->id, 'name' => $barberia->name];
+                    return ['id' => $barberia->id, 'name' => $barberia->name, 'active' => $barberia->active];
                 }
                 return null;
             },

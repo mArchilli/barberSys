@@ -28,7 +28,15 @@ class ConsolidadoController extends Controller
         $inicio = $this->resolvePeriod($request);
         $fin = $inicio->copy()->endOfMonth();
 
-        $barberias = $owner->barberias()->where('active', true)->orderBy('name')->get(['id', 'name']);
+        // Para el período seleccionado incluye barberías activas hoy, y también
+        // las cerradas cuyo cierre ocurrió después de que terminó ese período
+        // (es decir, que estuvieron abiertas durante todo el período consultado).
+        // Así los meses anteriores al cierre conservan su historial tal como
+        // ocurrió, sin recalcular ni excluir retroactivamente.
+        $barberias = $owner->barberias()
+            ->where(fn ($q) => $q->where('active', true)->orWhere('deactivated_at', '>', $fin))
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         // No bypasea el Global Scope de Corte (sigue activo sobre este query),
         // pero además filtra explícitamente por owner_id vía join: el
@@ -60,7 +68,8 @@ class ConsolidadoController extends Controller
             ->join('barberias', 'barberias.id', '=', 'users.barberia_id')
             ->where('barberias.owner_id', $owner->id)
             ->where('users.role', 'barber')
-            ->where('users.active', true)
+            ->where('users.created_at', '<=', $fin)
+            ->where(fn ($q) => $q->where('users.active', true)->orWhere('users.deactivated_at', '>', $fin))
             ->get(['users.*'])
             ->groupBy('barberia_id')
             ->map(fn ($barberos) => $barberos->sum(fn ($barbero) => $comisionCalculator->calcular($barbero, $inicio, $fin)));

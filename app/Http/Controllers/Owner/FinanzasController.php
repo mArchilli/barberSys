@@ -27,9 +27,13 @@ class FinanzasController extends Controller
             ->whereBetween('performed_at', [$inicio->toDateString(), $fin->toDateString()])
             ->sum('price');
 
+        // Un barbero cuenta para el sueldo de este período si estaba activo en
+        // algún momento durante [$inicio, $fin], sin importar su estado actual:
+        // activo hoy, o desactivado después de que terminó este período.
         $barberos = User::where('barberia_id', $barberia->id)
             ->where('role', 'barber')
-            ->where('active', true)
+            ->where('created_at', '<=', $fin)
+            ->where(fn ($q) => $q->where('active', true)->orWhere('deactivated_at', '>', $fin))
             ->orderBy('name')
             ->get();
 

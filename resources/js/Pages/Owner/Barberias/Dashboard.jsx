@@ -2,7 +2,7 @@ import MonthSelector from '@/Components/MonthSelector';
 import RankingList from '@/Components/RankingList';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { IconCoin, IconLock, IconReceipt2 } from '@tabler/icons-react';
+import { IconCoin, IconLock, IconLockSquareRounded, IconReceipt2 } from '@tabler/icons-react';
 
 function formatMoney(value) {
     return `$${Number(value).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -30,8 +30,20 @@ export default function Dashboard({
         >
             <Head title="Dashboard" />
 
-            <div className="pt-6 pb-24 sm:pt-12 sm:pb-16">
+            <div className={`pt-6 sm:pt-12 ${currentBarberia?.active ? 'pb-24 sm:pb-16' : 'pb-12'}`}>
                 <div className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+                    {! currentBarberia?.active && (
+                        <div className="flex items-center gap-3 rounded-brand-md border border-brand-border bg-brand-surface-alt px-4 py-3 text-sm text-brand-text-secondary">
+                            <IconLockSquareRounded size={20} className="shrink-0" stroke={1.75} />
+                            <span>
+                                Esta barbería está cerrada — estás viendo su información en solo lectura.{' '}
+                                <Link href={route('owner.barberias.edit', currentBarberia.id)} className="font-medium text-brand-primary hover:underline">
+                                    Reactivarla
+                                </Link>
+                            </span>
+                        </div>
+                    )}
+
                     <div className="flex justify-end">
                         <MonthSelector
                             month={period.month}
@@ -107,13 +119,15 @@ export default function Dashboard({
                 </div>
             </div>
 
-            <Link
-                href={route('owner.barberias.cortes.index', currentBarberia.id)}
-                className="fixed bottom-4 right-4 z-30 inline-flex h-12 items-center gap-2 rounded-brand-pill bg-brand-primary px-5 text-sm font-semibold text-white shadow-brand-cta transition hover:bg-brand-primary-hover sm:bottom-6 sm:right-6"
-            >
-                <IconReceipt2 size={20} stroke={1.75} />
-                Cargar corte
-            </Link>
+            {currentBarberia?.active && (
+                <Link
+                    href={route('owner.barberias.cortes.index', currentBarberia.id)}
+                    className="fixed bottom-4 right-4 z-30 inline-flex h-12 items-center gap-2 rounded-brand-pill bg-brand-primary px-5 text-sm font-semibold text-white shadow-brand-cta transition hover:bg-brand-primary-hover sm:bottom-6 sm:right-6"
+                >
+                    <IconReceipt2 size={20} stroke={1.75} />
+                    Cargar corte
+                </Link>
+            )}
         </AuthenticatedLayout>
     );
 }

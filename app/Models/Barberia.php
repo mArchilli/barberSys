@@ -11,11 +11,14 @@ class Barberia extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['owner_id', 'name', 'address', 'active'];
+    protected $fillable = ['owner_id', 'name', 'address', 'active', 'deactivated_at'];
 
     protected function casts(): array
     {
-        return ['active' => 'boolean'];
+        return [
+            'active'         => 'boolean',
+            'deactivated_at' => 'datetime',
+        ];
     }
 
     public function owner(): BelongsTo

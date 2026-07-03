@@ -26,9 +26,12 @@ class DashboardController extends Controller
         $totalFacturado = (float) $baseQuery()->sum('cortes.price');
         $totalCortes = (int) $baseQuery()->count();
 
+        // Mismo criterio que en Finanzas: un barbero cuenta para este período
+        // si estaba activo en algún momento durante él, no según su estado actual.
         $barberosActivos = User::where('barberia_id', $barberia->id)
             ->where('role', 'barber')
-            ->where('active', true)
+            ->where('created_at', '<=', $fin)
+            ->where(fn ($q) => $q->where('active', true)->orWhere('deactivated_at', '>', $fin))
             ->count();
 
         $rankingBarberosEnabled = $barberia->owner->subscription?->hasFeature('ranking_barberos') ?? false;

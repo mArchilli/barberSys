@@ -1,9 +1,12 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
-import { IconEdit } from '@tabler/icons-react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { IconChevronDown, IconEdit, IconLock } from '@tabler/icons-react';
+import { useState } from 'react';
 
-export default function Index({ barberias, planLimit }) {
+export default function Index({ barberias, barberiasCerradas, planLimit }) {
+    const { flash } = usePage().props;
     const atLimit = planLimit.max !== null && planLimit.current >= planLimit.max;
+    const [showCerradas, setShowCerradas] = useState(false);
 
     return (
         <AuthenticatedLayout
@@ -30,6 +33,12 @@ export default function Index({ barberias, planLimit }) {
 
             <div className="py-6 sm:py-12">
                 <div className="mx-auto max-w-4xl space-y-4 px-4 sm:px-6 lg:px-8">
+
+                    {flash?.success && (
+                        <div className="rounded-brand-md border border-brand-success/30 bg-brand-success-soft p-4 text-sm text-brand-success">
+                            {flash.success}
+                        </div>
+                    )}
 
                     {/* Contador de plan */}
                     <div className="rounded-brand-md border border-brand-border bg-brand-surface px-4 py-4 shadow-brand-card sm:px-6">
@@ -105,6 +114,50 @@ export default function Index({ barberias, planLimit }) {
                                     </Link>
                                 </div>
                             ))}
+                        </div>
+                    )}
+
+                    {barberiasCerradas.length > 0 && (
+                        <div className="pt-2">
+                            <button
+                                type="button"
+                                onClick={() => setShowCerradas((v) => !v)}
+                                className="flex min-h-[44px] w-full items-center justify-between rounded-brand-md border border-brand-border bg-brand-surface-alt px-4 text-sm font-medium text-brand-text-secondary transition hover:text-brand-text sm:px-6"
+                            >
+                                <span>Barberías cerradas ({barberiasCerradas.length})</span>
+                                <IconChevronDown
+                                    size={18}
+                                    className={`transition-transform ${showCerradas ? 'rotate-180' : ''}`}
+                                />
+                            </button>
+
+                            {showCerradas && (
+                                <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                                    {barberiasCerradas.map((barberia) => (
+                                        <Link
+                                            key={barberia.id}
+                                            href={route('owner.barberias.dashboard', barberia.id)}
+                                            className="group flex flex-col gap-1 rounded-brand-lg border border-brand-border bg-brand-surface-alt p-6 opacity-80 shadow-brand-card transition hover:border-brand-primary hover:opacity-100"
+                                        >
+                                            <div className="flex items-center justify-between gap-2">
+                                                <h3 className="text-lg font-semibold text-brand-text transition group-hover:text-brand-primary">
+                                                    {barberia.name}
+                                                </h3>
+                                                <span className="inline-flex items-center gap-1 rounded-brand-pill border border-brand-border bg-brand-surface px-2.5 py-1 text-xs font-medium text-brand-text-secondary">
+                                                    <IconLock size={12} />
+                                                    Cerrada
+                                                </span>
+                                            </div>
+                                            {barberia.address && (
+                                                <p className="text-sm text-brand-text-secondary">{barberia.address}</p>
+                                            )}
+                                            <span className="mt-3 text-sm font-medium text-brand-primary">
+                                                Ver historial →
+                                            </span>
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

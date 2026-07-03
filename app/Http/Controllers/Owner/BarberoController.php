@@ -108,6 +108,7 @@ class BarberoController extends Controller
             'salary_amount'  => $request->salary_type === 'fixed' ? $request->salary_amount : null,
             'commission_pct' => $request->salary_type === 'commission' ? $request->commission_pct : null,
             'active'         => $request->active,
+            'deactivated_at' => $request->active ? null : ($barbero->deactivated_at ?? now()),
         ]);
 
         return redirect()->route('owner.barberias.barberos.index', $barberia->id);
@@ -116,7 +117,7 @@ class BarberoController extends Controller
     public function deactivate(Barberia $barberia, User $barbero)
     {
         $this->authorizeBarbero($barbero, $barberia);
-        $barbero->update(['active' => false]);
+        $barbero->update(['active' => false, 'deactivated_at' => now()]);
 
         return redirect()->route('owner.barberias.barberos.index', $barberia->id);
     }

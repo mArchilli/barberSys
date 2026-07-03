@@ -26,6 +26,7 @@ class User extends Authenticatable
         'commission_pct',
         'phone',
         'active',
+        'deactivated_at',
         'must_change_password',
     ];
 
@@ -42,6 +43,7 @@ class User extends Authenticatable
             'salary_amount'     => 'decimal:2',
             'commission_pct'    => 'decimal:2',
             'active'                => 'boolean',
+            'deactivated_at'        => 'datetime',
             'must_change_password'  => 'boolean',
         ];
     }

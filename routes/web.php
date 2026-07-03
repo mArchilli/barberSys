@@ -57,15 +57,19 @@ Route::prefix('owner')
         // el propio controller redirige si no corresponde)
         Route::get('/consolidado', [ConsolidadoController::class, 'index'])->name('consolidado');
 
-        // Gestión anidada por barbería activa
+        // Gestión anidada por barbería (activa o cerrada: el middleware
+        // blockIfBarberiaInactive deja pasar las lecturas siempre, y bloquea
+        // las acciones de escritura si la barbería está cerrada)
         Route::prefix('barberias/{barberia}')
-            ->middleware('checkBarberiaOwnership')
+            ->middleware(['checkBarberiaOwnership', 'blockIfBarberiaInactive'])
             ->name('barberias.')
             ->group(function () {
 
                 Route::get('/dashboard', [OwnerDashboard::class, 'index'])->name('dashboard');
                 Route::get('/edit', [BarberiaController::class, 'edit'])->name('edit');
                 Route::put('/', [BarberiaController::class, 'update'])->name('update');
+                Route::patch('/deactivate', [BarberiaController::class, 'deactivate'])->name('deactivate');
+                Route::patch('/reactivate', [BarberiaController::class, 'reactivate'])->name('reactivate');
 
                 Route::get('cortes', [CorteController::class, 'index'])->name('cortes.index');
                 Route::post('cortes', [CorteController::class, 'store'])->name('cortes.store');

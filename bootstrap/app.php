@@ -19,8 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'role'                   => \App\Http\Middleware\CheckRole::class,
-            'checkBarberiaOwnership' => \App\Http\Middleware\CheckBarberiaOwnership::class,
+            'role'                    => \App\Http\Middleware\CheckRole::class,
+            'checkBarberiaOwnership'  => \App\Http\Middleware\CheckBarberiaOwnership::class,
+            'blockIfBarberiaInactive' => \App\Http\Middleware\BlockIfBarberiaInactive::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule): void {

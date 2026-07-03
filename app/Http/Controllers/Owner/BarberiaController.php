@@ -8,6 +8,7 @@ use App\Http\Requests\Owner\UpdateBarberiaRequest;
 use App\Models\Barberia;
 use App\Services\PlanLimitService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,8 +25,11 @@ class BarberiaController extends Controller
             return redirect()->route('owner.barberias.dashboard', $barberias->first()->id);
         }
 
+        $barberiasCerradas = $owner->barberias()->where('active', false)->orderByDesc('deactivated_at')->get(['id', 'name', 'address', 'deactivated_at']);
+
         return Inertia::render('Owner/Barberias/Index', [
-            'barberias' => $barberias,
+            'barberias'         => $barberias,
+            'barberiasCerradas' => $barberiasCerradas,
             'planLimit' => [
                 'max'     => $this->planLimitService->maxBarberias($owner),
                 'current' => $this->planLimitService->currentBarberias($owner),
@@ -54,7 +58,8 @@ class BarberiaController extends Controller
     public function edit(Barberia $barberia): Response
     {
         return Inertia::render('Owner/Barberias/Edit', [
-            'barberia' => $barberia->only(['id', 'name', 'address', 'active']),
+            'barberia'            => $barberia->only(['id', 'name', 'address', 'active']),
+            'activeBarberosCount' => $barberia->barbers()->where('active', true)->count(),
         ]);
     }
 
@@ -63,9 +68,39 @@ class BarberiaController extends Controller
         $barberia->update([
             'name'    => $request->name,
             'address' => $request->address,
-            'active'  => $request->active,
         ]);
 
         return redirect()->route('owner.barberias.index');
+    }
+
+    public function deactivate(Barberia $barberia)
+    {
+        DB::transaction(function () use ($barberia) {
+            $barberia->update(['active' => false, 'deactivated_at' => now()]);
+
+            $barberia->barbers()
+                ->where('role', 'barber')
+                ->where('active', true)
+                ->update(['active' => false, 'deactivated_at' => now()]);
+        });
+
+        return redirect()->route('owner.barberias.index')
+            ->with('success', "Cerraste \"{$barberia->name}\". Podés reactivarla cuando quieras.");
+    }
+
+    public function reactivate(Barberia $barberia)
+    {
+        $owner = Auth::user();
+
+        if (! $this->planLimitService->canAddBarberia($owner)) {
+            return back()->withErrors([
+                'plan_limit' => 'Ya alcanzaste el límite de barberías activas de tu plan. Cerrá otra barbería o actualizá tu plan para reactivar esta.',
+            ]);
+        }
+
+        $barberia->update(['active' => true, 'deactivated_at' => null]);
+
+        return redirect()->route('owner.barberias.dashboard', $barberia->id)
+            ->with('success', "Reactivaste \"{$barberia->name}\".");
     }
 }
