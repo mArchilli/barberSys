@@ -32,7 +32,7 @@ export default function Edit({ cliente }) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-2xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
+                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-brand-card">
                         <div className="p-8">
                             <form onSubmit={submit} className="space-y-6">
                                 <div>

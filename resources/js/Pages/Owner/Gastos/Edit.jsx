@@ -34,7 +34,7 @@ export default function Edit({ gasto }) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-2xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
+                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-brand-card">
                         <div className="p-8">
                             <p className="mb-6 text-sm text-brand-text-secondary">
                                 Estos cambios afectan la plantilla hacia adelante — no modifican los registros ya generados de meses anteriores ni del mes actual.

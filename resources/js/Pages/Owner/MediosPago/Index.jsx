@@ -37,7 +37,7 @@ export default function Index({ mediosPago }) {
                         </div>
                     )}
 
-                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
+                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-brand-card">
                         {mediosPago.length === 0 ? (
                             <div className="p-8 text-center text-brand-text-secondary">
                                 No hay medios de pago cargados.{' '}
@@ -61,7 +61,7 @@ export default function Index({ mediosPago }) {
                                                 <Link
                                                     href={route('owner.barberias.medios-pago.edit', { barberia: barbId, medioPago: m.id })}
                                                     aria-label={`Editar ${m.name}`}
-                                                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-accent-soft"
+                                                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-primary-soft"
                                                 >
                                                     <IconEdit size={16} />
                                                 </Link>
@@ -108,7 +108,7 @@ export default function Index({ mediosPago }) {
                                                         <Link
                                                             href={route('owner.barberias.medios-pago.edit', { barberia: barbId, medioPago: m.id })}
                                                             aria-label={`Editar ${m.name}`}
-                                                            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-accent-soft"
+                                                            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-primary-soft"
                                                         >
                                                             <IconEdit size={16} />
                                                         </Link>

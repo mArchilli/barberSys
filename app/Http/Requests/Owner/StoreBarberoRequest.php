@@ -42,12 +42,4 @@ class StoreBarberoRequest extends FormRequest
             }
         });
     }
-
-    public function messages(): array
-    {
-        return [
-            'salary_amount.required_if'  => 'El monto fijo es obligatorio cuando el tipo de sueldo es fijo.',
-            'commission_pct.required_if' => 'El porcentaje de comisión es obligatorio cuando el tipo de sueldo es por comisión.',
-        ];
-    }
 }

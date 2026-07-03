@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use App\Scopes\BelongsToBarberiaScope;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MedioPago extends Model
 {
+    use HasFactory;
+
     protected $table = 'medios_pago';
 
     protected $fillable = ['barberia_id', 'name', 'active'];

@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use App\Scopes\BelongsToBarberiaScope;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Corte extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'barberia_id',
         'barbero_id',

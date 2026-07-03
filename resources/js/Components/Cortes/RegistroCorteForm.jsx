@@ -95,7 +95,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
 
     return (
         <div className="grid gap-6 md:grid-cols-[1fr_320px]">
-            <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
+            <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-brand-card">
                 <div className="p-4 sm:p-6">
                     {flash?.success && (
                         <div className="mb-4 rounded-xl border border-brand-success/30 bg-brand-success/10 p-4 text-sm text-brand-success">
@@ -169,13 +169,13 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                                 autoComplete="off"
                             />
                             {showResults && clienteResults.length > 0 && (
-                                <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-md border border-brand-border bg-brand-surface shadow-card">
+                                <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-md border border-brand-border bg-brand-surface shadow-brand-card">
                                     {clienteResults.map((c) => (
                                         <li key={c.id}>
                                             <button
                                                 type="button"
                                                 onMouseDown={() => selectCliente(c)}
-                                                className="flex min-h-[44px] w-full items-center px-4 text-left text-sm text-brand-text hover:bg-brand-accent-soft"
+                                                className="flex min-h-[44px] w-full items-center px-4 text-left text-sm text-brand-text hover:bg-brand-primary-soft"
                                             >
                                                 {c.name}
                                                 {c.phone && (
@@ -248,7 +248,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                 </div>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
+            <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-brand-card">
                 <div className="border-b border-brand-border px-4 py-3">
                     <h3 className="text-sm font-semibold text-brand-text">Hoy cargaste</h3>
                 </div>

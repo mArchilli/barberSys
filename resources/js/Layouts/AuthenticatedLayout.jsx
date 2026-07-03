@@ -93,7 +93,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             {/* Indicador de barbería activa */}
                             {user.role === 'owner' && currentBarberia && (
                                 <div className="flex items-center gap-2">
-                                    <span className="rounded-full bg-brand-accent-soft px-3 py-1 text-xs font-medium text-brand-accent-soft-text">
+                                    <span className="rounded-full bg-brand-primary-soft px-3 py-1 text-xs font-medium text-brand-primary-soft-text">
                                         {currentBarberia.name}
                                     </span>
                                     {ownerBarberiaCount > 1 && (

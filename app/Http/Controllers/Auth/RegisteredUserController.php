@@ -44,6 +44,7 @@ class RegisteredUserController extends Controller
                 'email'    => $request->email,
                 'password' => Hash::make($request->password),
                 'role'     => 'owner',
+                'must_change_password' => false,
             ]);
 
             Subscription::create([
@@ -64,6 +65,6 @@ class RegisteredUserController extends Controller
             Auth::login($user);
         });
 
-        return redirect()->route('owner.dashboard');
+        return redirect()->route('dashboard');
     }
 }

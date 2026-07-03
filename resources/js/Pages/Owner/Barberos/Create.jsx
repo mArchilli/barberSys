@@ -35,7 +35,7 @@ export default function Create({ canAdd }) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-2xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-card">
+                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-brand-card">
                         <div className="p-8">
                             {! canAdd && (
                                 <div className="mb-6 rounded-lg border border-brand-danger/30 bg-brand-danger/10 p-4 text-sm text-brand-danger">

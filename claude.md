@@ -62,6 +62,7 @@ id, gasto_id (FK, nullable), barberia_id (FK), amount (decimal), month (date), i
 - **Gastos recurrentes**: un job mensual (Laravel Task Scheduling) genera `gasto_registros` a partir de `gastos` activos con `is_recurring=true`. El dueño puede editar o marcar `is_deleted_for_month=true` una instancia puntual sin afectar la plantilla ni meses futuros.
 - **Neto mensual**: Σ(cortes.price) − Σ(sueldos calculados) − Σ(gasto_registros.amount, excluyendo is_deleted_for_month).
 - **Clientes implícitos**: los clientes se crean de forma implícita al cargar un corte (autocompletar un cliente existente vía search, o crear uno nuevo con el nombre tipeado en el mismo request). No existe alta manual de clientes como flujo principal — el CRUD de Clientes es solo de consulta, edición y baja.
+- **`must_change_password`**: se fuerza en `true` únicamente cuando la contraseña fue generada por un tercero en nombre del usuario (alta de barbero por el owner, reseteo de clave). Cuando el usuario elige su propia contraseña (registro de owner), el flag se setea explícitamente en `false`. Este criterio aplica a cualquier flujo de alta futuro, no solo a los actuales.
 
 ## Estructura de carpetas
 app/Http/Controllers/{Owner,Barber,Admin}/
@@ -131,29 +132,4 @@ Una funcionalidad está terminada cuando cumple **todos** los puntos siguientes:
 
 ## Pendientes conocidos
 
-### Tokens de Tailwind inexistentes en pantallas de fases tempranas (detectado en Fase 8)
-Varias pantallas de Owner usan clases `shadow-card` y `bg-brand-accent-soft` / `text-brand-accent-soft-text`, que **no están definidas** en `tailwind.config.js` (solo existen `shadow-brand-card` y tokens como `brand-primary-soft` / `brand-primary-soft-text`). Al ser clases inexistentes, Tailwind no genera CSS para ellas — no tiran error, simplemente se renderizan sin sombra o sin fondo, de forma silenciosa (ej. el avatar circular de `Barberos/Index.jsx` y la barra de progreso del contador de plan quedan sin color de fondo).
-
-Las pantallas más nuevas (`Finanzas.jsx`, `Consolidado.jsx`, `Gastos/*`) ya usan los tokens correctos (`shadow-brand-card`, `brand-primary-soft`, `brand-surface-alt`, `brand-border-subtle`) — el drift es solo en las pantallas construidas en fases más tempranas.
-
-**Archivos afectados** (usan `shadow-card` y/o `bg-brand-accent-soft` / `text-brand-accent-soft-text`):
-- `resources/js/Layouts/AuthenticatedLayout.jsx`
-- `resources/js/Layouts/GuestLayout.jsx`
-- `resources/js/Components/Cortes/RegistroCorteForm.jsx`
-- `resources/js/Pages/Owner/Gastos/Edit.jsx`
-- `resources/js/Pages/Owner/Gastos/Create.jsx`
-- `resources/js/Pages/Owner/Clientes/Index.jsx`
-- `resources/js/Pages/Owner/Clientes/Edit.jsx`
-- `resources/js/Pages/Owner/MediosPago/Edit.jsx`
-- `resources/js/Pages/Owner/MediosPago/Create.jsx`
-- `resources/js/Pages/Owner/MediosPago/Index.jsx`
-- `resources/js/Pages/Owner/Servicios/Edit.jsx`
-- `resources/js/Pages/Owner/Servicios/Create.jsx`
-- `resources/js/Pages/Owner/Servicios/Index.jsx`
-- `resources/js/Pages/Owner/Barberos/Edit.jsx`
-- `resources/js/Pages/Owner/Barberos/Create.jsx`
-- `resources/js/Pages/Owner/Barberos/Index.jsx`
-
-`resources/js/Pages/Owner/Barberias/Index.jsx` tenía el mismo problema y ya fue corregido en la Fase 8 (usa `shadow-brand-card` y `brand-primary-soft`) — sirve de referencia de los tokens correctos para cuando se corrija el resto en la Fase 10.
-
-**Pendiente para Fase 10**: reemplazar `shadow-card` → `shadow-brand-card` y `bg-brand-accent-soft`/`text-brand-accent-soft-text` → `bg-brand-primary-soft`/`text-brand-primary-soft-text` (o el token semántico que corresponda por contexto) en los archivos de arriba.
+Ninguno — la deuda de tokens Tailwind detectada en Fase 8 se resolvió en Fase 10 (todas las pantallas usan `shadow-brand-card` / `bg-brand-primary-soft` / `text-brand-primary-soft-text`).

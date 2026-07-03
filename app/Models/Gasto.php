@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Scopes\BelongsToBarberiaScope;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Gasto extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['barberia_id', 'name', 'amount', 'type', 'is_recurring', 'active'];
 
     protected function casts(): array
