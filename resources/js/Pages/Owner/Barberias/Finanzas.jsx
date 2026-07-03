@@ -61,15 +61,21 @@ function GastoRow({ gasto, barbId }) {
 
                 {registro ? (
                     <form onSubmit={guardarMonto} className="mt-2 flex flex-wrap items-center gap-2">
-                        <span className="text-sm text-brand-text-secondary">Monto este mes:</span>
+                        <span className="text-sm text-brand-text-secondary">Monto este mes ($):</span>
                         <TextInput
                             type="number"
                             min="0"
                             step="0.01"
                             value={data.amount}
                             onChange={(e) => setData('amount', e.target.value)}
+                            onWheel={(e) => e.target.blur()}
                             className="h-9 w-28 text-sm"
                         />
+                        {data.amount !== '' && !isNaN(Number(data.amount)) && (
+                            <span className="text-xs text-brand-text-secondary">
+                                = ${formatPrice(data.amount)} (pesos)
+                            </span>
+                        )}
                         {huboCambio && (
                             <button
                                 type="submit"
