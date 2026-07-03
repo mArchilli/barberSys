@@ -1,332 +1,305 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import MobileMenuLink from '@/Components/MobileMenuLink';
+import MobileNavOverlay from '@/Components/MobileNavOverlay';
+import SidebarLink from '@/Components/SidebarLink';
+import useSidebarCollapsed from '@/Hooks/useSidebarCollapsed';
 import { Link, usePage } from '@inertiajs/react';
+import {
+    IconBuildingStore,
+    IconChartPie,
+    IconCreditCard,
+    IconLayoutDashboard,
+    IconLayoutSidebarLeftCollapse,
+    IconLayoutSidebarLeftExpand,
+    IconList,
+    IconLogout,
+    IconMenu2,
+    IconReceipt2,
+    IconReportMoney,
+    IconUserCircle,
+    IconUserCog,
+    IconUsers,
+} from '@tabler/icons-react';
 import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
     const { auth, currentBarberia, ownerBarberiaCount } = usePage().props;
     const user = auth.user;
 
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const closeMobileMenu = () => setMobileMenuOpen(false);
+    const [collapsed, setCollapsed] = useSidebarCollapsed();
+
+    const dashboardHref = user.role === 'owner' && currentBarberia
+        ? route('owner.barberias.dashboard', { barberia: currentBarberia.id })
+        : route('dashboard');
+    const dashboardActive = route().current('dashboard') || route().current('owner.barberias.dashboard');
+    const cortesActive = user.role === 'owner' ? route().current('owner.barberias.cortes.*') : route().current('barber.cortes.*');
+    const barberosActive = route().current('owner.barberias.barberos.*');
+    const serviciosActive = route().current('owner.barberias.servicios.*');
+    const mediosPagoActive = route().current('owner.barberias.medios-pago.*');
+    const clientesActive = route().current('owner.barberias.clientes.*');
+    const finanzasActive = route().current('owner.barberias.finanzas') || route().current('owner.barberias.gastos.*') || route().current('owner.barberias.gasto-registros.*');
+    const consolidadoActive = route().current('owner.consolidado');
 
     return (
-        <div className="min-h-screen bg-brand-bg">
-            <nav className="border-b border-brand-border/20 bg-brand-nav-bg">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 justify-between">
-                        <div className="flex">
-                            <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-brand-nav-active" />
-                                </Link>
-                            </div>
-
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route('dashboard')}
-                                    active={route().current('dashboard') || route().current('owner.barberias.dashboard')}
-                                >
-                                    Dashboard
-                                </NavLink>
-
-                                {user.role === 'owner' && currentBarberia && (
-                                    <>
-                                        <NavLink
-                                            href={route('owner.barberias.cortes.index', { barberia: currentBarberia.id })}
-                                            active={route().current('owner.barberias.cortes.*')}
-                                        >
-                                            Cargar corte
-                                        </NavLink>
-
-                                        <NavLink
-                                            href={route('owner.barberias.barberos.index', { barberia: currentBarberia.id })}
-                                            active={route().current('owner.barberias.barberos.*')}
-                                        >
-                                            Barberos
-                                        </NavLink>
-
-                                        <NavLink
-                                            href={route('owner.barberias.servicios.index', { barberia: currentBarberia.id })}
-                                            active={route().current('owner.barberias.servicios.*')}
-                                        >
-                                            Servicios
-                                        </NavLink>
-
-                                        <NavLink
-                                            href={route('owner.barberias.medios-pago.index', { barberia: currentBarberia.id })}
-                                            active={route().current('owner.barberias.medios-pago.*')}
-                                        >
-                                            Medios de pago
-                                        </NavLink>
-
-                                        <NavLink
-                                            href={route('owner.barberias.clientes.index', { barberia: currentBarberia.id })}
-                                            active={route().current('owner.barberias.clientes.*')}
-                                        >
-                                            Clientes
-                                        </NavLink>
-
-                                        <NavLink
-                                            href={route('owner.barberias.finanzas', { barberia: currentBarberia.id })}
-                                            active={route().current('owner.barberias.finanzas') || route().current('owner.barberias.gastos.*') || route().current('owner.barberias.gasto-registros.*')}
-                                        >
-                                            Finanzas
-                                        </NavLink>
-                                    </>
-                                )}
-
-                                {user.role === 'barber' && (
-                                    <NavLink
-                                        href={route('barber.cortes.index')}
-                                        active={route().current('barber.cortes.*')}
-                                    >
-                                        Cargar corte
-                                    </NavLink>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center sm:gap-4">
-                            {/* Indicador de barbería activa */}
-                            {user.role === 'owner' && currentBarberia && (
-                                <div className="flex items-center gap-2">
-                                    <span className="rounded-full bg-brand-primary-soft px-3 py-1 text-xs font-medium text-brand-primary-soft-text">
-                                        {currentBarberia.name}
-                                    </span>
-                                    {ownerBarberiaCount > 1 && (
-                                        <>
-                                            <Link
-                                                href={route('owner.barberias.index')}
-                                                className="text-xs text-brand-nav-text transition hover:text-brand-nav-active"
-                                            >
-                                                Cambiar
-                                            </Link>
-                                            <Link
-                                                href={route('owner.consolidado')}
-                                                className="text-xs text-brand-nav-text transition hover:text-brand-nav-active"
-                                            >
-                                                Ver consolidado
-                                            </Link>
-                                        </>
-                                    )}
-                                </div>
-                            )}
-
-                            <div className="relative">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center rounded-md border border-transparent bg-transparent px-3 py-2 text-sm font-medium leading-4 text-brand-nav-text transition duration-150 ease-in-out hover:text-brand-nav-active focus:outline-none"
-                                            >
-                                                {user.name}
-
-                                                <svg
-                                                    className="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link href={route('profile.edit')}>
-                                            Perfil
-                                        </Dropdown.Link>
-                                        <Dropdown.Link
-                                            href={route('logout')}
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Cerrar sesión
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <div className="-me-2 flex items-center sm:hidden">
-                            <button
-                                onClick={() =>
-                                    setShowingNavigationDropdown(
-                                        (previousState) => !previousState,
-                                    )
-                                }
-                                className="inline-flex items-center justify-center rounded-md p-2.5 text-brand-nav-text transition duration-150 ease-in-out hover:bg-brand-surface/10 hover:text-brand-nav-active focus:bg-brand-surface/10 focus:text-brand-nav-active focus:outline-none"
-                            >
-                                <svg
-                                    className="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        className={
-                                            !showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={
-                                            showingNavigationDropdown
-                                                ? 'inline-flex'
-                                                : 'hidden'
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+        <div className="min-h-screen bg-brand-bg md:flex">
+            {/* Sidebar (desktop) */}
+            <aside
+                className={
+                    'hidden md:fixed md:inset-y-0 md:left-0 md:z-30 md:flex md:flex-col md:bg-brand-nav-bg md:transition-[width] md:duration-150 ' +
+                    (collapsed ? 'md:w-20' : 'md:w-64')
+                }
+            >
+                <div className={`flex h-16 shrink-0 items-center ${collapsed ? 'justify-center px-2' : 'justify-between px-6'}`}>
+                    <Link href="/">
+                        <ApplicationLogo className="block h-8 w-auto fill-current text-brand-nav-active" />
+                    </Link>
+                    {!collapsed && (
+                        <button
+                            type="button"
+                            onClick={() => setCollapsed(true)}
+                            aria-label="Contraer menú"
+                            className="flex h-9 w-9 items-center justify-center rounded-brand-sm text-brand-nav-text transition hover:bg-brand-surface/10 hover:text-brand-nav-active"
+                        >
+                            <IconLayoutSidebarLeftCollapse size={20} stroke={1.75} />
+                        </button>
+                    )}
                 </div>
 
-                {/* Mobile nav */}
-                <div
-                    className={
-                        (showingNavigationDropdown ? 'block' : 'hidden') +
-                        ' sm:hidden'
-                    }
-                >
-                    <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard') || route().current('owner.barberias.dashboard')}
+                {collapsed && (
+                    <div className="flex justify-center pb-2">
+                        <button
+                            type="button"
+                            onClick={() => setCollapsed(false)}
+                            aria-label="Expandir menú"
+                            className="flex h-9 w-9 items-center justify-center rounded-brand-sm text-brand-nav-text transition hover:bg-brand-surface/10 hover:text-brand-nav-active"
                         >
-                            Dashboard
-                        </ResponsiveNavLink>
+                            <IconLayoutSidebarLeftExpand size={20} stroke={1.75} />
+                        </button>
+                    </div>
+                )}
 
-                        {user.role === 'owner' && currentBarberia && (
-                            <>
-                                <ResponsiveNavLink
-                                    href={route('owner.barberias.cortes.index', { barberia: currentBarberia.id })}
-                                    active={route().current('owner.barberias.cortes.*')}
-                                >
-                                    Cargar corte
-                                </ResponsiveNavLink>
+                {!collapsed && user.role === 'owner' && currentBarberia && (
+                    <div className="px-4 pb-4">
+                        <span className="block truncate rounded-brand-sm bg-brand-primary/10 px-3 py-2 text-xs font-medium text-brand-nav-active">
+                            {currentBarberia.name}
+                        </span>
+                    </div>
+                )}
 
-                                <ResponsiveNavLink
-                                    href={route('owner.barberias.barberos.index', { barberia: currentBarberia.id })}
-                                    active={route().current('owner.barberias.barberos.*')}
-                                >
-                                    Barberos
-                                </ResponsiveNavLink>
+                <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3">
+                    <SidebarLink href={dashboardHref} active={dashboardActive} icon={IconLayoutDashboard} collapsed={collapsed}>
+                        Dashboard
+                    </SidebarLink>
 
-                                <ResponsiveNavLink
-                                    href={route('owner.barberias.servicios.index', { barberia: currentBarberia.id })}
-                                    active={route().current('owner.barberias.servicios.*')}
-                                >
-                                    Servicios
-                                </ResponsiveNavLink>
-
-                                <ResponsiveNavLink
-                                    href={route('owner.barberias.medios-pago.index', { barberia: currentBarberia.id })}
-                                    active={route().current('owner.barberias.medios-pago.*')}
-                                >
-                                    Medios de pago
-                                </ResponsiveNavLink>
-
-                                <ResponsiveNavLink
-                                    href={route('owner.barberias.clientes.index', { barberia: currentBarberia.id })}
-                                    active={route().current('owner.barberias.clientes.*')}
-                                >
-                                    Clientes
-                                </ResponsiveNavLink>
-
-                                <ResponsiveNavLink
-                                    href={route('owner.barberias.finanzas', { barberia: currentBarberia.id })}
-                                    active={route().current('owner.barberias.finanzas') || route().current('owner.barberias.gastos.*') || route().current('owner.barberias.gasto-registros.*')}
-                                >
-                                    Finanzas
-                                </ResponsiveNavLink>
-                            </>
-                        )}
-
-                        {user.role === 'barber' && (
-                            <ResponsiveNavLink
-                                href={route('barber.cortes.index')}
-                                active={route().current('barber.cortes.*')}
+                    {user.role === 'owner' && currentBarberia && (
+                        <>
+                            <SidebarLink
+                                href={route('owner.barberias.cortes.index', { barberia: currentBarberia.id })}
+                                active={cortesActive}
+                                icon={IconReceipt2}
+                                collapsed={collapsed}
                             >
                                 Cargar corte
-                            </ResponsiveNavLink>
-                        )}
-
-                        {user.role === 'owner' && currentBarberia && ownerBarberiaCount > 1 && (
-                            <>
-                                <ResponsiveNavLink href={route('owner.barberias.index')}>
-                                    Cambiar barbería
-                                </ResponsiveNavLink>
-                                <ResponsiveNavLink
-                                    href={route('owner.consolidado')}
-                                    active={route().current('owner.consolidado')}
-                                >
-                                    Ver consolidado
-                                </ResponsiveNavLink>
-                            </>
-                        )}
-                    </div>
-
-                    <div className="border-t border-brand-border/20 pb-1 pt-4">
-                        {user.role === 'owner' && currentBarberia && (
-                            <div className="px-4 pb-2">
-                                <span className="text-xs font-medium text-brand-nav-text/60">Barbería activa: </span>
-                                <span className="text-xs font-semibold text-brand-nav-active">{currentBarberia.name}</span>
-                            </div>
-                        )}
-
-                        <div className="px-4">
-                            <div className="text-base font-medium text-brand-nav-active">
-                                {user.name}
-                            </div>
-                            <div className="text-sm font-medium text-brand-nav-text">
-                                {user.email}
-                            </div>
-                        </div>
-
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>
-                                Perfil
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                method="post"
-                                href={route('logout')}
-                                as="button"
+                            </SidebarLink>
+                            <SidebarLink
+                                href={route('owner.barberias.barberos.index', { barberia: currentBarberia.id })}
+                                active={barberosActive}
+                                icon={IconUsers}
+                                collapsed={collapsed}
                             >
-                                Cerrar sesión
-                            </ResponsiveNavLink>
+                                Barberos
+                            </SidebarLink>
+                            <SidebarLink
+                                href={route('owner.barberias.servicios.index', { barberia: currentBarberia.id })}
+                                active={serviciosActive}
+                                icon={IconList}
+                                collapsed={collapsed}
+                            >
+                                Servicios
+                            </SidebarLink>
+                            <SidebarLink
+                                href={route('owner.barberias.medios-pago.index', { barberia: currentBarberia.id })}
+                                active={mediosPagoActive}
+                                icon={IconCreditCard}
+                                collapsed={collapsed}
+                            >
+                                Medios de pago
+                            </SidebarLink>
+                            <SidebarLink
+                                href={route('owner.barberias.clientes.index', { barberia: currentBarberia.id })}
+                                active={clientesActive}
+                                icon={IconUserCircle}
+                                collapsed={collapsed}
+                            >
+                                Clientes
+                            </SidebarLink>
+                            <SidebarLink
+                                href={route('owner.barberias.finanzas', { barberia: currentBarberia.id })}
+                                active={finanzasActive}
+                                icon={IconReportMoney}
+                                collapsed={collapsed}
+                            >
+                                Finanzas
+                            </SidebarLink>
+                        </>
+                    )}
+
+                    {user.role === 'barber' && (
+                        <SidebarLink href={route('barber.cortes.index')} active={cortesActive} icon={IconReceipt2} collapsed={collapsed}>
+                            Cargar corte
+                        </SidebarLink>
+                    )}
+                </nav>
+
+                <div className="border-t border-brand-nav-text/10 px-3 py-4">
+                    {user.role === 'owner' && currentBarberia && ownerBarberiaCount > 1 && (
+                        <div className="mb-2 space-y-1">
+                            <SidebarLink href={route('owner.barberias.index')} icon={IconBuildingStore} collapsed={collapsed}>
+                                Cambiar barbería
+                            </SidebarLink>
+                            <SidebarLink href={route('owner.consolidado')} active={consolidadoActive} icon={IconChartPie} collapsed={collapsed}>
+                                Ver consolidado
+                            </SidebarLink>
                         </div>
+                    )}
+
+                    {!collapsed && (
+                        <div className="px-3 py-2">
+                            <p className="truncate text-sm font-semibold text-brand-nav-active">{user.name}</p>
+                            <p className="truncate text-xs text-brand-nav-text">{user.email}</p>
+                        </div>
+                    )}
+
+                    <div className="mt-1 space-y-1">
+                        <SidebarLink href={route('profile.edit')} icon={IconUserCog} collapsed={collapsed}>
+                            Perfil
+                        </SidebarLink>
+                        <SidebarLink
+                            href={route('logout')}
+                            method="post"
+                            as="button"
+                            icon={IconLogout}
+                            collapsed={collapsed}
+                            className="w-full text-left"
+                        >
+                            Cerrar sesión
+                        </SidebarLink>
                     </div>
                 </div>
-            </nav>
+            </aside>
 
-            {header && (
-                <header className="bg-brand-surface shadow-sm">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        {header}
-                    </div>
-                </header>
-            )}
+            {/* Botón flotante de menú (mobile) */}
+            <button
+                type="button"
+                onClick={() => setMobileMenuOpen(true)}
+                aria-label="Abrir menú"
+                className="fixed right-4 top-4 z-40 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-brand-pill bg-brand-nav-bg text-brand-nav-text shadow-brand-floating transition hover:text-brand-nav-active md:hidden"
+            >
+                <IconMenu2 size={20} stroke={2} />
+            </button>
 
-            <main>{children}</main>
+            {/* Menú de pantalla completa (mobile) */}
+            <MobileNavOverlay open={mobileMenuOpen} onClose={closeMobileMenu}>
+                <MobileMenuLink href={dashboardHref} active={dashboardActive} onClick={closeMobileMenu}>
+                    Dashboard
+                </MobileMenuLink>
+
+                {user.role === 'owner' && currentBarberia && (
+                    <>
+                        <MobileMenuLink
+                            href={route('owner.barberias.cortes.index', { barberia: currentBarberia.id })}
+                            active={cortesActive}
+                            onClick={closeMobileMenu}
+                        >
+                            Cargar corte
+                        </MobileMenuLink>
+                        <MobileMenuLink
+                            href={route('owner.barberias.barberos.index', { barberia: currentBarberia.id })}
+                            active={barberosActive}
+                            onClick={closeMobileMenu}
+                        >
+                            Barberos
+                        </MobileMenuLink>
+                        <MobileMenuLink
+                            href={route('owner.barberias.servicios.index', { barberia: currentBarberia.id })}
+                            active={serviciosActive}
+                            onClick={closeMobileMenu}
+                        >
+                            Servicios
+                        </MobileMenuLink>
+                        <MobileMenuLink
+                            href={route('owner.barberias.medios-pago.index', { barberia: currentBarberia.id })}
+                            active={mediosPagoActive}
+                            onClick={closeMobileMenu}
+                        >
+                            Medios de pago
+                        </MobileMenuLink>
+                        <MobileMenuLink
+                            href={route('owner.barberias.clientes.index', { barberia: currentBarberia.id })}
+                            active={clientesActive}
+                            onClick={closeMobileMenu}
+                        >
+                            Clientes
+                        </MobileMenuLink>
+                        <MobileMenuLink
+                            href={route('owner.barberias.finanzas', { barberia: currentBarberia.id })}
+                            active={finanzasActive}
+                            onClick={closeMobileMenu}
+                        >
+                            Finanzas
+                        </MobileMenuLink>
+                    </>
+                )}
+
+                {user.role === 'barber' && (
+                    <MobileMenuLink href={route('barber.cortes.index')} active={cortesActive} onClick={closeMobileMenu}>
+                        Cargar corte
+                    </MobileMenuLink>
+                )}
+
+                {user.role === 'owner' && currentBarberia && ownerBarberiaCount > 1 && (
+                    <>
+                        <MobileMenuLink href={route('owner.barberias.index')} onClick={closeMobileMenu}>
+                            Cambiar barbería
+                        </MobileMenuLink>
+                        <MobileMenuLink href={route('owner.consolidado')} active={consolidadoActive} onClick={closeMobileMenu}>
+                            Ver consolidado
+                        </MobileMenuLink>
+                    </>
+                )}
+
+                <div className="mt-6 w-full max-w-xs border-t border-brand-nav-text/20 pt-6 text-center">
+                    {user.role === 'owner' && currentBarberia && (
+                        <p className="mb-3 text-xs text-brand-nav-text">
+                            Barbería activa: <span className="font-semibold text-brand-nav-active">{currentBarberia.name}</span>
+                        </p>
+                    )}
+                    <p className="text-sm font-semibold text-brand-nav-active">{user.name}</p>
+                    <p className="text-xs text-brand-nav-text">{user.email}</p>
+                </div>
+
+                <MobileMenuLink href={route('profile.edit')} onClick={closeMobileMenu}>
+                    Perfil
+                </MobileMenuLink>
+                <MobileMenuLink href={route('logout')} method="post" as="button" onClick={closeMobileMenu}>
+                    Cerrar sesión
+                </MobileMenuLink>
+            </MobileNavOverlay>
+
+            {/* Columna de contenido */}
+            <div className={`flex-1 pt-16 transition-[padding] duration-150 md:pt-0 ${collapsed ? 'md:pl-20' : 'md:pl-64'}`}>
+                {header && (
+                    <header className="bg-brand-surface shadow-sm">
+                        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                            {header}
+                        </div>
+                    </header>
+                )}
+
+                <main>{children}</main>
+            </div>
         </div>
     );
 }
