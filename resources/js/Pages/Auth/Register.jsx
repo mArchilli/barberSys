@@ -2,19 +2,15 @@ import AuthLabel from '@/Components/AuthLabel';
 import AuthTextInput from '@/Components/AuthTextInput';
 import InputError from '@/Components/InputError';
 import PasswordInput from '@/Components/PasswordInput';
+import PasswordRequirements, {
+    PASSWORD_REGEX,
+} from '@/Components/PasswordRequirements';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import {
-    IconArrowLeft,
-    IconArrowRight,
-    IconCheck,
-    IconX,
-} from '@tabler/icons-react';
+import { IconArrowLeft, IconArrowRight, IconCheck } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
 const STEPS = ['Tus datos', 'Tu plan', 'Tu barbería'];
-
-const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
 
 const primaryButtonClass =
     'inline-flex min-h-[46px] items-center justify-center gap-2 rounded-brand-pill bg-brand-primary px-6 text-sm font-bold text-brand-surface shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 motion-reduce:transition-none motion-reduce:hover:transform-none';
@@ -68,34 +64,6 @@ function StepIndicator({ step }) {
                 );
             })}
         </div>
-    );
-}
-
-function PasswordRequirements({ password }) {
-    const checks = [
-        { label: 'Al menos 8 caracteres', met: password.length >= 8 },
-        { label: 'Una letra mayúscula', met: /[A-Z]/.test(password) },
-        { label: 'Un símbolo (!@#$%...)', met: /[^A-Za-z0-9]/.test(password) },
-    ];
-
-    return (
-        <ul className="mt-2 space-y-1">
-            {checks.map((check) => (
-                <li
-                    key={check.label}
-                    className={`flex items-center gap-1.5 text-xs font-medium ${
-                        check.met ? 'text-brand-success' : 'text-brand-text-secondary'
-                    }`}
-                >
-                    {check.met ? (
-                        <IconCheck className="h-3.5 w-3.5" stroke={2.8} />
-                    ) : (
-                        <IconX className="h-3.5 w-3.5" stroke={2.2} />
-                    )}
-                    {check.label}
-                </li>
-            ))}
-        </ul>
     );
 }
 

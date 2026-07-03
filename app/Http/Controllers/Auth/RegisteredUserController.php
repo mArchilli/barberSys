@@ -7,6 +7,7 @@ use App\Models\Barberia;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Rules\StrongPassword;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -32,16 +33,9 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name'          => 'required|string|max:255',
             'email'         => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password'      => [
-                'required',
-                'confirmed',
-                'min:8',
-                'regex:/^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).+$/',
-            ],
+            'password'      => ['required', 'confirmed', new StrongPassword()],
             'plan_id'       => 'required|exists:plans,id',
             'barberia_name' => 'required|string|max:255',
-        ], [
-            'password.regex' => 'La contraseña debe tener al menos 8 caracteres, una mayúscula y un símbolo.',
         ]);
 
         DB::transaction(function () use ($request) {

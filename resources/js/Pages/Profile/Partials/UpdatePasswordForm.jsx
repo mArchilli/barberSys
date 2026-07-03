@@ -6,6 +6,8 @@ import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 import { useRef } from 'react';
 
+const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
+
 export default function UpdatePasswordForm({ className = '' }) {
     const passwordInput = useRef();
     const currentPasswordInput = useRef();
@@ -26,6 +28,8 @@ export default function UpdatePasswordForm({ className = '' }) {
 
     const updatePassword = (e) => {
         e.preventDefault();
+
+        if (!PASSWORD_REGEX.test(data.password)) return;
 
         put(route('password.update'), {
             preserveScroll: true,
@@ -94,6 +98,10 @@ export default function UpdatePasswordForm({ className = '' }) {
                         className="mt-1 block w-full"
                         autoComplete="new-password"
                     />
+
+                    <p className="mt-1 text-xs text-gray-500">
+                        At least 8 characters, one uppercase letter and one symbol.
+                    </p>
 
                     <InputError message={errors.password} className="mt-2" />
                 </div>

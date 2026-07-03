@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\StrongPassword;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +16,7 @@ class ChangePasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'confirmed', new StrongPassword()],
         ];
     }
 
@@ -23,7 +24,6 @@ class ChangePasswordRequest extends FormRequest
     {
         return [
             'password.required'  => 'La contraseña es obligatoria.',
-            'password.min'       => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ];
     }

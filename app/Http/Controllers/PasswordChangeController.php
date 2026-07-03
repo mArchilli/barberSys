@@ -23,6 +23,6 @@ class PasswordChangeController extends Controller
             'must_change_password' => false,
         ]);
 
-        return redirect()->route("{$user->role}.dashboard");
+        return redirect()->route('dashboard');
     }
 }
