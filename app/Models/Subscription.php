@@ -16,6 +16,7 @@ class Subscription extends Model
         'custom_max_barberias',
         'custom_max_barberos',
         'custom_features',
+        'custom_price',
         'status',
         'starts_at',
         'trial_ends_at',
@@ -29,6 +30,7 @@ class Subscription extends Model
             'trial_ends_at'   => 'date',
             'ends_at'         => 'date',
             'custom_features' => 'array',
+            'custom_price'    => 'decimal:2',
         ];
     }
 
@@ -50,6 +52,16 @@ class Subscription extends Model
     public function maxBarberos(): ?int
     {
         return $this->custom_max_barberos ?? $this->plan->max_barberos;
+    }
+
+    /**
+     * Precio real de la suscripción: prioriza el precio negociado (custom_price,
+     * usado por el Plan 4 "a medida" que tiene price=0 en el catálogo) y cae al
+     * precio de catálogo del plan si no hay override.
+     */
+    public function effectivePrice(): float
+    {
+        return (float) ($this->custom_price ?? $this->plan->price);
     }
 
     /**

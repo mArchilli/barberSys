@@ -1,8 +1,52 @@
+import MetricCard from '@/Components/MetricCard';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
-export default function Dashboard() {
-    const { auth } = usePage().props;
+function formatMoney(value) {
+    return `$${Number(value).toLocaleString('es-AR', { minimumFractionDigits: 2 })}`;
+}
+
+function Section({ title, children }) {
+    return (
+        <div className="rounded-brand-lg border border-brand-border bg-brand-surface p-6 shadow-brand-card">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-text-secondary">{title}</h3>
+            <div className="mt-4">{children}</div>
+        </div>
+    );
+}
+
+function PlanBar({ plan, maxMrr }) {
+    const width = maxMrr > 0 ? Math.max((plan.mrr / maxMrr) * 100, 4) : 0;
+
+    return (
+        <div>
+            <div className="flex items-baseline justify-between gap-2 text-sm">
+                <span className="font-medium text-brand-text">{plan.plan_name}</span>
+                <span className="text-brand-text-secondary">
+                    {plan.subscriptions_count} suscripción(es) · {formatMoney(plan.mrr)}
+                </span>
+            </div>
+            <div className="mt-1.5 h-2.5 w-full rounded-brand-pill bg-brand-surface-alt">
+                <div
+                    className="h-2.5 rounded-brand-pill bg-brand-primary"
+                    style={{ width: `${width}%` }}
+                />
+            </div>
+        </div>
+    );
+}
+
+export default function Dashboard({
+    activeClientsCount,
+    trialClientsCount,
+    mrr,
+    mrrByPlan,
+    trialsExpiringSoonCount,
+    trialsExpiringSoon,
+    inactiveOwners,
+    ownersNearPlanLimit,
+}) {
+    const maxMrr = mrrByPlan.reduce((max, p) => Math.max(max, p.mrr), 0);
 
     return (
         <AdminLayout
@@ -14,31 +58,100 @@ export default function Dashboard() {
         >
             <Head title="Administración" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-                    <div className="overflow-hidden rounded-brand-lg border border-brand-border bg-brand-surface shadow-brand-card">
-                        <div className="p-8">
-                            <h1 className="text-2xl font-bold text-brand-text">
-                                Panel Admin Pelito
-                            </h1>
-                            <p className="mt-2 text-brand-text-secondary">
-                                Sesión iniciada como {auth.user.name} (admin).
-                            </p>
+            <div className="py-6 sm:py-12">
+                <div className="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
+                    {/* Salud del negocio */}
+                    <section>
+                        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-brand-text-secondary">
+                            Salud del negocio
+                        </h3>
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                            <div className="rounded-brand-lg bg-brand-nav-bg p-5 shadow-brand-card">
+                                <p className="text-sm font-medium text-brand-nav-text">MRR</p>
+                                <p className="mt-1 font-display text-3xl font-bold text-brand-nav-active">
+                                    {formatMoney(mrr)}
+                                </p>
+                            </div>
+                            <MetricCard label="Clientes activos" value={activeClientsCount} />
+                            <MetricCard label="En trial" value={trialClientsCount} />
+                            <MetricCard
+                                label="Trials por vencer (7 días)"
+                                value={trialsExpiringSoonCount}
+                                tone={trialsExpiringSoonCount > 0 ? 'warning' : 'default'}
+                            />
                         </div>
-                    </div>
+                    </section>
 
-                    <Link
-                        href={route('admin.owners.index')}
-                        className="flex items-center justify-between rounded-brand-lg border border-brand-border bg-brand-surface p-6 shadow-brand-card transition hover:border-brand-primary hover:shadow-brand-card-hover"
-                    >
-                        <div>
-                            <h3 className="text-lg font-semibold text-brand-text">Owners</h3>
-                            <p className="mt-1 text-sm text-brand-text-secondary">
-                                Ver todos los owners, sus barberías y el estado de sus suscripciones.
-                            </p>
-                        </div>
-                        <span className="text-sm font-medium text-brand-primary">Ir →</span>
-                    </Link>
+                    {/* Distribución por plan */}
+                    <Section title="Distribución por plan">
+                        {mrrByPlan.length === 0 ? (
+                            <p className="text-sm text-brand-text-secondary">Todavía no hay suscripciones activas.</p>
+                        ) : (
+                            <div className="space-y-4">
+                                {mrrByPlan.map((plan) => (
+                                    <PlanBar key={plan.plan_id} plan={plan} maxMrr={maxMrr} />
+                                ))}
+                            </div>
+                        )}
+                    </Section>
+
+                    {/* Riesgo y oportunidad */}
+                    <div className="grid gap-6 lg:grid-cols-2">
+                        <Section title="Owners inactivos">
+                            {inactiveOwners.length === 0 ? (
+                                <p className="text-sm text-brand-text-secondary">No hay owners inactivos.</p>
+                            ) : (
+                                <ul className="divide-y divide-brand-border">
+                                    {inactiveOwners.map((row) => (
+                                        <li key={row.owner_id + '-' + row.barberia_name}>
+                                            <Link
+                                                href={route('admin.owners.show', row.owner_id)}
+                                                className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0 hover:bg-brand-bg"
+                                            >
+                                                <div>
+                                                    <p className="font-medium text-brand-text">{row.owner_name}</p>
+                                                    <p className="text-xs text-brand-text-secondary">
+                                                        {row.barberia_name} · último corte:{' '}
+                                                        {row.last_corte_at ?? 'nunca'}
+                                                    </p>
+                                                </div>
+                                                <span className="inline-flex shrink-0 items-center rounded-full bg-brand-danger-soft px-2 py-0.5 text-xs font-medium text-brand-danger">
+                                                    Riesgo
+                                                </span>
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </Section>
+
+                        <Section title="Owners cerca del límite de plan">
+                            {ownersNearPlanLimit.length === 0 ? (
+                                <p className="text-sm text-brand-text-secondary">Ningún owner está cerca de su límite.</p>
+                            ) : (
+                                <ul className="divide-y divide-brand-border">
+                                    {ownersNearPlanLimit.map((row) => (
+                                        <li key={row.owner_id}>
+                                            <Link
+                                                href={route('admin.owners.show', row.owner_id)}
+                                                className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0 hover:bg-brand-bg"
+                                            >
+                                                <div>
+                                                    <p className="font-medium text-brand-text">{row.owner_name}</p>
+                                                    <p className="text-xs text-brand-text-secondary">
+                                                        {row.plan_name} · {row.barberias} barberías · {row.barberos} barberos
+                                                    </p>
+                                                </div>
+                                                <span className="inline-flex shrink-0 items-center rounded-full bg-brand-primary-soft px-2 py-0.5 text-xs font-medium text-brand-primary-soft-text">
+                                                    Upsell
+                                                </span>
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </Section>
+                    </div>
                 </div>
             </div>
         </AdminLayout>

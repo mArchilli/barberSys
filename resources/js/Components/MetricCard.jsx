@@ -2,6 +2,7 @@ const toneClasses = {
     default: 'text-brand-text',
     success: 'text-brand-success',
     danger: 'text-brand-danger',
+    warning: 'text-brand-warning',
 };
 
 export default function MetricCard({ label, value, tone = 'default' }) {

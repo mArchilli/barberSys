@@ -23,6 +23,7 @@ class UpdateSubscriptionRequest extends FormRequest
             'ends_at'               => ['nullable', 'date'],
             'custom_max_barberias'  => ['nullable', 'integer', 'min:0'],
             'custom_max_barberos'   => ['nullable', 'integer', 'min:0'],
+            'custom_price'          => ['nullable', 'numeric', 'min:0'],
         ];
     }
 }

@@ -115,6 +115,7 @@ class OwnerController extends Controller
                 'ends_at'               => optional($subscription->ends_at)->toDateString(),
                 'custom_max_barberias'  => $subscription->custom_max_barberias,
                 'custom_max_barberos'   => $subscription->custom_max_barberos,
+                'custom_price'          => $subscription->custom_price,
             ] : null,
             'plans' => $plans,
             'recentCortes' => $recentCortes->map(fn (Corte $c) => [

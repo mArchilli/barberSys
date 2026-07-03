@@ -32,6 +32,7 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
         ends_at: subscription?.ends_at ?? '',
         custom_max_barberias: subscription?.custom_max_barberias ?? '',
         custom_max_barberos: subscription?.custom_max_barberos ?? '',
+        custom_price: subscription?.custom_price ?? '',
     });
 
     function submit(e) {
@@ -238,8 +239,22 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
 
                                     <div className="border-t border-brand-border-subtle pt-4">
                                         <p className="text-xs text-brand-text-secondary">
-                                            Límites custom — sólo aplican para planes a medida (ej. Plan 4). Dejar vacío para usar el límite del plan.
+                                            Límites y precio custom — sólo aplican para planes a medida (ej. Plan 4). Dejar vacío para usar el valor del plan.
                                         </p>
+
+                                        <div className="mt-3">
+                                            <InputLabel htmlFor="custom_price" value="Precio mensual (custom)" />
+                                            <TextInput
+                                                id="custom_price"
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                value={data.custom_price}
+                                                onChange={(e) => setData('custom_price', e.target.value)}
+                                                className="mt-1 block w-full"
+                                            />
+                                            <InputError message={errors.custom_price} className="mt-1" />
+                                        </div>
 
                                         <div className="mt-3">
                                             <InputLabel htmlFor="custom_max_barberias" value="Máx. barberías (custom)" />

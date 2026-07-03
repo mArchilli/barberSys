@@ -13,7 +13,7 @@ class SubscriptionController extends Controller
 {
     private const LOGGED_FIELDS = [
         'plan_id', 'status', 'starts_at', 'trial_ends_at', 'ends_at',
-        'custom_max_barberias', 'custom_max_barberos',
+        'custom_max_barberias', 'custom_max_barberos', 'custom_price',
     ];
 
     public function update(UpdateSubscriptionRequest $request, User $owner)
