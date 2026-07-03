@@ -15,9 +15,8 @@ class ServicioController extends Controller
     public function index(Barberia $barberia): Response
     {
         $servicios = Servicio::where('barberia_id', $barberia->id)
-            ->where('active', true)
             ->orderBy('name')
-            ->get(['id', 'name', 'price']);
+            ->get(['id', 'name', 'price', 'active']);
 
         return Inertia::render('Owner/Servicios/Index', [
             'servicios' => $servicios,

@@ -15,9 +15,8 @@ class MedioPagoController extends Controller
     public function index(Barberia $barberia): Response
     {
         $mediosPago = MedioPago::where('barberia_id', $barberia->id)
-            ->where('active', true)
             ->orderBy('name')
-            ->get(['id', 'name']);
+            ->get(['id', 'name', 'active']);
 
         return Inertia::render('Owner/MediosPago/Index', [
             'mediosPago' => $mediosPago,
