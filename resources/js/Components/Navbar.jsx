@@ -1,3 +1,4 @@
+import BrandMark from '@/Components/BrandMark';
 import { Link } from '@inertiajs/react';
 import { IconMenu2, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -8,37 +9,6 @@ const defaultLinks = [
     { label: 'Precios', href: '#precios' },
     { label: 'FAQ', href: '#faq' },
 ];
-
-function BrandMark() {
-    return (
-        <svg
-            aria-hidden="true"
-            className="h-8 w-8"
-            viewBox="0 0 32 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-            <circle cx="9" cy="9" r="3.25" className="fill-brand-primary" />
-            <circle cx="9" cy="23" r="3.25" className="fill-brand-primary" />
-            <circle cx="23" cy="9" r="3.25" className="fill-brand-primary" />
-            <circle cx="23" cy="23" r="3.25" className="fill-brand-primary" />
-            <path
-                d="M12 12L20 20"
-                stroke="currentColor"
-                strokeWidth="2.25"
-                strokeLinecap="round"
-                className="text-brand-primary"
-            />
-            <path
-                d="M20 12L12 20"
-                stroke="currentColor"
-                strokeWidth="2.25"
-                strokeLinecap="round"
-                className="text-brand-primary"
-            />
-        </svg>
-    );
-}
 
 function NavAction({ href, inertia = false, className, children, onClick }) {
     if (inertia) {
@@ -65,6 +35,7 @@ export default function Navbar({
         href: '#precios',
         inertia: false,
     },
+    loginCta = null,
 }) {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -101,7 +72,16 @@ export default function Navbar({
                             ))}
                         </nav>
 
-                        <div className="hidden md:flex">
+                        <div className="hidden items-center gap-2 md:flex">
+                            {loginCta && (
+                                <NavAction
+                                    href={loginCta.href}
+                                    inertia={loginCta.inertia}
+                                    className={navLinkClassName}
+                                >
+                                    {loginCta.label}
+                                </NavAction>
+                            )}
                             <NavAction
                                 href={cta.href}
                                 inertia={cta.inertia}
@@ -146,6 +126,16 @@ export default function Navbar({
                                         {item.label}
                                     </a>
                                 ))}
+                                {loginCta && (
+                                    <NavAction
+                                        href={loginCta.href}
+                                        inertia={loginCta.inertia}
+                                        className="inline-flex min-h-[44px] items-center rounded-brand-lg px-4 text-sm font-semibold text-brand-text-secondary transition-colors duration-200 hover:bg-brand-primary-soft hover:text-brand-text focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transition-none"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        {loginCta.label}
+                                    </NavAction>
+                                )}
                                 <NavAction
                                     href={cta.href}
                                     inertia={cta.inertia}

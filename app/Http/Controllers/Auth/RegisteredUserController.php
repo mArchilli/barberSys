@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -33,9 +32,16 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name'          => 'required|string|max:255',
             'email'         => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password'      => ['required', 'confirmed', Rules\Password::defaults()],
+            'password'      => [
+                'required',
+                'confirmed',
+                'min:8',
+                'regex:/^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).+$/',
+            ],
             'plan_id'       => 'required|exists:plans,id',
             'barberia_name' => 'required|string|max:255',
+        ], [
+            'password.regex' => 'La contraseña debe tener al menos 8 caracteres, una mayúscula y un símbolo.',
         ]);
 
         DB::transaction(function () use ($request) {

@@ -40,6 +40,15 @@ export default function Welcome({ auth, canLogin, canRegister }) {
                         href: ctaHref,
                         inertia: ctaHref !== '#',
                     }}
+                    loginCta={
+                        !auth.user && canLogin
+                            ? {
+                                  label: 'Iniciar sesión',
+                                  href: route('login'),
+                                  inertia: true,
+                              }
+                            : null
+                    }
                 />
                 <HeroSection
                     primaryCta={{
