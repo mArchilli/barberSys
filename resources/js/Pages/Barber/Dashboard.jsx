@@ -61,7 +61,7 @@ export default function Dashboard({ period, totalFacturado, totalCortes, porServ
 
             <Link
                 href={route('barber.cortes.index')}
-                className="fixed bottom-4 right-4 z-30 inline-flex h-12 items-center gap-2 rounded-brand-pill bg-brand-primary px-5 text-sm font-semibold text-white shadow-brand-cta transition hover:bg-brand-primary-hover sm:bottom-6 sm:right-6"
+                className="fixed bottom-4 right-4 z-30 inline-flex h-12 items-center gap-2 rounded-brand-pill bg-brand-primary px-5 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition hover:bg-brand-primary-hover sm:bottom-6 sm:right-6"
             >
                 <IconReceipt2 size={20} stroke={1.75} />
                 Cargar corte

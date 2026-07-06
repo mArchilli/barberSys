@@ -16,14 +16,14 @@ export default function BrandMark({ className = 'h-8 w-8' }) {
                 stroke="currentColor"
                 strokeWidth="2.25"
                 strokeLinecap="round"
-                className="text-brand-primary"
+                className="text-brand-link"
             />
             <path
                 d="M20 12L12 20"
                 stroke="currentColor"
                 strokeWidth="2.25"
                 strokeLinecap="round"
-                className="text-brand-primary"
+                className="text-brand-link"
             />
         </svg>
     );

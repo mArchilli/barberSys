@@ -77,7 +77,7 @@ export default function Index({ clientes }) {
                                                 <Link
                                                     href={route('owner.barberias.clientes.edit', { barberia: barbId, cliente: c.id })}
                                                     aria-label={`Editar ${c.name}`}
-                                                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-primary-soft"
+                                                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-link transition hover:bg-brand-primary-soft"
                                                 >
                                                     <IconEdit size={16} />
                                                 </Link>
@@ -128,7 +128,7 @@ export default function Index({ clientes }) {
                                                         <Link
                                                             href={route('owner.barberias.clientes.edit', { barberia: barbId, cliente: c.id })}
                                                             aria-label={`Editar ${c.name}`}
-                                                            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-primary-soft"
+                                                            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-link transition hover:bg-brand-primary-soft"
                                                         >
                                                             <IconEdit size={16} />
                                                         </Link>

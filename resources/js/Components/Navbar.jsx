@@ -49,7 +49,7 @@ export default function Navbar({
                     <div className="flex items-center justify-between gap-3">
                         <a
                             href={homeHref}
-                            className="inline-flex min-h-[44px] items-center gap-3 rounded-brand-pill px-3 text-brand-text transition-colors duration-200 hover:text-brand-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transition-none"
+                            className="inline-flex min-h-[44px] items-center gap-3 rounded-brand-pill px-3 text-brand-text transition-colors duration-200 hover:text-brand-link focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transition-none"
                         >
                             <BrandMark />
                             <span className="font-display text-[1.35rem] font-extrabold tracking-[-0.03em]">
@@ -85,7 +85,7 @@ export default function Navbar({
                             <NavAction
                                 href={cta.href}
                                 inertia={cta.inertia}
-                                className="inline-flex min-h-[44px] items-center justify-center rounded-brand-pill bg-brand-primary px-6 text-sm font-bold text-brand-surface shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                                className="inline-flex min-h-[44px] items-center justify-center rounded-brand-pill bg-brand-primary px-6 text-sm font-bold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
                             >
                                 {cta.label}
                             </NavAction>
@@ -96,7 +96,7 @@ export default function Navbar({
                             aria-expanded={isOpen}
                             aria-controls="mobile-nav"
                             aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
-                            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-brand-pill border border-brand-border bg-brand-surface text-brand-text transition-colors duration-200 hover:border-brand-primary-muted hover:text-brand-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transition-none md:hidden"
+                            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-brand-pill border border-brand-border bg-brand-surface text-brand-text transition-colors duration-200 hover:border-brand-primary-muted hover:text-brand-link focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transition-none md:hidden"
                             onClick={() => setIsOpen((open) => !open)}
                         >
                             {isOpen ? (
@@ -139,7 +139,7 @@ export default function Navbar({
                                 <NavAction
                                     href={cta.href}
                                     inertia={cta.inertia}
-                                    className="mt-2 inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-5 text-sm font-bold text-brand-surface shadow-brand-cta transition-colors duration-200 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transition-none"
+                                    className="mt-2 inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-5 text-sm font-bold text-brand-on-primary shadow-brand-cta transition-colors duration-200 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transition-none"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     {cta.label}

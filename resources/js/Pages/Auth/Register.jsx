@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 const STEPS = ['Tus datos', 'Tu plan', 'Tu barbería'];
 
 const primaryButtonClass =
-    'inline-flex min-h-[46px] items-center justify-center gap-2 rounded-brand-pill bg-brand-primary px-6 text-sm font-bold text-brand-surface shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 motion-reduce:transition-none motion-reduce:hover:transform-none';
+    'inline-flex min-h-[46px] items-center justify-center gap-2 rounded-brand-pill bg-brand-primary px-6 text-sm font-bold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 motion-reduce:transition-none motion-reduce:hover:transform-none';
 
 const secondaryButtonClass =
     'inline-flex min-h-[46px] items-center justify-center gap-2 rounded-brand-pill border border-brand-border bg-brand-surface px-6 text-sm font-bold text-brand-text transition-colors duration-200 hover:border-brand-primary-muted hover:bg-brand-surface-alt focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transition-none';
@@ -32,7 +32,7 @@ function StepIndicator({ step }) {
                             <div
                                 className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors duration-200 ${
                                     isActive
-                                        ? 'bg-brand-primary text-brand-surface shadow-brand-cta'
+                                        ? 'bg-brand-primary text-brand-on-primary shadow-brand-cta'
                                         : isDone
                                           ? 'bg-brand-primary-soft text-brand-primary-soft-text'
                                           : 'bg-brand-surface-alt text-brand-text-secondary'
@@ -274,7 +274,7 @@ export default function Register({ plans }) {
                                             className="sr-only"
                                         />
                                         {selected && (
-                                            <span className="absolute right-4 top-4 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-brand-surface">
+                                            <span className="absolute right-4 top-4 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-brand-on-primary">
                                                 <IconCheck className="h-3 w-3" stroke={3} />
                                             </span>
                                         )}

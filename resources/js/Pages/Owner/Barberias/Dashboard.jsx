@@ -37,7 +37,7 @@ export default function Dashboard({
                             <IconLockSquareRounded size={20} className="shrink-0" stroke={1.75} />
                             <span>
                                 Esta barbería está cerrada — estás viendo su información en solo lectura.{' '}
-                                <Link href={route('owner.barberias.edit', currentBarberia.id)} className="font-medium text-brand-primary hover:underline">
+                                <Link href={route('owner.barberias.edit', currentBarberia.id)} className="font-medium text-brand-link hover:underline">
                                     Reactivarla
                                 </Link>
                             </span>
@@ -95,7 +95,7 @@ export default function Dashboard({
                                         Descubrí qué barbero factura más y tomá mejores decisiones sobre tu equipo.
                                     </p>
                                     {/* Placeholder: todavía no existe un flujo de upgrade de plan dentro del panel */}
-                                    <a href="#" className="text-sm font-semibold text-brand-primary hover:text-brand-primary-hover">
+                                    <a href="#" className="text-sm font-semibold text-brand-link hover:text-brand-link-hover">
                                         Ver planes →
                                     </a>
                                 </div>
@@ -122,7 +122,7 @@ export default function Dashboard({
             {currentBarberia?.active && (
                 <Link
                     href={route('owner.barberias.cortes.index', currentBarberia.id)}
-                    className="fixed bottom-4 right-4 z-30 inline-flex h-12 items-center gap-2 rounded-brand-pill bg-brand-primary px-5 text-sm font-semibold text-white shadow-brand-cta transition hover:bg-brand-primary-hover sm:bottom-6 sm:right-6"
+                    className="fixed bottom-4 right-4 z-30 inline-flex h-12 items-center gap-2 rounded-brand-pill bg-brand-primary px-5 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition hover:bg-brand-primary-hover sm:bottom-6 sm:right-6"
                 >
                     <IconReceipt2 size={20} stroke={1.75} />
                     Cargar corte

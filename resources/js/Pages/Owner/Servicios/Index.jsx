@@ -27,7 +27,7 @@ export default function Index({ servicios }) {
                     </h2>
                     <Link
                         href={route('owner.barberias.servicios.create', { barberia: barbId })}
-                        className="inline-flex items-center justify-center rounded-brand-pill bg-brand-primary px-4 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-brand-primary-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 sm:py-2"
+                        className="inline-flex items-center justify-center rounded-brand-pill bg-brand-primary px-4 py-3 text-sm font-medium text-brand-on-primary shadow-sm transition hover:bg-brand-primary-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 sm:py-2"
                     >
                         + Nuevo servicio
                     </Link>
@@ -65,7 +65,7 @@ export default function Index({ servicios }) {
                                     No hay servicios cargados.{' '}
                                     <Link
                                         href={route('owner.barberias.servicios.create', { barberia: barbId })}
-                                        className="text-brand-primary hover:underline"
+                                        className="text-brand-link hover:underline"
                                     >
                                         Crear el primero
                                     </Link>
@@ -94,7 +94,7 @@ export default function Index({ servicios }) {
                                         )}
                                     </div>
 
-                                    <p className="mt-1 text-lg font-semibold text-brand-primary">
+                                    <p className="mt-1 text-lg font-semibold text-brand-link">
                                         ${Number(s.price).toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                                     </p>
 
@@ -103,7 +103,7 @@ export default function Index({ servicios }) {
                                             href={route('owner.barberias.servicios.edit', { barberia: barbId, servicio: s.id })}
                                             aria-label={`Editar ${s.name}`}
                                             title="Editar"
-                                            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-primary-soft"
+                                            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-link transition hover:bg-brand-primary-soft"
                                         >
                                             <IconEdit size={16} />
                                         </Link>

@@ -117,7 +117,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                                     {faltaServicios && (
                                         <Link
                                             href={route('owner.barberias.servicios.create', currentBarberia.id)}
-                                            className="font-medium text-brand-primary hover:underline"
+                                            className="font-medium text-brand-link hover:underline"
                                         >
                                             Cargar servicios
                                         </Link>
@@ -125,7 +125,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                                     {faltaMediosPago && (
                                         <Link
                                             href={route('owner.barberias.medios-pago.create', currentBarberia.id)}
-                                            className="font-medium text-brand-primary hover:underline"
+                                            className="font-medium text-brand-link hover:underline"
                                         >
                                             Cargar medios de pago
                                         </Link>
@@ -187,12 +187,12 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                                             aria-pressed={selected}
                                             className={`flex min-h-[64px] flex-col items-start justify-center gap-0.5 rounded-brand-md border px-4 py-3 text-left transition-colors ${
                                                 selected
-                                                    ? 'border-brand-primary bg-brand-primary text-white shadow-brand-cta'
+                                                    ? 'border-brand-primary bg-brand-primary text-brand-on-primary shadow-brand-cta'
                                                     : 'border-brand-border bg-brand-surface text-brand-text hover:border-brand-primary-muted hover:bg-brand-primary-soft'
                                             }`}
                                         >
                                             <span className="text-sm font-semibold">{s.name}</span>
-                                            <span className={selected ? 'text-xs text-white/80' : 'text-xs text-brand-text-secondary'}>
+                                            <span className={selected ? 'text-xs text-brand-on-primary/70' : 'text-xs text-brand-text-secondary'}>
                                                 ${formatPrice(s.price)}
                                             </span>
                                         </button>
@@ -215,7 +215,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                                             aria-pressed={selected}
                                             className={`flex min-h-[56px] items-center justify-center rounded-brand-md border px-4 py-3 text-center text-sm font-semibold transition-colors ${
                                                 selected
-                                                    ? 'border-brand-primary bg-brand-primary text-white shadow-brand-cta'
+                                                    ? 'border-brand-primary bg-brand-primary text-brand-on-primary shadow-brand-cta'
                                                     : 'border-brand-border bg-brand-surface text-brand-text hover:border-brand-primary-muted hover:bg-brand-primary-soft'
                                             }`}
                                         >

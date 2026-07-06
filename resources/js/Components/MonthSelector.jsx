@@ -26,7 +26,7 @@ export default function MonthSelector({ month, url }) {
             <button
                 type="button"
                 onClick={() => go(shiftMonth(month, -1))}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-brand-pill text-brand-text-secondary transition hover:bg-brand-primary-soft hover:text-brand-primary"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-brand-pill text-brand-text-secondary transition hover:bg-brand-primary-soft hover:text-brand-link"
                 aria-label="Mes anterior"
             >
                 &larr;
@@ -39,7 +39,7 @@ export default function MonthSelector({ month, url }) {
             <button
                 type="button"
                 onClick={() => go(shiftMonth(month, 1))}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-brand-pill text-brand-text-secondary transition hover:bg-brand-primary-soft hover:text-brand-primary"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-brand-pill text-brand-text-secondary transition hover:bg-brand-primary-soft hover:text-brand-link"
                 aria-label="Mes siguiente"
             >
                 &rarr;

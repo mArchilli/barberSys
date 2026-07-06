@@ -80,7 +80,7 @@ function GastoRow({ gasto, barbId }) {
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="rounded-brand-pill bg-brand-primary px-3 py-1.5 text-xs font-medium text-white transition hover:bg-brand-primary-hover disabled:opacity-50"
+                                className="rounded-brand-pill bg-brand-primary px-3 py-1.5 text-xs font-medium text-brand-on-primary transition hover:bg-brand-primary-hover disabled:opacity-50"
                             >
                                 Guardar
                             </button>
@@ -105,7 +105,7 @@ function GastoRow({ gasto, barbId }) {
                     href={route('owner.barberias.gastos.edit', { barberia: barbId, gasto: gasto.id })}
                     aria-label={`Editar plantilla de ${gasto.name}`}
                     title="Editar plantilla"
-                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-primary-soft"
+                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-link transition hover:bg-brand-primary-soft"
                 >
                     <IconEdit size={16} />
                 </Link>
@@ -174,7 +174,7 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
                                 <h3 className="font-display text-lg font-bold text-brand-text">Gastos</h3>
                                 <Link
                                     href={route('owner.barberias.gastos.create', { barberia: barbId })}
-                                    className="inline-flex items-center justify-center rounded-brand-pill bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-brand-cta transition hover:bg-brand-primary-hover"
+                                    className="inline-flex items-center justify-center rounded-brand-pill bg-brand-primary px-4 py-2.5 text-sm font-medium text-brand-on-primary shadow-brand-cta transition hover:bg-brand-primary-hover"
                                 >
                                     + Nuevo gasto
                                 </Link>

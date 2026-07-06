@@ -99,7 +99,7 @@ export default function PricingSection({
         >
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="mx-auto max-w-3xl text-center">
-                    <span className="inline-flex rounded-brand-pill bg-brand-primary-tint px-4 py-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-brand-primary-soft-text">
+                    <span className="inline-flex rounded-brand-pill border border-brand-accent/20 bg-brand-accent/12 px-4 py-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-brand-accent">
                         Pricing claro
                     </span>
                     <h2 className="mt-5 font-display text-3xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-4xl lg:text-5xl">
@@ -132,12 +132,12 @@ export default function PricingSection({
                                     dark
                                         ? 'border-brand-nav-bg bg-brand-nav-bg text-brand-surface'
                                         : featured
-                                          ? 'border-brand-primary bg-brand-surface shadow-brand-floating lg:-translate-y-3'
+                                          ? 'border-brand-accent bg-brand-surface shadow-brand-floating lg:-translate-y-3'
                                           : 'border-brand-border bg-brand-surface hover:-translate-y-1 hover:shadow-brand-card-hover motion-reduce:hover:transform-none',
                                 ].join(' ')}
                             >
                                 {featured && (
-                                    <div className="absolute inset-x-0 top-0 h-1.5 bg-brand-primary" />
+                                    <div className="absolute inset-x-0 top-0 h-1.5 bg-brand-accent" />
                                 )}
 
                                 <div className="flex items-start justify-between gap-4">
@@ -147,7 +147,7 @@ export default function PricingSection({
                                             dark
                                                 ? 'bg-brand-surface/10 text-brand-surface'
                                                 : featured
-                                                  ? 'bg-brand-primary text-brand-surface'
+                                                  ? 'bg-brand-accent text-brand-dark'
                                                   : 'bg-brand-primary-soft text-brand-primary-soft-text',
                                         ].join(' ')}
                                     >
@@ -201,7 +201,7 @@ export default function PricingSection({
                                         dark
                                             ? 'border-brand-surface/10 bg-brand-surface/5'
                                             : featured
-                                              ? 'border-brand-primary/15 bg-brand-primary-soft/50'
+                                              ? 'border-brand-accent/20 bg-brand-accent/10'
                                               : 'border-brand-border-subtle bg-brand-surface-alt/70',
                                     ].join(' ')}
                                 >
@@ -244,7 +244,7 @@ export default function PricingSection({
                                                     dark
                                                         ? 'bg-brand-surface/10 text-brand-surface'
                                                         : featured
-                                                          ? 'bg-brand-primary-soft text-brand-primary'
+                                                          ? 'bg-brand-primary-soft text-brand-primary-soft-text'
                                                           : 'bg-brand-primary-soft text-brand-primary-soft-text',
                                                 ].join(' ')}
                                             >
@@ -275,7 +275,7 @@ export default function PricingSection({
                                             dark
                                                 ? 'bg-brand-surface text-brand-text hover:-translate-y-0.5 hover:bg-brand-bg focus-visible:ring-brand-surface'
                                                 : featured
-                                                  ? 'bg-brand-primary text-brand-surface shadow-brand-cta hover:-translate-y-0.5 hover:bg-brand-primary-hover focus-visible:ring-brand-primary'
+                                                  ? 'bg-brand-accent text-brand-dark shadow-brand-card hover:-translate-y-0.5 hover:bg-brand-accent/85 focus-visible:ring-brand-accent'
                                                   : 'border border-brand-border bg-brand-surface text-brand-text hover:-translate-y-0.5 hover:border-brand-primary-muted hover:bg-brand-bg focus-visible:ring-brand-primary',
                                         ].join(' ')}
                                     >

@@ -10,7 +10,7 @@ export default function PelitoLogo({
     return (
         <Link
             href={href}
-            className={`inline-flex items-center gap-2.5 text-brand-text transition-colors duration-200 hover:text-brand-primary ${className}`}
+            className={`inline-flex items-center gap-2.5 text-brand-text transition-colors duration-200 hover:text-brand-link ${className}`}
         >
             <BrandMark className={markClassName} />
             <span className={`font-display font-extrabold tracking-[-0.03em] ${textClassName}`}>

@@ -71,7 +71,7 @@ export default function Index({ barberos, planLimit }) {
                     </h2>
                     <Link
                         href={route('owner.barberias.barberos.create', { barberia: barbId })}
-                        className={`inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-medium text-white shadow-sm transition sm:py-2 ${
+                        className={`inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-medium text-brand-on-primary shadow-sm transition sm:py-2 ${
                             atLimit
                                 ? 'cursor-not-allowed bg-brand-text-secondary'
                                 : 'bg-brand-primary hover:bg-brand-primary-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2'
@@ -162,7 +162,7 @@ export default function Index({ barberos, planLimit }) {
                                 {! atLimit && (
                                     <Link
                                         href={route('owner.barberias.barberos.create', { barberia: barbId })}
-                                        className="text-brand-primary hover:underline"
+                                        className="text-brand-link hover:underline"
                                     >
                                         Crear el primero
                                     </Link>
@@ -185,7 +185,7 @@ export default function Index({ barberos, planLimit }) {
                                                 <Link
                                                     href={route('owner.barberias.barberos.edit', { barberia: barbId, barbero: b.id })}
                                                     aria-label={`Editar ${b.name}`}
-                                                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-primary-soft"
+                                                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-link transition hover:bg-brand-primary-soft"
                                                 >
                                                     <IconEdit size={16} />
                                                 </Link>
@@ -241,7 +241,7 @@ export default function Index({ barberos, planLimit }) {
                                                         <Link
                                                             href={route('owner.barberias.barberos.edit', { barberia: barbId, barbero: b.id })}
                                                             aria-label={`Editar ${b.name}`}
-                                                            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-primary transition hover:bg-brand-primary-soft"
+                                                            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-link transition hover:bg-brand-primary-soft"
                                                         >
                                                             <IconEdit size={16} />
                                                         </Link>

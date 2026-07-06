@@ -43,7 +43,7 @@ function FeatureCard({ icon: Icon, title, description, actionLabel }) {
                 </p>
             </div>
 
-            <div className="mt-6 flex items-center text-sm font-bold text-brand-primary">
+            <div className="mt-6 flex items-center text-sm font-bold text-brand-accent">
                 <span>{actionLabel}</span>
                 <IconArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none" />
             </div>
@@ -85,19 +85,19 @@ export default function FeaturesSection({
                         />
                     </div>
 
-                    <article className="relative overflow-hidden rounded-brand-xl bg-brand-primary p-7 text-brand-surface shadow-brand-floating md:col-span-8 lg:p-8">
+                    <article className="relative overflow-hidden rounded-brand-xl bg-brand-primary p-7 text-brand-on-primary shadow-brand-floating md:col-span-8 lg:p-8">
                         <div className="pointer-events-none absolute right-[-48px] top-[-42px] h-40 w-40 rounded-full border border-brand-surface/15" />
                         <div className="pointer-events-none absolute bottom-[-60px] right-[18%] h-36 w-36 rounded-full bg-brand-surface/10 blur-2xl" />
 
                         <div className="relative grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
                             <div>
-                                <div className="inline-flex rounded-brand-pill bg-brand-surface/18 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-brand-surface">
+                                <div className="inline-flex rounded-brand-pill border border-brand-accent/30 bg-brand-accent/14 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-brand-accent">
                                     Multi-sucursal
                                 </div>
-                                <h3 className="mt-5 font-display text-3xl font-extrabold tracking-[-0.04em] text-brand-surface">
+                                <h3 className="mt-5 font-display text-3xl font-extrabold tracking-[-0.04em] text-brand-on-primary">
                                     Módulo para crecer sin perder control
                                 </h3>
-                                <p className="mt-4 max-w-xl text-base leading-7 text-brand-surface/90">
+                                <p className="mt-4 max-w-xl text-base leading-7 text-brand-on-primary/80">
                                     Consolidá varias barberías en un solo panel,
                                     compará sucursales, seguí equipos y detectá
                                     dónde está la rentabilidad real del negocio.
@@ -184,7 +184,7 @@ export default function FeaturesSection({
                                                         {barber.name}
                                                     </span>
                                                 </div>
-                                                <span className="font-bold text-brand-primary">
+                                                <span className="font-bold text-brand-accent">
                                                     {barber.score}
                                                 </span>
                                             </div>
@@ -224,7 +224,7 @@ export default function FeaturesSection({
                             ].map((method) => (
                                 <div
                                     key={method}
-                                    className="rounded-brand-md border border-brand-border bg-brand-surface-alt px-3 py-2 text-xs font-bold text-brand-text-secondary"
+                                    className="rounded-brand-md border border-brand-accent/20 bg-brand-accent/10 px-3 py-2 text-xs font-bold text-brand-accent"
                                 >
                                     {method}
                                 </div>

@@ -1,7 +1,7 @@
 import { IconBrandInstagram, IconBrandWhatsapp } from '@tabler/icons-react';
 
 const socialBaseClass =
-    'inline-flex h-11 w-11 items-center justify-center rounded-full border border-brand-border bg-brand-surface text-brand-text-secondary shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-primary-muted hover:text-brand-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none';
+    'inline-flex h-11 w-11 items-center justify-center rounded-full border border-brand-border bg-brand-surface text-brand-text-secondary shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-primary-muted hover:text-brand-link focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none';
 
 export default function FooterSection({
     whatsappHref = 'https://wa.me/',

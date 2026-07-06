@@ -60,7 +60,7 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
                     className={[
                         'flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-all duration-200 motion-reduce:transition-none',
                         isOpen
-                            ? 'border-brand-primary bg-brand-primary-soft text-brand-primary'
+                            ? 'border-brand-primary bg-brand-primary-soft text-brand-primary-soft-text'
                             : 'border-brand-border bg-brand-surface-alt text-brand-text-secondary',
                     ].join(' ')}
                 >
@@ -107,7 +107,7 @@ export default function FAQSection({
         >
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="mx-auto max-w-3xl text-center">
-                    <span className="inline-flex rounded-brand-pill bg-brand-primary-tint px-4 py-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-brand-primary-soft-text">
+                    <span className="inline-flex rounded-brand-pill border border-brand-accent/20 bg-brand-accent/12 px-4 py-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-brand-accent">
                         Preguntas frecuentes
                     </span>
                     <h2 className="mt-5 font-display text-3xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-4xl lg:text-5xl">
@@ -136,7 +136,7 @@ export default function FAQSection({
                 </div>
 
                 <div className="mt-10 flex justify-center">
-                    <div className="max-w-2xl rounded-brand-xl border border-brand-border bg-brand-surface px-6 py-6 text-center shadow-brand-card sm:px-8">
+                    <div className="max-w-2xl rounded-brand-xl border border-brand-accent/25 bg-brand-surface px-6 py-6 text-center shadow-brand-card sm:px-8">
                         <p className="text-sm leading-7 text-brand-text-secondary sm:text-base">
                             Si querés resolver tu caso puntual, te lo mostramos por
                             WhatsApp y vemos juntos qué plan te conviene.
@@ -146,7 +146,7 @@ export default function FAQSection({
                                 href={cta.href}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-7 text-sm font-bold text-brand-surface shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                                className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-7 text-sm font-bold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
                             >
                                 {cta.label}
                             </a>

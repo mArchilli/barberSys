@@ -103,7 +103,7 @@ export default function Consolidado({ period, totalFacturado, totalCortes, total
                                                     <td className="p-4">
                                                         <Link
                                                             href={route('owner.barberias.dashboard', item.id)}
-                                                            className="font-medium text-brand-text hover:text-brand-primary"
+                                                            className="font-medium text-brand-text hover:text-brand-link"
                                                         >
                                                             {item.name}
                                                         </Link>

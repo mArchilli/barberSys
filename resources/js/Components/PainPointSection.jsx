@@ -57,7 +57,7 @@ export default function PainPointSection({
         >
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="mx-auto max-w-3xl text-center">
-                    <span className="inline-flex rounded-brand-pill bg-brand-danger-soft px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-brand-danger">
+                    <span className="inline-flex rounded-brand-pill border border-brand-accent/25 bg-brand-accent/12 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-brand-accent">
                         100% en gestión interna
                     </span>
                     <h2 className="mt-6 font-display text-3xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-4xl lg:text-5xl">
@@ -74,9 +74,9 @@ export default function PainPointSection({
                     {painPoints.map(({ title, description, icon: Icon }) => (
                         <article
                             key={title}
-                            className="group rounded-brand-lg border border-brand-border bg-brand-surface p-6 shadow-brand-card transition-all duration-200 hover:-translate-y-1 hover:border-brand-danger/20 hover:shadow-brand-card-hover motion-reduce:transform-none motion-reduce:transition-none"
+                            className="group rounded-brand-lg border border-brand-border bg-brand-surface p-6 shadow-brand-card transition-all duration-200 hover:-translate-y-1 hover:border-brand-accent/30 hover:shadow-brand-card-hover motion-reduce:transform-none motion-reduce:transition-none"
                         >
-                            <div className="flex h-12 w-12 items-center justify-center rounded-brand-md bg-brand-danger-soft text-brand-danger transition-colors duration-200 group-hover:bg-brand-danger group-hover:text-brand-surface motion-reduce:transition-none">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-brand-md bg-brand-accent/12 text-brand-accent transition-colors duration-200 group-hover:bg-brand-accent group-hover:text-brand-dark motion-reduce:transition-none">
                                 <Icon className="h-5 w-5" stroke={2.1} />
                             </div>
 
@@ -100,7 +100,7 @@ export default function PainPointSection({
                         <IconArrowRight className="ml-2 h-4 w-4" stroke={2.3} />
                     </SectionAction>
 
-                    <p className="mt-5 text-sm font-medium text-brand-text-secondary">
+                    <p className="mt-5 text-sm font-medium text-brand-accent">
                         Sin tarjeta de crédito requerida
                     </p>
                 </div>

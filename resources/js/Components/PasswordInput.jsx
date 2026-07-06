@@ -24,7 +24,7 @@ export default forwardRef(function PasswordInput(
                 onClick={() => setVisible((v) => !v)}
                 tabIndex={-1}
                 aria-label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-brand-text-secondary transition-colors duration-150 hover:text-brand-primary focus:outline-none"
+                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-brand-text-secondary transition-colors duration-150 hover:text-brand-link focus:outline-none"
             >
                 {visible ? (
                     <IconEyeOff className="h-5 w-5" stroke={1.8} />

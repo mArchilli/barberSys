@@ -17,7 +17,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                     </h2>
                     <Link
                         href={route('owner.barberias.create')}
-                        className={`inline-flex items-center justify-center rounded-brand-pill px-4 py-3 text-sm font-medium text-white shadow-sm transition sm:py-2 ${
+                        className={`inline-flex items-center justify-center rounded-brand-pill px-4 py-3 text-sm font-medium text-brand-on-primary shadow-sm transition sm:py-2 ${
                             atLimit
                                 ? 'cursor-not-allowed bg-brand-text-secondary'
                                 : 'bg-brand-primary hover:bg-brand-primary-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2'
@@ -78,7 +78,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                         <div className="rounded-brand-lg border border-brand-border bg-brand-surface p-8 text-center text-brand-text-secondary shadow-brand-card">
                             No tenés barberías activas cargadas.{' '}
                             {! atLimit && (
-                                <Link href={route('owner.barberias.create')} className="text-brand-primary hover:underline">
+                                <Link href={route('owner.barberias.create')} className="text-brand-link hover:underline">
                                     Crear la primera
                                 </Link>
                             )}
@@ -94,13 +94,13 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                                         href={route('owner.barberias.dashboard', barberia.id)}
                                         className="flex flex-col gap-1 p-6"
                                     >
-                                        <h3 className="pr-8 text-lg font-semibold text-brand-text transition group-hover:text-brand-primary">
+                                        <h3 className="pr-8 text-lg font-semibold text-brand-text transition group-hover:text-brand-link">
                                             {barberia.name}
                                         </h3>
                                         {barberia.address && (
                                             <p className="text-sm text-brand-text-secondary">{barberia.address}</p>
                                         )}
-                                        <span className="mt-3 text-sm font-medium text-brand-primary">
+                                        <span className="mt-3 text-sm font-medium text-brand-link">
                                             Gestionar →
                                         </span>
                                     </Link>
@@ -108,7 +108,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                                         href={route('owner.barberias.edit', barberia.id)}
                                         aria-label={`Editar ${barberia.name}`}
                                         title="Editar"
-                                        className="absolute right-2 top-2 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-brand-text-secondary transition hover:bg-brand-primary-soft hover:text-brand-primary"
+                                        className="absolute right-2 top-2 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-brand-text-secondary transition hover:bg-brand-primary-soft hover:text-brand-link"
                                     >
                                         <IconEdit size={16} />
                                     </Link>
@@ -140,7 +140,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                                             className="group flex flex-col gap-1 rounded-brand-lg border border-brand-border bg-brand-surface-alt p-6 opacity-80 shadow-brand-card transition hover:border-brand-primary hover:opacity-100"
                                         >
                                             <div className="flex items-center justify-between gap-2">
-                                                <h3 className="text-lg font-semibold text-brand-text transition group-hover:text-brand-primary">
+                                                <h3 className="text-lg font-semibold text-brand-text transition group-hover:text-brand-link">
                                                     {barberia.name}
                                                 </h3>
                                                 <span className="inline-flex items-center gap-1 rounded-brand-pill border border-brand-border bg-brand-surface px-2.5 py-1 text-xs font-medium text-brand-text-secondary">
@@ -151,7 +151,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                                             {barberia.address && (
                                                 <p className="text-sm text-brand-text-secondary">{barberia.address}</p>
                                             )}
-                                            <span className="mt-3 text-sm font-medium text-brand-primary">
+                                            <span className="mt-3 text-sm font-medium text-brand-link">
                                                 Ver historial →
                                             </span>
                                         </Link>

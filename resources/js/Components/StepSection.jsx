@@ -60,7 +60,7 @@ export default function StepSection({
         >
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="mx-auto max-w-3xl text-center">
-                    <span className="text-xs font-bold uppercase tracking-[0.18em] text-brand-primary">
+                    <span className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accent">
                         Proceso optimizado
                     </span>
                     <h2 className="mt-4 font-display text-3xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-4xl lg:text-5xl">
@@ -81,8 +81,8 @@ export default function StepSection({
                                 key={title}
                                 className="group relative flex flex-col items-center text-center"
                             >
-                                <div className="relative z-10 mb-7 flex h-24 w-24 items-center justify-center rounded-full border-4 border-brand-primary bg-brand-surface shadow-brand-card transition-transform duration-200 group-hover:scale-[1.04] motion-reduce:transition-none">
-                                    <span className="font-display text-3xl font-extrabold text-brand-primary">
+                                <div className="relative z-10 mb-7 flex h-24 w-24 items-center justify-center rounded-full border-4 border-brand-accent bg-brand-surface shadow-brand-card transition-transform duration-200 group-hover:scale-[1.04] motion-reduce:transition-none">
+                                    <span className="font-display text-3xl font-extrabold text-brand-accent">
                                         {number}
                                     </span>
                                 </div>
@@ -111,7 +111,7 @@ export default function StepSection({
                     <StepAction
                         href={cta.href}
                         inertia={cta.inertia}
-                        className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-8 text-sm font-bold text-brand-surface shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                        className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-8 text-sm font-bold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
                     >
                         <span>{cta.label}</span>
                         <IconArrowRight className="ml-2 h-4 w-4" stroke={2.3} />

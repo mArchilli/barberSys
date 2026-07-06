@@ -68,7 +68,7 @@ export default function HeroSection({
 
             <div className="mx-auto grid w-full max-w-[1440px] gap-10 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)] lg:items-center lg:gap-10 xl:gap-14">
                 <div className="flex flex-col items-start lg:pb-2">
-                    <div className="inline-flex min-h-[40px] items-center gap-2 rounded-brand-pill bg-brand-primary-tint px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-brand-primary-soft-text">
+                    <div className="inline-flex min-h-[40px] items-center gap-2 rounded-brand-pill border border-brand-accent/20 bg-brand-accent/12 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-brand-accent">
                         <IconSparkles className="h-4 w-4" stroke={2.2} />
                         <span>Sistema de gestión para barberías</span>
                     </div>
@@ -77,7 +77,7 @@ export default function HeroSection({
                         <span className="block lg:whitespace-nowrap">
                             Vos encargate de cortar.
                         </span>
-                        <span className="mt-1 block text-brand-primary lg:whitespace-nowrap">
+                        <span className="mt-1 block text-brand-link lg:whitespace-nowrap">
                             Pelito ordena tu barbería.
                         </span>
                     </h1>
@@ -93,7 +93,7 @@ export default function HeroSection({
                         <HeroAction
                             href={primaryCta.href}
                             inertia={primaryCta.inertia}
-                            className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-6 text-sm font-bold text-brand-surface shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                            className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-6 text-sm font-bold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
                         >
                             <span>{primaryCta.label}</span>
                             <IconArrowRight className="ml-2 h-4 w-4" stroke={2.4} />
@@ -173,7 +173,7 @@ export default function HeroSection({
                                             Lucas R. lidera el mes
                                         </p>
                                     </div>
-                                    <span className="rounded-brand-pill bg-brand-primary-soft px-3 py-1 text-xs font-bold text-brand-primary-soft-text">
+                                    <span className="rounded-brand-pill border border-brand-accent/20 bg-brand-accent/12 px-3 py-1 text-xs font-bold text-brand-accent">
                                         Top 1
                                     </span>
                                 </div>
@@ -241,7 +241,7 @@ export default function HeroSection({
                     </div>
 
                     <div className="absolute right-3 top-5 hidden rounded-brand-lg border border-brand-border bg-brand-surface px-4 py-3 shadow-brand-card xl:block">
-                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-text-secondary">
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-accent">
                             Reporte enviado
                         </p>
                         <p className="mt-1 text-sm font-semibold text-brand-text">
@@ -250,7 +250,7 @@ export default function HeroSection({
                     </div>
 
                     <div className="absolute bottom-[-22px] left-4 hidden rounded-brand-lg border border-brand-border bg-brand-surface px-4 py-3 shadow-brand-card xl:block">
-                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-success">
+                        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-accent">
                             Ganancia neta
                         </p>
                         <p className="mt-1 text-sm font-semibold text-brand-text">
