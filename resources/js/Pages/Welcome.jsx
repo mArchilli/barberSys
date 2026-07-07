@@ -103,6 +103,7 @@ export default function Welcome({ auth, canLogin, canRegister }) {
                     }}
                 />
                 <FooterSection
+                    links={links}
                     whatsappHref={whatsappHref}
                     instagramHref="#"
                 />

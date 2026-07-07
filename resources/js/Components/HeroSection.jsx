@@ -77,7 +77,7 @@ export default function HeroSection({
                         <span className="block lg:whitespace-nowrap">
                             Vos encargate de cortar.
                         </span>
-                        <span className="mt-1 block text-brand-link lg:whitespace-nowrap">
+                        <span className="mt-1 block text-brand-primary lg:whitespace-nowrap">
                             Pelito ordena tu barbería.
                         </span>
                     </h1>
