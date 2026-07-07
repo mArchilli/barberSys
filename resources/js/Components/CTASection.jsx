@@ -1,10 +1,4 @@
-import { IconArrowRight, IconBrandWhatsapp, IconCheck } from '@tabler/icons-react';
-
-const highlights = [
-    'Te mostramos cómo se registra un día real de trabajo.',
-    'Revisamos comisiones, medios de pago y ganancia neta.',
-    'Te recomendamos el plan según tu operación actual.',
-];
+import { IconArrowRight, IconBrandWhatsapp } from '@tabler/icons-react';
 
 export default function CTASection({
     cta = {
@@ -12,33 +6,29 @@ export default function CTASection({
         href: 'https://wa.me/',
     },
 }) {
+    const ctaButtonClasses =
+        'inline-flex min-h-[52px] items-center justify-center rounded-brand-pill bg-brand-primary px-7 text-sm font-bold text-brand-on-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-surface focus-visible:ring-offset-2 focus-visible:ring-offset-brand-nav-bg motion-reduce:transform-none motion-reduce:transition-none';
+
     return (
         <section className="px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12">
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="overflow-hidden rounded-[28px] border border-brand-nav-bg bg-brand-nav-bg shadow-brand-floating">
-                    <div className="grid gap-10 px-6 py-8 sm:px-8 sm:py-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:px-12 lg:py-12 xl:px-14">
-                        <div className="relative">
+                    <div className="grid gap-10 px-6 py-8 sm:px-8 sm:py-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:items-stretch lg:px-12 lg:py-12 xl:px-14">
+                        <div className="relative flex min-w-0 flex-col lg:min-h-[420px]">
                             <div className="absolute left-0 top-0 h-32 w-32 rounded-full bg-brand-accent/25 blur-3xl" />
-                            <div className="relative">
-                                <span className="inline-flex rounded-brand-pill border border-brand-accent/30 bg-brand-accent/18 px-4 py-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-brand-accent">
-                                    Hablemos por WhatsApp
-                                </span>
-                                <h2 className="mt-5 max-w-2xl font-display text-3xl font-extrabold tracking-[-0.05em] text-brand-surface sm:text-4xl lg:text-[3.2rem] lg:leading-[1.02]">
-                                    Si querés ver cómo Pelito ordena tu barbería,
-                                    lo vemos juntos en una charla corta.
-                                </h2>
-                                <p className="mt-5 max-w-xl text-base leading-7 text-brand-text-on-dark sm:text-lg sm:leading-8">
-                                    Escribinos y te mostramos el flujo real del
-                                    sistema para que evalúes rápido si encaja con
-                                    tu operación, sin vueltas ni formularios largos.
-                                </p>
 
-                                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                            <div className="relative flex min-w-0 h-full flex-col">
+                                <h2 className="w-full max-w-full font-display text-[1.8rem] font-extrabold leading-[1.08] tracking-[-0.02em] text-brand-surface break-words sm:max-w-2xl sm:text-4xl sm:leading-[1.04] sm:tracking-[-0.05em] lg:text-[3.2rem] lg:leading-[1.02]">
+                                    Si querés ver cómo Pelito ordena tu barbería,
+                                    probalo gratis 2 semanas.
+                                </h2>
+
+                                <div className="mt-8 hidden lg:mt-auto lg:flex lg:pt-8">
                                     <a
                                         href={cta.href}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="inline-flex min-h-[52px] items-center justify-center rounded-brand-pill bg-brand-primary px-7 text-sm font-bold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-surface focus-visible:ring-offset-2 focus-visible:ring-offset-brand-nav-bg motion-reduce:transform-none motion-reduce:transition-none"
+                                        className={ctaButtonClasses}
                                     >
                                         <IconBrandWhatsapp
                                             className="mr-2 h-5 w-5"
@@ -50,62 +40,39 @@ export default function CTASection({
                                             stroke={2.3}
                                         />
                                     </a>
-                                    <div className="inline-flex min-h-[52px] items-center justify-center rounded-brand-pill border border-brand-accent/25 bg-brand-accent/12 px-6 text-sm font-semibold text-brand-accent">
-                                        Respuesta directa, sin compromiso
-                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex">
-                            <div className="w-full rounded-brand-xl border border-brand-surface/10 bg-brand-surface/6 p-6 backdrop-blur-sm sm:p-7">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary-soft text-brand-primary-soft-text">
-                                        <IconBrandWhatsapp
-                                            className="h-5 w-5"
-                                            stroke={2.2}
-                                        />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accent">
-                                            Qué resolvemos
-                                        </p>
-                                        <p className="mt-1 font-display text-2xl font-bold tracking-[-0.03em] text-brand-surface">
-                                            Una charla útil desde el primer mensaje
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <ul className="mt-7 space-y-4">
-                                    {highlights.map((highlight) => (
-                                        <li
-                                            key={highlight}
-                                            className="flex items-start gap-3 rounded-brand-lg border border-brand-surface/10 bg-brand-surface/6 px-4 py-3"
-                                        >
-                                            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-primary-soft text-brand-primary-soft-text">
-                                                <IconCheck
-                                                    className="h-3.5 w-3.5"
-                                                    stroke={2.6}
-                                                />
-                                            </span>
-                                            <span className="text-sm leading-6 text-brand-surface sm:text-[0.95rem]">
-                                                {highlight}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                <div className="mt-7 rounded-brand-lg border border-brand-accent/25 bg-brand-accent/10 px-4 py-4">
-                                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-accent">
-                                        Ideal si hoy
-                                    </p>
-                                    <p className="mt-2 text-sm leading-6 text-brand-surface">
-                                        Seguís resolviendo números por WhatsApp,
-                                        cuadernos o planillas y querés pasar a un
-                                        sistema simple sin frenar la operación.
-                                    </p>
+                        <div className="flex lg:h-full">
+                            <div className="w-full overflow-hidden rounded-brand-xl bg-brand-surface/6 shadow-brand-card lg:h-full">
+                                <div className="aspect-[1672/941] min-h-[280px] w-full sm:min-h-[340px] lg:h-full lg:min-h-[420px]">
+                                    <img
+                                        src="/images/cta-section.png"
+                                        alt="Herramientas de barbería"
+                                        className="h-full w-full object-cover"
+                                    />
                                 </div>
                             </div>
+                        </div>
+
+                        <div className="flex lg:hidden">
+                            <a
+                                href={cta.href}
+                                target="_blank"
+                                rel="noreferrer"
+                                className={ctaButtonClasses}
+                            >
+                                <IconBrandWhatsapp
+                                    className="mr-2 h-5 w-5"
+                                    stroke={2.2}
+                                />
+                                <span>{cta.label}</span>
+                                <IconArrowRight
+                                    className="ml-2 h-4 w-4"
+                                    stroke={2.3}
+                                />
+                            </a>
                         </div>
                     </div>
                 </div>
