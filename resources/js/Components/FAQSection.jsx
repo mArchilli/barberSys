@@ -46,14 +46,26 @@ const faqs = [
 
 function FAQItem({ question, answer, isOpen, onToggle }) {
     return (
-        <article className="overflow-hidden rounded-[18px] border border-brand-border bg-brand-surface shadow-brand-card">
+        <article
+            className={[
+                'overflow-hidden rounded-[18px] border bg-brand-surface shadow-brand-card transition-colors duration-200 motion-reduce:transition-none',
+                isOpen
+                    ? 'border-brand-primary bg-brand-primary-soft/40'
+                    : 'border-brand-border',
+            ].join(' ')}
+        >
             <button
                 type="button"
                 onClick={onToggle}
                 aria-expanded={isOpen}
                 className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
             >
-                <span className="pr-2 text-base font-semibold leading-7 text-brand-text sm:text-lg">
+                <span
+                    className={[
+                        'pr-2 text-base font-semibold leading-7 sm:text-lg',
+                        isOpen ? 'text-brand-primary' : 'text-brand-text',
+                    ].join(' ')}
+                >
                     {question}
                 </span>
                 <span
@@ -81,8 +93,22 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
                 ].join(' ')}
             >
                 <div className="overflow-hidden">
-                    <div className="border-t border-brand-border-subtle px-5 pb-5 pt-4 sm:px-6">
-                        <p className="max-w-3xl text-sm leading-7 text-brand-text-secondary sm:text-base">
+                    <div
+                        className={[
+                            'border-t px-5 pb-5 pt-4 sm:px-6',
+                            isOpen
+                                ? 'border-brand-primary/20'
+                                : 'border-brand-border-subtle',
+                        ].join(' ')}
+                    >
+                        <p
+                            className={[
+                                'max-w-3xl text-sm leading-7 sm:text-base',
+                                isOpen
+                                    ? 'text-brand-primary-soft-text'
+                                    : 'text-brand-text-secondary',
+                            ].join(' ')}
+                        >
                             {answer}
                         </p>
                     </div>
@@ -110,7 +136,7 @@ export default function FAQSection({
                     <span className="inline-flex rounded-brand-pill border border-brand-accent/20 bg-brand-accent/12 px-4 py-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-brand-accent">
                         Preguntas frecuentes
                     </span>
-                    <h2 className="mt-5 font-display text-3xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-4xl lg:text-5xl">
+                    <h2 className="mt-5 font-display text-4xl font-extrabold tracking-[-0.06em] text-brand-text sm:text-5xl lg:text-6xl">
                         Lo que más preguntan antes de empezar
                     </h2>
                     <p className="mt-5 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
