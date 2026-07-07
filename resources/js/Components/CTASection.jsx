@@ -19,7 +19,10 @@ export default function CTASection({
 
                             <div className="relative flex min-w-0 h-full flex-col">
                                 <h2 className="w-full max-w-full font-display text-[1.8rem] font-extrabold leading-[1.08] tracking-[-0.02em] text-brand-surface break-words sm:max-w-2xl sm:text-4xl sm:leading-[1.04] sm:tracking-[-0.05em] lg:text-[3.2rem] lg:leading-[1.02]">
-                                    Si querés ver cómo Pelito ordena tu barbería,
+                                    Si querés ver cómo{' '}
+                                    <span className="text-brand-primary">
+                                        Pelito ordena tu barbería.
+                                    </span>{' '}
                                     probalo gratis 2 semanas.
                                 </h2>
 

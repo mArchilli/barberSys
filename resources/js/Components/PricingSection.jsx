@@ -20,7 +20,7 @@ const plans = [
     },
     {
         tier: 'Más elegido',
-        name: 'Crecimiento',
+        name: 'Profesional',
         price: '$35k',
         cadence: '/mes',
         description:
@@ -44,7 +44,7 @@ const plans = [
             'Hecho para operaciones que ya manejan varias sucursales y necesitan control financiero más fino.',
         details: ['Hasta 5 barberías', 'Barberos ilimitados', 'Control ampliado por sucursal'],
         features: [
-            'Todo lo del plan Crecimiento',
+            'Todo lo del plan Profesional',
             'Neto por sucursal',
             'Neto total del negocio',
             'Sin límite de barberos por sucursal',
@@ -139,7 +139,7 @@ export default function PricingSection({
                                     <div className="absolute inset-x-0 top-0 h-1.5 bg-brand-nav-bg" />
                                 )}
 
-                                <div>
+                                <div className="flex items-center justify-between gap-3">
                                     <h3
                                         className={[
                                             'font-display text-[2rem] font-extrabold tracking-[-0.05em]',
@@ -150,6 +150,12 @@ export default function PricingSection({
                                     >
                                         {name}
                                     </h3>
+
+                                    {featured && (
+                                        <span className="inline-flex shrink-0 rounded-full bg-brand-surface px-3 py-1 text-[0.68rem] font-bold uppercase tracking-[0.16em] text-brand-text">
+                                            Popular
+                                        </span>
+                                    )}
                                 </div>
 
                                 <div className="mt-7">
