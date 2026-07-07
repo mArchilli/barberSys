@@ -139,9 +139,9 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
 
             <div className="py-6 sm:py-12">
                 <div className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <p className="text-sm capitalize text-brand-text-secondary">{monthLabel(period.month)}</p>
-                        <MonthSelector month={period.month} url={route('owner.barberias.finanzas', barbId)} />
+                        <MonthSelector month={period.month} url={route('owner.barberias.finanzas', barbId)} fullWidth />
                     </div>
 
                     {flash?.success && (

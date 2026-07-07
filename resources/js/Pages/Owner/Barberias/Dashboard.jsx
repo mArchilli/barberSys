@@ -1,11 +1,10 @@
 import DaySelector from '@/Components/DaySelector';
-import MetricCard from '@/Components/MetricCard';
 import MonthSelector from '@/Components/MonthSelector';
 import PeriodModeToggle from '@/Components/PeriodModeToggle';
 import RankingList from '@/Components/RankingList';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { IconCoin, IconLock, IconLockSquareRounded, IconReceipt2 } from '@tabler/icons-react';
+import { IconCoin, IconLock, IconLockSquareRounded, IconMenu2, IconReceipt2 } from '@tabler/icons-react';
 
 function formatMoney(value) {
     return `$${Number(value).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -36,8 +35,9 @@ export default function Dashboard({
     miRendimiento,
     neto,
 }) {
-    const { currentBarberia } = usePage().props;
+    const { currentBarberia, auth } = usePage().props;
     const dashboardUrl = route('owner.barberias.dashboard', currentBarberia.id);
+    const primerNombre = auth.user.name.split(' ')[0];
 
     function handleModeChange(newMode) {
         if (newMode === period.mode) return;
@@ -59,11 +59,25 @@ export default function Dashboard({
 
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-brand-text">
-                    Dashboard — {currentBarberia?.name}
-                </h2>
-            }
+            header={({ onOpenMobileMenu }) => (
+                <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                        <p className="text-sm text-brand-text-secondary">Hola, {primerNombre}</p>
+                        <h2 className="truncate font-display text-xl font-bold text-brand-text">
+                            {currentBarberia?.name}
+                        </h2>
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={onOpenMobileMenu}
+                        aria-label="Abrir menú"
+                        className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-brand-pill text-brand-text-secondary transition hover:bg-brand-primary-soft hover:text-brand-link md:hidden"
+                    >
+                        <IconMenu2 size={22} stroke={1.75} />
+                    </button>
+                </div>
+            )}
         >
             <Head title="Dashboard" />
 
@@ -81,13 +95,13 @@ export default function Dashboard({
                         </div>
                     )}
 
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <PeriodModeToggle mode={period.mode} onChange={handleModeChange} />
 
                         {period.mode === 'day' ? (
-                            <DaySelector date={period.day} esHoy={period.diaEsHoy} url={dashboardUrl} onDark={false} />
+                            <DaySelector date={period.day} esHoy={period.diaEsHoy} url={dashboardUrl} onDark={false} fullWidth />
                         ) : (
-                            <MonthSelector month={period.month} url={dashboardUrl} />
+                            <MonthSelector month={period.month} url={dashboardUrl} fullWidth />
                         )}
                     </div>
 
@@ -119,10 +133,33 @@ export default function Dashboard({
                     {miRendimiento && (
                         <section className="space-y-3">
                             <h3 className="font-display text-lg font-bold text-brand-text">Mi rendimiento</h3>
-                            <div className="grid gap-4 sm:grid-cols-3">
-                                <MetricCard label="Mi facturación" value={formatMoney(miRendimiento.totalFacturado)} />
-                                <MetricCard label="Mis cortes" value={miRendimiento.totalCortes} />
-                                <MetricCard label="% del total de la barbería" value={`${miRendimiento.pct}%`} />
+                            <div className="rounded-brand-xl border border-brand-border bg-brand-surface p-6 shadow-brand-card">
+                                <div className="grid grid-cols-3 divide-x divide-brand-border-subtle">
+                                    <div className="pr-3 sm:pr-4">
+                                        <p className="text-[11px] font-medium uppercase tracking-wide text-brand-text-secondary sm:text-xs">
+                                            Mi facturación
+                                        </p>
+                                        <p className="mt-1 truncate text-lg font-bold text-brand-text sm:text-xl">
+                                            {formatMoney(miRendimiento.totalFacturado)}
+                                        </p>
+                                    </div>
+                                    <div className="px-3 sm:px-4">
+                                        <p className="text-[11px] font-medium uppercase tracking-wide text-brand-text-secondary sm:text-xs">
+                                            Mis cortes
+                                        </p>
+                                        <p className="mt-1 text-lg font-bold text-brand-text sm:text-xl">
+                                            {miRendimiento.totalCortes}
+                                        </p>
+                                    </div>
+                                    <div className="pl-3 sm:pl-4">
+                                        <p className="text-[11px] font-medium uppercase tracking-wide text-brand-text-secondary sm:text-xs">
+                                            % del total
+                                        </p>
+                                        <p className="mt-1 text-lg font-bold text-brand-text sm:text-xl">
+                                            {miRendimiento.pct}%
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </section>
                     )}

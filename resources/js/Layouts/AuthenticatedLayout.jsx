@@ -30,6 +30,15 @@ export default function AuthenticatedLayout({ header, children }) {
     const closeMobileMenu = () => setMobileMenuOpen(false);
     const [collapsed, setCollapsed] = useSidebarCollapsed();
 
+    // `header` normalmente es un nodo fijo. Una pantalla puede pasar una
+    // función `({ onOpenMobileMenu }) => node` cuando necesita renderizar su
+    // propio disparador del menú mobile alineado dentro de su propio layout
+    // (en vez del botón flotante de acá abajo, que se oculta en ese caso).
+    const rendersOwnMobileTrigger = typeof header === 'function';
+    const headerContent = rendersOwnMobileTrigger
+        ? header({ onOpenMobileMenu: () => setMobileMenuOpen(true) })
+        : header;
+
     const dashboardHref = user.role === 'owner' && currentBarberia
         ? route('owner.barberias.dashboard', { barberia: currentBarberia.id })
         : route('dashboard');
@@ -190,15 +199,18 @@ export default function AuthenticatedLayout({ header, children }) {
                 </div>
             </aside>
 
-            {/* Botón flotante de menú (mobile) */}
-            <button
-                type="button"
-                onClick={() => setMobileMenuOpen(true)}
-                aria-label="Abrir menú"
-                className="fixed right-4 top-4 z-40 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-brand-pill bg-brand-nav-bg text-brand-nav-text shadow-brand-floating transition hover:text-brand-nav-active md:hidden"
-            >
-                <IconMenu2 size={20} stroke={2} />
-            </button>
+            {/* Botón flotante de menú (mobile) — se oculta cuando la pantalla
+                renderiza su propio disparador dentro del header. */}
+            {!rendersOwnMobileTrigger && (
+                <button
+                    type="button"
+                    onClick={() => setMobileMenuOpen(true)}
+                    aria-label="Abrir menú"
+                    className="fixed right-4 top-4 z-40 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-brand-pill bg-brand-nav-bg text-brand-nav-text shadow-brand-floating transition hover:text-brand-nav-active md:hidden"
+                >
+                    <IconMenu2 size={20} stroke={2} />
+                </button>
+            )}
 
             {/* Menú de pantalla completa (mobile) */}
             <MobileNavOverlay open={mobileMenuOpen} onClose={closeMobileMenu}>
@@ -289,11 +301,19 @@ export default function AuthenticatedLayout({ header, children }) {
             </MobileNavOverlay>
 
             {/* Columna de contenido */}
-            <div className={`flex-1 pt-16 transition-[padding] duration-150 md:pt-0 ${collapsed ? 'md:pl-20' : 'md:pl-64'}`}>
-                {header && (
-                    <header className="bg-transparent shadow-none md:bg-brand-surface md:shadow-sm">
+            <div
+                className={`flex-1 transition-[padding] duration-150 ${rendersOwnMobileTrigger ? '' : 'pt-16 md:pt-0'} ${collapsed ? 'md:pl-20' : 'md:pl-64'}`}
+            >
+                {headerContent && (
+                    <header
+                        className={
+                            rendersOwnMobileTrigger
+                                ? 'sticky top-0 z-20 bg-brand-bg/95 backdrop-blur-sm md:static md:bg-brand-surface md:shadow-sm'
+                                : 'bg-transparent shadow-none md:bg-brand-surface md:shadow-sm'
+                        }
+                    >
                         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                            {header}
+                            {headerContent}
                         </div>
                     </header>
                 )}

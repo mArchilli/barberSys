@@ -8,7 +8,7 @@ export default function PeriodModeToggle({ mode, onChange }) {
         <div
             role="tablist"
             aria-label="Ver por mes o por día"
-            className="inline-flex items-center gap-1 rounded-brand-pill border border-brand-border bg-brand-surface p-1 shadow-brand-card"
+            className="flex w-full items-center gap-1 rounded-brand-pill border border-brand-border bg-brand-surface p-1 shadow-brand-card sm:w-auto"
         >
             {options.map((option) => (
                 <button
@@ -17,7 +17,7 @@ export default function PeriodModeToggle({ mode, onChange }) {
                     role="tab"
                     aria-selected={mode === option.value}
                     onClick={() => onChange(option.value)}
-                    className={`h-11 rounded-brand-pill px-4 text-sm font-semibold transition ${
+                    className={`h-11 flex-1 rounded-brand-pill px-4 text-sm font-semibold transition sm:flex-none ${
                         mode === option.value
                             ? 'bg-brand-primary text-brand-on-primary'
                             : 'text-brand-text-secondary hover:bg-brand-primary-soft hover:text-brand-link'
