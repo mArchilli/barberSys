@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Barberia;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -64,6 +65,7 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => 'barber',
+            'barberia_id' => Barberia::factory(),
             'salary_type' => 'fixed',
             'salary_amount' => 1000,
             'commission_pct' => null,

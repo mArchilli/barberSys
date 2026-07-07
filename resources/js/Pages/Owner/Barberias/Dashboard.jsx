@@ -1,11 +1,27 @@
+import DaySelector from '@/Components/DaySelector';
+import MetricCard from '@/Components/MetricCard';
 import MonthSelector from '@/Components/MonthSelector';
+import PeriodModeToggle from '@/Components/PeriodModeToggle';
 import RankingList from '@/Components/RankingList';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { IconCoin, IconLock, IconLockSquareRounded, IconReceipt2 } from '@tabler/icons-react';
 
 function formatMoney(value) {
     return `$${Number(value).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+function monthLabel(month) {
+    const [year, m] = month.split('-').map(Number);
+    const label = new Date(year, m - 1, 1).toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+    return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
+// Al pasar a vista Día sin un día previamente elegido, arranca en hoy si el
+// mes seleccionado es el actual, o en el día 1 si es un mes distinto.
+function defaultDayForMonth(month) {
+    const todayIso = new Date().toLocaleDateString('sv-SE');
+    return month === todayIso.slice(0, 7) ? todayIso : `${month}-01`;
 }
 
 export default function Dashboard({
@@ -17,8 +33,29 @@ export default function Dashboard({
     porBarbero,
     porServicio,
     porMedioPago,
+    miRendimiento,
+    neto,
 }) {
     const { currentBarberia } = usePage().props;
+    const dashboardUrl = route('owner.barberias.dashboard', currentBarberia.id);
+
+    function handleModeChange(newMode) {
+        if (newMode === period.mode) return;
+
+        if (newMode === 'day') {
+            router.get(
+                dashboardUrl,
+                { day: defaultDayForMonth(period.month) },
+                { preserveState: true, preserveScroll: true, replace: true },
+            );
+        } else {
+            router.get(
+                dashboardUrl,
+                { month: period.month },
+                { preserveState: true, preserveScroll: true, replace: true },
+            );
+        }
+    }
 
     return (
         <AuthenticatedLayout
@@ -30,7 +67,7 @@ export default function Dashboard({
         >
             <Head title="Dashboard" />
 
-            <div className={`pt-6 sm:pt-12 ${currentBarberia?.active ? 'pb-24 sm:pb-16' : 'pb-12'}`}>
+            <div className={`pt-6 sm:pt-12 ${currentBarberia?.active ? 'pb-36 sm:pb-24' : 'pb-12'}`}>
                 <div className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
                     {! currentBarberia?.active && (
                         <div className="flex items-center gap-3 rounded-brand-md border border-brand-border bg-brand-surface-alt px-4 py-3 text-sm text-brand-text-secondary">
@@ -44,11 +81,14 @@ export default function Dashboard({
                         </div>
                     )}
 
-                    <div className="flex justify-end">
-                        <MonthSelector
-                            month={period.month}
-                            url={route('owner.barberias.dashboard', currentBarberia.id)}
-                        />
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <PeriodModeToggle mode={period.mode} onChange={handleModeChange} />
+
+                        {period.mode === 'day' ? (
+                            <DaySelector date={period.day} esHoy={period.diaEsHoy} url={dashboardUrl} onDark={false} />
+                        ) : (
+                            <MonthSelector month={period.month} url={dashboardUrl} />
+                        )}
                     </div>
 
                     <div className="rounded-brand-xl bg-brand-nav-bg p-6 shadow-brand-floating">
@@ -74,6 +114,32 @@ export default function Dashboard({
                                 <p className="mt-1 text-lg font-semibold text-white">{barberosActivos}</p>
                             </div>
                         </div>
+                    </div>
+
+                    {miRendimiento && (
+                        <section className="space-y-3">
+                            <h3 className="font-display text-lg font-bold text-brand-text">Mi rendimiento</h3>
+                            <div className="grid gap-4 sm:grid-cols-3">
+                                <MetricCard label="Mi facturación" value={formatMoney(miRendimiento.totalFacturado)} />
+                                <MetricCard label="Mis cortes" value={miRendimiento.totalCortes} />
+                                <MetricCard label="% del total de la barbería" value={`${miRendimiento.pct}%`} />
+                            </div>
+                        </section>
+                    )}
+
+                    <div className="rounded-brand-lg border border-brand-border bg-brand-surface p-5 shadow-brand-card">
+                        <p className="text-sm font-medium text-brand-text-secondary">
+                            Neto estimado de {monthLabel(period.month)}
+                        </p>
+                        <p className={`mt-1 font-display text-3xl font-bold ${neto < 0 ? 'text-brand-danger' : 'text-brand-success'}`}>
+                            {`${neto < 0 ? '-' : ''}${formatMoney(Math.abs(neto))}`}
+                        </p>
+                        <Link
+                            href={route('owner.barberias.finanzas', currentBarberia.id)}
+                            className="mt-3 inline-block text-sm font-semibold text-brand-link hover:text-brand-link-hover"
+                        >
+                            Ver Finanzas →
+                        </Link>
                     </div>
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

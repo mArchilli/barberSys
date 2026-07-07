@@ -1,3 +1,4 @@
+import { dayLabel } from '@/Components/DaySelector';
 import MetricCard from '@/Components/MetricCard';
 import MonthSelector from '@/Components/MonthSelector';
 import RankingList from '@/Components/RankingList';
@@ -121,9 +122,10 @@ function GastoRow({ gasto, barbId }) {
     );
 }
 
-export default function Finanzas({ period, totalFacturado, totalSueldos, totalGastos, neto, sueldosPorBarbero, gastos }) {
+export default function Finanzas({ period, totalFacturado, totalSueldos, totalGastos, neto, sueldosPorBarbero, gastos, porDia }) {
     const { currentBarberia, flash } = usePage().props;
     const barbId = currentBarberia?.id;
+    const todayIso = new Date().toLocaleDateString('sv-SE');
 
     return (
         <AuthenticatedLayout
@@ -190,6 +192,62 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
                                         <GastoRow key={gasto.id} gasto={gasto} barbId={barbId} />
                                     ))}
                                 </ul>
+                            )}
+                        </section>
+
+                        <section className="space-y-3 lg:col-span-2">
+                            <h3 className="font-display text-lg font-bold text-brand-text">Facturación por día</h3>
+
+                            {porDia.length === 0 ? (
+                                <p className="rounded-brand-md border border-dashed border-brand-border bg-brand-surface-alt p-4 text-sm text-brand-text-secondary">
+                                    Todavía no hay cortes cargados en este período.
+                                </p>
+                            ) : (
+                                <>
+                                    {/* Mobile: cards */}
+                                    <div className="space-y-2 md:hidden">
+                                        {porDia.map((dia) => (
+                                            <div
+                                                key={dia.date}
+                                                className="flex items-center justify-between gap-3 rounded-brand-md border border-brand-border bg-brand-surface p-4"
+                                            >
+                                                <p className="text-sm font-medium text-brand-text">
+                                                    {dayLabel(dia.date, dia.date === todayIso)}
+                                                </p>
+                                                <div className="text-right">
+                                                    <p className="text-sm font-semibold text-brand-text">${formatPrice(dia.total)}</p>
+                                                    <p className="text-xs text-brand-text-secondary">
+                                                        {dia.cantidad} {dia.cantidad === 1 ? 'corte' : 'cortes'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Desktop: tabla */}
+                                    <div className="hidden overflow-x-auto rounded-brand-md border border-brand-border bg-brand-surface md:block">
+                                        <table className="w-full min-w-[420px] text-left text-sm">
+                                            <thead className="text-xs uppercase tracking-wide text-brand-text-secondary">
+                                                <tr className="border-b border-brand-border-subtle">
+                                                    <th className="p-4 font-medium">Día</th>
+                                                    <th className="p-4 font-medium">Facturación</th>
+                                                    <th className="p-4 font-medium">Cortes</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-brand-border-subtle">
+                                                {porDia.map((dia) => (
+                                                    <tr key={dia.date} className="transition hover:bg-brand-surface-alt">
+                                                        <td className="p-4 font-medium text-brand-text">
+                                                            {dayLabel(dia.date, dia.date === todayIso)}
+                                                        </td>
+                                                        <td className="p-4 text-brand-text">${formatPrice(dia.total)}</td>
+                                                        <td className="p-4 text-brand-text-secondary">{dia.cantidad}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
                             )}
                         </section>
                     </div>

@@ -21,31 +21,44 @@ export function dayLabel(date, esHoy) {
     return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
-export default function DaySelector({ date, esHoy, url }) {
+// `onDark` estiliza para asentarse sobre una card oscura (uso original, panel
+// de barbero). Pasá `onDark={false}` para usarlo sobre el fondo claro del
+// panel (mismo lenguaje visual que MonthSelector), como en el dashboard owner.
+export default function DaySelector({ date, esHoy, url, onDark = true }) {
     function go(newDate) {
         router.get(url, { day: newDate }, { preserveState: true, preserveScroll: true, replace: true });
     }
 
+    const containerClass = onDark
+        ? 'inline-flex items-center gap-1 rounded-brand-pill bg-brand-primary/10 p-1'
+        : 'inline-flex items-center gap-1 rounded-brand-pill border border-brand-border bg-brand-surface p-1 shadow-brand-card';
+
+    const buttonClass = onDark
+        ? 'flex h-8 w-8 shrink-0 items-center justify-center rounded-brand-pill text-brand-nav-text transition hover:bg-brand-nav-text/10 hover:text-brand-nav-active'
+        : 'flex h-11 w-11 shrink-0 items-center justify-center rounded-brand-pill text-brand-text-secondary transition hover:bg-brand-primary-soft hover:text-brand-link';
+
+    const labelClass = onDark
+        ? 'min-w-[5rem] px-1 text-center text-sm font-semibold text-brand-nav-active'
+        : 'min-w-[8.5rem] px-1 text-center text-sm font-semibold text-brand-text';
+
     return (
-        <div className="inline-flex items-center gap-1 rounded-brand-pill bg-brand-primary/10 p-1">
+        <div className={containerClass}>
             <button
                 type="button"
                 onClick={() => go(shiftDay(date, -1))}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-brand-pill text-brand-nav-text transition hover:bg-brand-nav-text/10 hover:text-brand-nav-active"
+                className={buttonClass}
                 aria-label="Día anterior"
             >
                 &larr;
             </button>
 
-            <span className="min-w-[5rem] px-1 text-center text-sm font-semibold text-brand-nav-active">
-                {dayLabel(date, esHoy)}
-            </span>
+            <span className={labelClass}>{dayLabel(date, esHoy)}</span>
 
             <button
                 type="button"
                 onClick={() => go(shiftDay(date, 1))}
                 disabled={esHoy}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-brand-pill text-brand-nav-text transition hover:bg-brand-nav-text/10 hover:text-brand-nav-active disabled:pointer-events-none disabled:opacity-30"
+                className={`${buttonClass} disabled:pointer-events-none disabled:opacity-30`}
                 aria-label="Día siguiente"
             >
                 &rarr;

@@ -21,4 +21,33 @@ trait ResolvesPeriod
 
         return Carbon::now()->startOfMonth();
     }
+
+    /**
+     * Resuelve el rango activo (mes o día) para dashboards con vista dual.
+     * Con `?day=YYYY-MM-DD` presente delega en ResolvesDay::resolveDay() (la
+     * clase que use este método debe también `use ResolvesDay`); si no, cae a
+     * la resolución mensual de arriba. En ambos casos devuelve el mismo shape
+     * [mode, start, end] para que el resto del código arme sus queries con
+     * `whereBetween` sin distinguir mes de día.
+     */
+    protected function resolvePeriodRange(Request $request): object
+    {
+        if ($request->filled('day')) {
+            $dia = $this->resolveDay($request);
+
+            return (object) [
+                'mode' => 'day',
+                'start' => $dia->copy(),
+                'end' => $dia->copy()->endOfDay(),
+            ];
+        }
+
+        $inicio = $this->resolvePeriod($request);
+
+        return (object) [
+            'mode' => 'month',
+            'start' => $inicio,
+            'end' => $inicio->copy()->endOfMonth(),
+        ];
+    }
 }

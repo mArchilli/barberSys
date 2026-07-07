@@ -50,6 +50,21 @@ class FinanzasController extends Controller
             ->where('is_deleted_for_month', false)
             ->sum('amount');
 
+        // Solo días con al menos un corte cargado; no es un toggle de vista
+        // diaria (sueldos y gastos siguen siendo mensuales), es el desglose
+        // día a día de la facturación ya incluida en $totalFacturado.
+        $porDia = Corte::where('barberia_id', $barberia->id)
+            ->whereBetween('performed_at', [$inicio->toDateString(), $fin->toDateString()])
+            ->selectRaw('performed_at as date, SUM(price) as total, COUNT(*) as cantidad')
+            ->groupBy('performed_at')
+            ->orderByDesc('performed_at')
+            ->get()
+            ->map(fn ($fila) => [
+                'date' => $fila->date,
+                'total' => (float) $fila->total,
+                'cantidad' => (int) $fila->cantidad,
+            ]);
+
         $gastos = Gasto::where('barberia_id', $barberia->id)
             ->where('active', true)
             ->orderBy('name')
@@ -80,6 +95,7 @@ class FinanzasController extends Controller
             'neto'              => $totalFacturado - $totalSueldos - $totalGastos,
             'sueldosPorBarbero' => $sueldosPorBarbero,
             'gastos'            => $gastos,
+            'porDia'            => $porDia,
         ]);
     }
 }
