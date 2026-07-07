@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Barber;
 
+use App\Http\Controllers\Concerns\ResolvesDay;
 use App\Http\Controllers\Concerns\ResolvesPeriod;
 use App\Http\Controllers\Controller;
 use App\Models\Corte;
@@ -12,13 +13,14 @@ use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    use ResolvesPeriod;
+    use ResolvesPeriod, ResolvesDay;
 
     public function index(Request $request, ComisionCalculator $comisionCalculator): Response
     {
         $user = $request->user();
         $inicio = $this->resolvePeriod($request);
         $fin = $inicio->copy()->endOfMonth();
+        $dia = $this->resolveDay($request);
 
         // El Global Scope ya limita a la barbería del barbero; acá además
         // restringimos a sus propios cortes, nunca los de otros barberos.
@@ -35,7 +37,7 @@ class DashboardController extends Controller
             ->orderByDesc('total')
             ->get();
 
-        $cortesHoy = Corte::deHoyPorBarbero($user->id)
+        $cortesDia = Corte::deUnDiaPorBarbero($user->id, $dia)
             ->with(['servicio:id,name', 'cliente:id,name'])
             ->latest('id')
             ->get(['id', 'servicio_id', 'cliente_id', 'price', 'created_at']);
@@ -45,10 +47,12 @@ class DashboardController extends Controller
             'barberia' => ['name' => $user->barberia->name],
             'totalFacturado' => $totalFacturado,
             'totalCortes' => $totalCortes,
-            'hoy' => [
-                'totalFacturado' => (float) $cortesHoy->sum('price'),
-                'totalCortes' => $cortesHoy->count(),
-                'cortes' => $cortesHoy->map(fn ($corte) => [
+            'dia' => [
+                'date' => $dia->format('Y-m-d'),
+                'esHoy' => $dia->isToday(),
+                'totalFacturado' => (float) $cortesDia->sum('price'),
+                'totalCortes' => $cortesDia->count(),
+                'cortes' => $cortesDia->map(fn ($corte) => [
                     'id' => $corte->id,
                     'hora' => $corte->created_at->format('H:i'),
                     'cliente' => $corte->cliente->name,

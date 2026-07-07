@@ -93,10 +93,10 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
 
     return (
         <div className="grid gap-6 md:grid-cols-[1fr_320px]">
-            <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-brand-card">
+            <div className="overflow-hidden rounded-brand-xl border border-brand-border bg-brand-surface shadow-brand-card">
                 <div className="p-4 sm:p-6">
                     {flash?.success && (
-                        <div className="mb-4 rounded-xl border border-brand-success/30 bg-brand-success/10 p-4 text-sm text-brand-success">
+                        <div className="mb-4 rounded-brand-md border border-brand-success/30 bg-brand-success/10 p-4 text-sm text-brand-success">
                             {flash.success}
                         </div>
                     )}
@@ -149,7 +149,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                                 autoFocus
                             />
                             {showResults && clienteResults.length > 0 && (
-                                <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-md border border-brand-border bg-brand-surface shadow-brand-card">
+                                <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-brand-md border border-brand-border bg-brand-surface shadow-brand-card">
                                     {clienteResults.map((c) => (
                                         <li key={c.id}>
                                             <button
@@ -263,16 +263,16 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                 </div>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-brand-card">
-                <div className="border-b border-brand-border px-4 py-3">
-                    <h3 className="text-sm font-semibold text-brand-text">Hoy cargaste</h3>
+            <div className="overflow-hidden rounded-brand-xl border border-brand-border bg-brand-surface shadow-brand-card">
+                <div className="border-b border-brand-border-subtle px-4 py-3">
+                    <h3 className="font-display text-base font-bold text-brand-text">Hoy cargaste</h3>
                 </div>
                 {cortesHoy.length === 0 ? (
                     <p className="p-4 text-sm text-brand-text-secondary">
                         Todavía no cargaste ningún corte hoy.
                     </p>
                 ) : (
-                    <ul className="divide-y divide-brand-border">
+                    <ul className="divide-y divide-brand-border-subtle">
                         {cortesHoy.map((c) => (
                             <li key={c.id} className="px-4 py-3">
                                 <div className="flex items-center justify-between gap-2">

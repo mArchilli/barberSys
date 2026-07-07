@@ -1,3 +1,4 @@
+import DaySelector, { dayLabel } from '@/Components/DaySelector';
 import MonthSelector from '@/Components/MonthSelector';
 import RankingList from '@/Components/RankingList';
 import BarberLayout from '@/Layouts/BarberLayout';
@@ -7,9 +8,10 @@ function formatMoney(value) {
     return `$${Number(value).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-export default function Dashboard({ period, barberia, totalFacturado, totalCortes, hoy, porServicio, liquidacion }) {
+export default function Dashboard({ period, barberia, totalFacturado, totalCortes, dia, porServicio, liquidacion }) {
     const { auth } = usePage().props;
     const primerNombre = auth.user.name.split(' ')[0];
+    const etiquetaDia = dayLabel(dia.date, dia.esHoy);
 
     return (
         <BarberLayout>
@@ -22,12 +24,15 @@ export default function Dashboard({ period, barberia, totalFacturado, totalCorte
                 </div>
 
                 <div className="rounded-brand-xl bg-brand-nav-bg p-6 shadow-brand-floating">
-                    <p className="text-sm font-medium text-brand-nav-text">Hoy</p>
-                    <p className="mt-1 font-display text-3xl font-extrabold text-brand-nav-active">
-                        {formatMoney(hoy.totalFacturado)}
+                    <div className="flex items-center justify-between gap-3">
+                        <p className="text-sm font-medium text-brand-nav-text">{etiquetaDia}</p>
+                        <DaySelector date={dia.date} esHoy={dia.esHoy} url={route('barber.dashboard')} />
+                    </div>
+                    <p className="mt-3 font-display text-3xl font-extrabold text-brand-nav-active">
+                        {formatMoney(dia.totalFacturado)}
                     </p>
                     <p className="mt-1 text-sm text-brand-nav-text">
-                        {hoy.totalCortes} {hoy.totalCortes === 1 ? 'corte cargado' : 'cortes cargados'}
+                        {dia.totalCortes} {dia.totalCortes === 1 ? 'corte cargado' : 'cortes cargados'}
                     </p>
                 </div>
 
@@ -65,14 +70,16 @@ export default function Dashboard({ period, barberia, totalFacturado, totalCorte
                 </section>
 
                 <section className="space-y-3">
-                    <h2 className="font-display text-lg font-bold text-brand-text">Cortes de hoy</h2>
-                    {hoy.cortes.length === 0 ? (
+                    <h2 className="font-display text-lg font-bold text-brand-text">
+                        {dia.esHoy ? 'Cortes de hoy' : `Cortes · ${etiquetaDia}`}
+                    </h2>
+                    {dia.cortes.length === 0 ? (
                         <p className="rounded-brand-md border border-dashed border-brand-border bg-brand-surface-alt p-4 text-sm text-brand-text-secondary">
-                            Todavía no cargaste ningún corte hoy.
+                            {dia.esHoy ? 'Todavía no cargaste ningún corte hoy.' : 'No cargaste cortes ese día.'}
                         </p>
                     ) : (
                         <ul className="divide-y divide-brand-border-subtle overflow-hidden rounded-brand-md border border-brand-border bg-brand-surface">
-                            {hoy.cortes.map((corte) => (
+                            {dia.cortes.map((corte) => (
                                 <li key={corte.id} className="flex items-center justify-between gap-3 p-4">
                                     <div className="min-w-0">
                                         <p className="truncate text-sm font-medium text-brand-text">{corte.cliente}</p>

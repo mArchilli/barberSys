@@ -6,6 +6,7 @@ use App\Scopes\BelongsToBarberiaScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 class Corte extends Model
 {
@@ -34,10 +35,10 @@ class Corte extends Model
         static::addGlobalScope(new BelongsToBarberiaScope);
     }
 
-    public function scopeDeHoyPorBarbero($query, int $barberoId)
+    public function scopeDeUnDiaPorBarbero($query, int $barberoId, ?Carbon $dia = null)
     {
         return $query->where('barbero_id', $barberoId)
-            ->whereDate('performed_at', now()->toDateString());
+            ->whereDate('performed_at', ($dia ?? now())->toDateString());
     }
 
     public function barberia(): BelongsTo

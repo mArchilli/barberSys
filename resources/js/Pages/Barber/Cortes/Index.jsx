@@ -4,32 +4,26 @@ import { Head, Link } from '@inertiajs/react';
 
 export default function Index({ servicios, mediosPago, cortesHoy, routes }) {
     return (
-        <BarberLayout
-            header={
-                <div className="flex flex-col items-center gap-2 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
-                    <h2 className="text-2xl font-bold leading-tight text-brand-text sm:text-xl sm:font-semibold">
-                        Cargar corte
-                    </h2>
+        <BarberLayout>
+            <Head title="Cargar corte" />
+
+            <div className="mx-auto max-w-4xl space-y-6 px-4 pt-8 sm:px-6">
+                <div>
+                    <h1 className="font-display text-2xl font-bold text-brand-text">Cargar corte</h1>
                     <Link
                         href={route('barber.dashboard')}
-                        className="inline-flex min-h-[44px] items-center gap-1 text-sm font-medium text-brand-text-secondary hover:text-brand-text"
+                        className="text-sm font-medium text-brand-text-secondary hover:text-brand-text"
                     >
                         ← Volver al dashboard
                     </Link>
                 </div>
-            }
-        >
-            <Head title="Cargar corte" />
 
-            <div className="py-6 sm:py-12">
-                <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-                    <RegistroCorteForm
-                        servicios={servicios}
-                        mediosPago={mediosPago}
-                        cortesHoy={cortesHoy}
-                        routes={routes}
-                    />
-                </div>
+                <RegistroCorteForm
+                    servicios={servicios}
+                    mediosPago={mediosPago}
+                    cortesHoy={cortesHoy}
+                    routes={routes}
+                />
             </div>
         </BarberLayout>
     );
