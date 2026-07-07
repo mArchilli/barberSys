@@ -102,8 +102,8 @@ export default function PricingSection({
                     <span className="inline-flex rounded-brand-pill border border-brand-accent/20 bg-brand-accent/12 px-4 py-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-brand-accent">
                         Pricing claro
                     </span>
-                    <h2 className="mt-5 font-display text-3xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-4xl lg:text-5xl">
-                        Planes simples para negocios reales
+                    <h2 className="mt-5 font-display text-4xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-5xl lg:text-6xl">
+                        Tenemos el plan perfecto para tu barbería
                     </h2>
                     <p className="mt-5 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
                         Probá gratis y elegí el plan que mejor acompaña el tamaño
@@ -115,7 +115,6 @@ export default function PricingSection({
                 <div className="mt-14 grid gap-6 xl:grid-cols-4">
                     {plans.map(
                         ({
-                            tier,
                             name,
                             price,
                             cadence,
@@ -128,41 +127,29 @@ export default function PricingSection({
                             <article
                                 key={name}
                                 className={[
-                                    'relative flex h-full flex-col overflow-hidden rounded-brand-xl border p-7 shadow-brand-card transition-all duration-200 motion-reduce:transition-none',
+                                    'relative flex h-full min-h-[760px] flex-col overflow-hidden rounded-brand-xl border p-7 shadow-brand-card transition-all duration-200 hover:-translate-y-1 hover:shadow-brand-card-hover motion-reduce:transition-none motion-reduce:hover:transform-none',
                                     dark
                                         ? 'border-brand-nav-bg bg-brand-nav-bg text-brand-surface'
                                         : featured
-                                          ? 'border-brand-accent bg-brand-surface shadow-brand-floating lg:-translate-y-3'
-                                          : 'border-brand-border bg-brand-surface hover:-translate-y-1 hover:shadow-brand-card-hover motion-reduce:hover:transform-none',
+                                          ? 'border-brand-primary bg-brand-primary shadow-brand-floating'
+                                          : 'border-brand-border bg-brand-surface',
                                 ].join(' ')}
                             >
                                 {featured && (
-                                    <div className="absolute inset-x-0 top-0 h-1.5 bg-brand-accent" />
+                                    <div className="absolute inset-x-0 top-0 h-1.5 bg-brand-nav-bg" />
                                 )}
 
-                                <div className="flex items-start justify-between gap-4">
-                                    <span
+                                <div>
+                                    <h3
                                         className={[
-                                            'inline-flex rounded-brand-pill px-3.5 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.18em]',
+                                            'font-display text-[2rem] font-extrabold tracking-[-0.05em]',
                                             dark
-                                                ? 'bg-brand-surface/10 text-brand-surface'
-                                                : featured
-                                                  ? 'bg-brand-accent text-brand-dark'
-                                                  : 'bg-brand-primary-soft text-brand-primary-soft-text',
-                                        ].join(' ')}
-                                    >
-                                        {featured ? 'Recomendado' : tier}
-                                    </span>
-                                    <span
-                                        className={[
-                                            'rounded-brand-pill border px-3 py-1 text-xs font-semibold',
-                                            dark
-                                                ? 'border-brand-surface/15 text-brand-text-on-dark'
-                                                : 'border-brand-border text-brand-text-secondary',
+                                                ? 'text-brand-surface'
+                                                : 'text-brand-text',
                                         ].join(' ')}
                                     >
                                         {name}
-                                    </span>
+                                    </h3>
                                 </div>
 
                                 <div className="mt-7">
@@ -176,7 +163,9 @@ export default function PricingSection({
                                                     'pb-2 text-sm font-medium',
                                                     dark
                                                         ? 'text-brand-text-on-dark'
-                                                        : 'text-brand-text-secondary',
+                                                        : featured
+                                                          ? 'text-brand-text/70'
+                                                          : 'text-brand-text-secondary',
                                                 ].join(' ')}
                                             >
                                                 {cadence}
@@ -188,11 +177,34 @@ export default function PricingSection({
                                             'mt-4 text-sm leading-6',
                                             dark
                                                 ? 'text-brand-text-on-dark'
-                                                : 'text-brand-text-secondary',
+                                                : featured
+                                                  ? 'text-brand-text/80'
+                                                  : 'text-brand-text-secondary',
                                         ].join(' ')}
                                     >
                                         {description}
                                     </p>
+                                </div>
+
+                                <div className="mt-8">
+                                    <PricingAction
+                                        href={cta.href}
+                                        inertia={cta.inertia}
+                                        className={[
+                                            'inline-flex min-h-[48px] w-full items-center justify-center rounded-brand-pill px-6 text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none',
+                                            dark
+                                                ? 'bg-brand-primary text-brand-on-primary hover:-translate-y-0.5 hover:bg-brand-primary-hover focus-visible:ring-brand-primary focus-visible:ring-offset-brand-nav-bg'
+                                                : featured
+                                                  ? 'bg-brand-nav-bg text-brand-text-on-dark hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:ring-brand-nav-bg'
+                                                  : 'border border-brand-border bg-brand-surface text-brand-text hover:-translate-y-0.5 hover:border-brand-primary-muted hover:bg-brand-bg focus-visible:ring-brand-primary',
+                                        ].join(' ')}
+                                    >
+                                        <span>{dark ? 'Hablar con ventas' : cta.label}</span>
+                                        <IconArrowRight
+                                            className="ml-2 h-4 w-4"
+                                            stroke={2.3}
+                                        />
+                                    </PricingAction>
                                 </div>
 
                                 <div
@@ -201,7 +213,7 @@ export default function PricingSection({
                                         dark
                                             ? 'border-brand-surface/10 bg-brand-surface/5'
                                             : featured
-                                              ? 'border-brand-accent/20 bg-brand-accent/10'
+                                              ? 'border-brand-text/10 bg-brand-surface/25'
                                               : 'border-brand-border-subtle bg-brand-surface-alt/70',
                                     ].join(' ')}
                                 >
@@ -210,7 +222,9 @@ export default function PricingSection({
                                             'text-[0.68rem] font-bold uppercase tracking-[0.18em]',
                                             dark
                                                 ? 'text-brand-text-on-dark'
-                                                : 'text-brand-text-secondary',
+                                                : featured
+                                                  ? 'text-brand-text/70'
+                                                  : 'text-brand-text-secondary',
                                         ].join(' ')}
                                     >
                                         Ideal para
@@ -223,7 +237,9 @@ export default function PricingSection({
                                                     'inline-flex rounded-brand-pill px-3 py-1.5 text-xs font-semibold',
                                                     dark
                                                         ? 'bg-brand-surface/10 text-brand-surface'
-                                                        : 'bg-brand-surface text-brand-text-secondary',
+                                                        : featured
+                                                          ? 'bg-brand-surface/40 text-brand-text'
+                                                          : 'bg-brand-surface text-brand-text-secondary',
                                                 ].join(' ')}
                                             >
                                                 {detail}
@@ -241,11 +257,7 @@ export default function PricingSection({
                                             <span
                                                 className={[
                                                     'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full',
-                                                    dark
-                                                        ? 'bg-brand-surface/10 text-brand-surface'
-                                                        : featured
-                                                          ? 'bg-brand-primary-soft text-brand-primary-soft-text'
-                                                          : 'bg-brand-primary-soft text-brand-primary-soft-text',
+                                                    'bg-brand-secondary text-brand-primary-soft',
                                                 ].join(' ')}
                                             >
                                                 <IconCheck
@@ -257,7 +269,9 @@ export default function PricingSection({
                                                 className={
                                                     dark
                                                         ? 'text-brand-surface'
-                                                        : 'text-brand-text-secondary'
+                                                        : featured
+                                                          ? 'text-brand-text/85'
+                                                          : 'text-brand-text-secondary'
                                                 }
                                             >
                                                 {feature}
@@ -265,27 +279,6 @@ export default function PricingSection({
                                         </li>
                                     ))}
                                 </ul>
-
-                                <div className="mt-8">
-                                    <PricingAction
-                                        href={cta.href}
-                                        inertia={cta.inertia}
-                                        className={[
-                                            'inline-flex min-h-[48px] w-full items-center justify-center rounded-brand-pill px-6 text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none',
-                                            dark
-                                                ? 'bg-brand-surface text-brand-text hover:-translate-y-0.5 hover:bg-brand-bg focus-visible:ring-brand-surface'
-                                                : featured
-                                                  ? 'bg-brand-accent text-brand-dark shadow-brand-card hover:-translate-y-0.5 hover:bg-brand-accent/85 focus-visible:ring-brand-accent'
-                                                  : 'border border-brand-border bg-brand-surface text-brand-text hover:-translate-y-0.5 hover:border-brand-primary-muted hover:bg-brand-bg focus-visible:ring-brand-primary',
-                                        ].join(' ')}
-                                    >
-                                        <span>{dark ? 'Hablar con ventas' : cta.label}</span>
-                                        <IconArrowRight
-                                            className="ml-2 h-4 w-4"
-                                            stroke={2.3}
-                                        />
-                                    </PricingAction>
-                                </div>
                             </article>
                         ),
                     )}

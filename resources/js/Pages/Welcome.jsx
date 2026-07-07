@@ -69,16 +69,16 @@ export default function Welcome({ auth, canLogin, canRegister }) {
                         inertia: ctaHref !== '#',
                     }}
                 />
-                <FeaturesSection
+                <StepSection
                     cta={{
-                        label: 'Configurar cadena',
+                        label: 'Empezar ahora',
                         href: ctaHref,
                         inertia: ctaHref !== '#',
                     }}
                 />
-                <StepSection
+                <FeaturesSection
                     cta={{
-                        label: 'Empezar ahora',
+                        label: 'Configurar cadena',
                         href: ctaHref,
                         inertia: ctaHref !== '#',
                     }}
