@@ -72,8 +72,8 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
                     className={[
                         'flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-all duration-200 motion-reduce:transition-none',
                         isOpen
-                            ? 'border-brand-primary bg-brand-primary-soft text-brand-primary-soft-text'
-                            : 'border-brand-border bg-brand-surface-alt text-brand-text-secondary',
+                            ? 'border-brand-primary bg-brand-primary-soft text-brand-primary'
+                            : 'border-brand-border bg-brand-surface-alt text-brand-primary',
                     ].join(' ')}
                 >
                     <IconChevronDown

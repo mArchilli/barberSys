@@ -8,6 +8,8 @@ export default function CTASection({
 }) {
     const ctaButtonClasses =
         'inline-flex min-h-[52px] items-center justify-center rounded-brand-pill bg-brand-primary px-7 text-sm font-bold text-brand-on-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-surface focus-visible:ring-offset-2 focus-visible:ring-offset-brand-nav-bg motion-reduce:transform-none motion-reduce:transition-none';
+    const trialNote =
+        'Sin poner tu tarjeta de credito. Al vencerse el plazo gratuito te damos la opcion de mantenerlo o darte de baja sin ningun compromiso.';
 
     return (
         <section className="px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12">
@@ -26,12 +28,15 @@ export default function CTASection({
                                     probalo gratis 2 semanas.
                                 </h2>
 
-                                <div className="mt-8 hidden lg:mt-auto lg:flex lg:pt-8">
+                                <div className="mt-8 hidden lg:mt-auto lg:block lg:pt-8">
+                                    <p className="max-w-xl text-sm leading-7 text-brand-text-on-dark">
+                                        {trialNote}
+                                    </p>
                                     <a
                                         href={cta.href}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className={ctaButtonClasses}
+                                        className={`${ctaButtonClasses} mt-4`}
                                     >
                                         <IconBrandWhatsapp
                                             className="mr-2 h-5 w-5"
@@ -59,7 +64,10 @@ export default function CTASection({
                             </div>
                         </div>
 
-                        <div className="flex lg:hidden">
+                        <div className="lg:hidden">
+                            <p className="mb-4 max-w-xl text-sm leading-7 text-brand-text-on-dark">
+                                {trialNote}
+                            </p>
                             <a
                                 href={cta.href}
                                 target="_blank"
