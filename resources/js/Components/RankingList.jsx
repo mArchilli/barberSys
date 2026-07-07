@@ -52,7 +52,14 @@ export default function RankingList({ items, emptyLabel, hrefFor, unitLabel = 'c
                                     >
                                         {avatars ? initials(item.name) : index + 1}
                                     </span>
-                                    <span className="truncate text-sm font-medium text-brand-text">{item.name}</span>
+                                    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1">
+                                        <span className="truncate text-sm font-medium text-brand-text">{item.name}</span>
+                                        {item.badge && (
+                                            <span className="inline-flex shrink-0 items-center rounded-brand-pill bg-brand-surface-alt px-2 py-0.5 text-xs font-medium text-brand-text-secondary">
+                                                {item.badge}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className="shrink-0 text-right">
                                     <p className="text-sm font-semibold text-brand-text">${formatPrice(item.total)}</p>

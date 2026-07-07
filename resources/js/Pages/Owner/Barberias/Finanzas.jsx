@@ -1,24 +1,34 @@
 import { dayLabel } from '@/Components/DaySelector';
+import DangerButton from '@/Components/DangerButton';
 import MetricCard from '@/Components/MetricCard';
 import MobileMenuButton from '@/Components/MobileMenuButton';
+import Modal from '@/Components/Modal';
 import MonthSelector from '@/Components/MonthSelector';
 import RankingList from '@/Components/RankingList';
+import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { IconEdit } from '@tabler/icons-react';
-
-function monthLabel(month) {
-    const [year, m] = month.split('-').map(Number);
-    return new Date(year, m - 1, 1).toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
-}
+import { IconAlertTriangle, IconBan, IconEdit, IconWallet } from '@tabler/icons-react';
+import { useState } from 'react';
 
 function formatPrice(value) {
     return Number(value).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+function sueldoBadge(item) {
+    if (item.salary_type === 'fixed') {
+        return `Fijo $${formatPrice(item.salary_amount)}`;
+    }
+    if (item.salary_type === 'commission') {
+        return `Comisión ${item.commission_pct}%`;
+    }
+    return null;
+}
+
 function GastoRow({ gasto, barbId }) {
     const registro = gasto.registro;
+    const [confirmingBaja, setConfirmingBaja] = useState(false);
 
     const { data, setData, patch, processing } = useForm({
         amount: registro ? String(registro.amount) : '',
@@ -35,8 +45,11 @@ function GastoRow({ gasto, barbId }) {
     }
 
     function darDeBajaRecurrencia() {
-        if (! confirm(`¿Dar de baja "${gasto.name}"? Deja de generarse a partir del próximo mes. Los registros ya generados no se modifican.`)) return;
-        router.patch(route('owner.barberias.gastos.deactivate', { barberia: barbId, gasto: gasto.id }));
+        router.patch(
+            route('owner.barberias.gastos.deactivate', { barberia: barbId, gasto: gasto.id }),
+            {},
+            { onFinish: () => setConfirmingBaja(false) },
+        );
     }
 
     const huboCambio = registro && data.amount !== String(registro.amount);
@@ -73,11 +86,6 @@ function GastoRow({ gasto, barbId }) {
                             onWheel={(e) => e.target.blur()}
                             className="h-9 w-28 text-sm"
                         />
-                        {data.amount !== '' && !isNaN(Number(data.amount)) && (
-                            <span className="text-xs text-brand-text-secondary">
-                                = ${formatPrice(data.amount)} (pesos)
-                            </span>
-                        )}
                         {huboCambio && (
                             <button
                                 type="submit"
@@ -102,7 +110,7 @@ function GastoRow({ gasto, barbId }) {
                 )}
             </div>
 
-            <div className="flex shrink-0 items-center gap-1 self-end sm:self-auto">
+            <div className="flex shrink-0 items-center gap-2 self-end border-t border-brand-border-subtle pt-3 sm:self-auto sm:border-t-0 sm:pt-0">
                 <Link
                     href={route('owner.barberias.gastos.edit', { barberia: barbId, gasto: gasto.id })}
                     aria-label={`Editar plantilla de ${gasto.name}`}
@@ -113,12 +121,41 @@ function GastoRow({ gasto, barbId }) {
                 </Link>
                 <button
                     type="button"
-                    onClick={darDeBajaRecurrencia}
-                    className="min-h-[44px] rounded-md px-2 text-xs font-medium text-brand-danger transition hover:bg-brand-danger-soft"
+                    onClick={() => setConfirmingBaja(true)}
+                    aria-label={`Dar de baja ${gasto.name}`}
+                    className="flex min-h-[44px] items-center gap-1.5 rounded-md border border-brand-danger-soft px-3 text-xs font-medium text-brand-danger transition hover:bg-brand-danger-soft"
                 >
+                    <IconBan size={14} />
                     Dar de baja
                 </button>
             </div>
+
+            <Modal show={confirmingBaja} onClose={() => setConfirmingBaja(false)}>
+                <div className="p-6">
+                    <div className="flex items-start gap-3">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-danger-soft text-brand-danger">
+                            <IconAlertTriangle size={20} stroke={1.75} />
+                        </span>
+                        <div>
+                            <h2 className="font-display text-lg font-bold text-brand-text">
+                                ¿Dar de baja &ldquo;{gasto.name}&rdquo;?
+                            </h2>
+                            <p className="mt-1 text-sm text-brand-text-secondary">
+                                Deja de generarse a partir del próximo mes. Los registros ya generados no se modifican.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 flex justify-end gap-3">
+                        <SecondaryButton onClick={() => setConfirmingBaja(false)}>
+                            Cancelar
+                        </SecondaryButton>
+                        <DangerButton onClick={darDeBajaRecurrencia}>
+                            Dar de baja
+                        </DangerButton>
+                    </div>
+                </div>
+            </Modal>
         </li>
     );
 }
@@ -128,12 +165,14 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
     const barbId = currentBarberia?.id;
     const todayIso = new Date().toLocaleDateString('sv-SE');
 
+    const sueldosItems = sueldosPorBarbero.map((s) => ({ ...s, badge: sueldoBadge(s) }));
+
     return (
         <AuthenticatedLayout
             header={({ onOpenMobileMenu }) => (
                 <div className="flex items-center justify-between gap-3">
                     <h2 className="min-w-0 flex-1 truncate text-xl font-semibold leading-tight text-brand-text">
-                        Finanzas — {currentBarberia?.name}
+                        Finanzas
                     </h2>
                     <MobileMenuButton onClick={onOpenMobileMenu} />
                 </div>
@@ -143,8 +182,7 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
 
             <div className="py-6 sm:py-12">
                 <div className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-                    <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-sm capitalize text-brand-text-secondary">{monthLabel(period.month)}</p>
+                    <div className="flex justify-center sm:justify-end">
                         <MonthSelector month={period.month} url={route('owner.barberias.finanzas', barbId)} fullWidth />
                     </div>
 
@@ -154,13 +192,46 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
                         </div>
                     )}
 
-                    <MetricCard
-                        label="Neto del período"
-                        value={`${neto < 0 ? '-' : ''}$${formatPrice(Math.abs(neto))}`}
-                        tone={neto < 0 ? 'danger' : 'success'}
-                    />
+                    <div className="rounded-brand-xl bg-brand-nav-bg p-6 shadow-brand-floating">
+                        <div className="flex items-center gap-4">
+                            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-primary/20 text-brand-nav-active">
+                                <IconWallet size={24} stroke={1.75} />
+                            </span>
+                            <div className="min-w-0">
+                                <p className="text-sm text-brand-text-on-dark">Neto del período</p>
+                                <p className={`truncate font-display text-3xl font-bold sm:text-4xl ${neto < 0 ? 'text-brand-danger' : 'text-brand-success'}`}>
+                                    {`${neto < 0 ? '-' : ''}$${formatPrice(Math.abs(neto))}`}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div className="grid gap-4 sm:grid-cols-3">
+                    {/* Mobile: card consolidada de 3 columnas */}
+                    <div className="rounded-brand-xl border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:hidden">
+                        <div className="grid grid-cols-3 divide-x divide-brand-border-subtle">
+                            <div className="pr-3">
+                                <p className="text-[11px] font-medium uppercase tracking-wide text-brand-text-secondary">
+                                    Facturación
+                                </p>
+                                <p className="mt-1 truncate text-lg font-bold text-brand-text">${formatPrice(totalFacturado)}</p>
+                            </div>
+                            <div className="px-3">
+                                <p className="text-[11px] font-medium uppercase tracking-wide text-brand-text-secondary">
+                                    Sueldos
+                                </p>
+                                <p className="mt-1 truncate text-lg font-bold text-brand-text">${formatPrice(totalSueldos)}</p>
+                            </div>
+                            <div className="pl-3">
+                                <p className="text-[11px] font-medium uppercase tracking-wide text-brand-text-secondary">
+                                    Gastos
+                                </p>
+                                <p className="mt-1 truncate text-lg font-bold text-brand-text">${formatPrice(totalGastos)}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Desktop: cards individuales */}
+                    <div className="hidden gap-4 sm:grid sm:grid-cols-3">
                         <MetricCard label="Facturación" value={`$${formatPrice(totalFacturado)}`} />
                         <MetricCard label="Sueldos" value={`$${formatPrice(totalSueldos)}`} />
                         <MetricCard label="Gastos" value={`$${formatPrice(totalGastos)}`} />
@@ -170,7 +241,7 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
                         <section className="space-y-3">
                             <h3 className="font-display text-lg font-bold text-brand-text">Sueldos por barbero</h3>
                             <RankingList
-                                items={sueldosPorBarbero}
+                                items={sueldosItems}
                                 emptyLabel="Todavía no hay barberos activos en esta barbería."
                             />
                         </section>

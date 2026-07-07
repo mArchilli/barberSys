@@ -38,12 +38,20 @@ class FinanzasController extends Controller
             ->get();
 
         $sueldosPorBarbero = $barberos->map(fn ($barbero) => [
-            'id'    => $barbero->id,
-            'name'  => $barbero->name,
-            'total' => $comisionCalculator->calcular($barbero, $inicio, $fin),
+            'id'             => $barbero->id,
+            'name'           => $barbero->name,
+            'total'          => $comisionCalculator->calcular($barbero, $inicio, $fin),
+            'salary_type'    => $barbero->salary_type,
+            'salary_amount'  => $barbero->salary_amount !== null ? (float) $barbero->salary_amount : null,
+            'commission_pct' => $barbero->commission_pct !== null ? (float) $barbero->commission_pct : null,
         ])->sortByDesc('total')->values();
 
         $totalSueldos = (float) $sueldosPorBarbero->sum('total');
+
+        $sueldosPorBarbero = $sueldosPorBarbero->map(fn ($fila) => [
+            ...$fila,
+            'pct' => $totalSueldos > 0 ? round(($fila['total'] / $totalSueldos) * 100, 1) : 0,
+        ]);
 
         $totalGastos = (float) GastoRegistro::where('barberia_id', $barberia->id)
             ->where('month', $inicio->toDateString())
