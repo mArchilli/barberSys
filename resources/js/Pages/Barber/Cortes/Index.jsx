@@ -1,10 +1,10 @@
 import RegistroCorteForm from '@/Components/Cortes/RegistroCorteForm';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import BarberLayout from '@/Layouts/BarberLayout';
 import { Head, Link } from '@inertiajs/react';
 
 export default function Index({ servicios, mediosPago, cortesHoy, routes }) {
     return (
-        <AuthenticatedLayout
+        <BarberLayout
             header={
                 <div className="flex flex-col items-center gap-2 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
                     <h2 className="text-2xl font-bold leading-tight text-brand-text sm:text-xl sm:font-semibold">
@@ -31,6 +31,6 @@ export default function Index({ servicios, mediosPago, cortesHoy, routes }) {
                     />
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </BarberLayout>
     );
 }

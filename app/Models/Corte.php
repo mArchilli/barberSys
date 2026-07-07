@@ -34,6 +34,12 @@ class Corte extends Model
         static::addGlobalScope(new BelongsToBarberiaScope);
     }
 
+    public function scopeDeHoyPorBarbero($query, int $barberoId)
+    {
+        return $query->where('barbero_id', $barberoId)
+            ->whereDate('performed_at', now()->toDateString());
+    }
+
     public function barberia(): BelongsTo
     {
         return $this->belongsTo(Barberia::class);

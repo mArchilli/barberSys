@@ -35,10 +35,27 @@ class DashboardController extends Controller
             ->orderByDesc('total')
             ->get();
 
+        $cortesHoy = Corte::deHoyPorBarbero($user->id)
+            ->with(['servicio:id,name', 'cliente:id,name'])
+            ->latest('id')
+            ->get(['id', 'servicio_id', 'cliente_id', 'price', 'created_at']);
+
         return Inertia::render('Barber/Dashboard', [
             'period' => ['month' => $inicio->format('Y-m')],
+            'barberia' => ['name' => $user->barberia->name],
             'totalFacturado' => $totalFacturado,
             'totalCortes' => $totalCortes,
+            'hoy' => [
+                'totalFacturado' => (float) $cortesHoy->sum('price'),
+                'totalCortes' => $cortesHoy->count(),
+                'cortes' => $cortesHoy->map(fn ($corte) => [
+                    'id' => $corte->id,
+                    'hora' => $corte->created_at->format('H:i'),
+                    'cliente' => $corte->cliente->name,
+                    'servicio' => $corte->servicio->name,
+                    'price' => (float) $corte->price,
+                ]),
+            ],
             'porServicio' => $porServicio->map(fn ($fila) => [
                 'id' => $fila->id,
                 'name' => $fila->name,

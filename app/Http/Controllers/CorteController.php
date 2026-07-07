@@ -34,8 +34,7 @@ class CorteController extends Controller
             ->get(['id', 'name']);
 
         $cortesHoy = Corte::where('barberia_id', $barberia->id)
-            ->where('barbero_id', $user->id)
-            ->whereDate('performed_at', now()->toDateString())
+            ->deHoyPorBarbero($user->id)
             ->with(['servicio:id,name', 'cliente:id,name', 'medioPago:id,name'])
             ->latest('id')
             ->get(['id', 'servicio_id', 'cliente_id', 'medio_pago_id', 'price', 'performed_at']);

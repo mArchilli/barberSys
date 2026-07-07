@@ -45,6 +45,10 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // La baja de un barbero es una acción de gestión del owner, no una
+        // autogestión del propio barbero.
+        abort_if($request->user()->isBarber(), 403);
+
         $request->validate([
             'password' => ['required', 'current_password'],
         ]);
