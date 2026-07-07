@@ -1,6 +1,6 @@
+import MobileMenuButton from '@/Components/MobileMenuButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { IconEdit, IconKey, IconUserX } from '@tabler/icons-react';
 import { useState } from 'react';
 
 function initials(name) {
@@ -30,19 +30,6 @@ function SalaryBadge({ barbero }) {
     );
 }
 
-function ActionButton({ onClick, label, icon: Icon, colorClass }) {
-    return (
-        <button
-            onClick={onClick}
-            aria-label={label}
-            title={label}
-            className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 transition hover:bg-brand-bg ${colorClass}`}
-        >
-            <Icon size={16} />
-        </button>
-    );
-}
-
 export default function Index({ barberos, planLimit }) {
     const { flash, currentBarberia } = usePage().props;
     const credentialFlash = flash.newBarbero || flash.resetPassword;
@@ -50,25 +37,18 @@ export default function Index({ barberos, planLimit }) {
 
     const barbId = currentBarberia?.id;
 
-    function handleResetPassword(barbero) {
-        if (! confirm(`¿Resetear la contraseña de ${barbero.name}? Se generará una nueva contraseña aleatoria y el barbero deberá cambiarla al ingresar.`)) return;
-        router.patch(route('owner.barberias.barberos.resetPassword', { barberia: barbId, barbero: barbero.id }));
-    }
-
-    function handleDeactivate(barbero) {
-        if (! confirm(`¿Dar de baja a ${barbero.name}? Su cuenta quedará inactiva.`)) return;
-        router.patch(route('owner.barberias.barberos.deactivate', { barberia: barbId, barbero: barbero.id }));
-    }
-
     const atLimit = planLimit.max !== null && planLimit.totalOwner >= planLimit.max;
 
     return (
         <AuthenticatedLayout
-            header={
+            header={({ onOpenMobileMenu }) => (
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <h2 className="text-xl font-semibold leading-tight text-brand-text">
-                        Barberos
-                    </h2>
+                    <div className="flex items-center justify-between gap-3">
+                        <h2 className="text-xl font-semibold leading-tight text-brand-text">
+                            Barberos
+                        </h2>
+                        <MobileMenuButton onClick={onOpenMobileMenu} />
+                    </div>
                     <Link
                         href={route('owner.barberias.barberos.create', { barberia: barbId })}
                         className={`inline-flex items-center justify-center rounded-xl px-4 py-3 text-sm font-medium text-brand-on-primary shadow-sm transition sm:py-2 ${
@@ -81,7 +61,7 @@ export default function Index({ barberos, planLimit }) {
                         + Nuevo barbero
                     </Link>
                 </div>
-            }
+            )}
         >
             <Head title="Barberos" />
 
@@ -116,115 +96,103 @@ export default function Index({ barberos, planLimit }) {
                         </div>
                     )}
 
-                    <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-brand-card">
-
-                        {/* Contador de plan */}
-                        <div className="border-b border-brand-border px-4 py-4 sm:px-6">
-                            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                                <div className="text-sm text-brand-text-secondary">
-                                    Barberos en esta barbería:{' '}
-                                    <span className="font-semibold text-brand-text">{planLimit.inBarberia}</span>
-                                </div>
-                                <div className="text-sm text-brand-text-secondary">
-                                    Total del plan:{' '}
-                                    <span className={`font-semibold ${atLimit ? 'text-brand-danger' : 'text-brand-text'}`}>
-                                        {planLimit.totalOwner}
-                                        {planLimit.max !== null ? `/${planLimit.max}` : ''}
-                                    </span>
-                                    {planLimit.max !== null && (
-                                        <span className="ml-1 text-xs text-brand-text-secondary">(todas tus barberías)</span>
-                                    )}
-                                    {planLimit.max === null && (
-                                        <span className="ml-1 text-xs font-normal text-brand-text-secondary">sin límite</span>
-                                    )}
-                                </div>
+                    {/* Contador de plan */}
+                    <div className="rounded-xl border border-brand-border bg-brand-surface px-4 py-4 shadow-brand-card sm:px-6">
+                        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="text-sm text-brand-text-secondary">
+                                Barberos en esta barbería:{' '}
+                                <span className="font-semibold text-brand-text">{planLimit.inBarberia}</span>
                             </div>
-                            {planLimit.max !== null && (
-                                <>
-                                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-brand-primary-soft">
-                                        <div
-                                            className={`h-1.5 rounded-full transition-all ${atLimit ? 'bg-brand-danger' : 'bg-brand-primary'}`}
-                                            style={{ width: `${Math.min(100, (planLimit.totalOwner / planLimit.max) * 100)}%` }}
-                                        />
-                                    </div>
-                                    {atLimit && (
-                                        <p className="mt-1.5 text-xs text-brand-danger">
-                                            Alcanzaste el límite de tu plan — actualizá tu plan para agregar más barberos
-                                        </p>
-                                    )}
-                                </>
-                            )}
-                        </div>
-
-                        {barberos.length === 0 ? (
-                            <div className="p-8 text-center text-brand-text-secondary">
-                                Todavía no hay barberos en esta barbería.{' '}
-                                {! atLimit && (
-                                    <Link
-                                        href={route('owner.barberias.barberos.create', { barberia: barbId })}
-                                        className="text-brand-link hover:underline"
-                                    >
-                                        Crear el primero
-                                    </Link>
+                            <div className="text-sm text-brand-text-secondary">
+                                Total del plan:{' '}
+                                <span className={`font-semibold ${atLimit ? 'text-brand-danger' : 'text-brand-text'}`}>
+                                    {planLimit.totalOwner}
+                                    {planLimit.max !== null ? `/${planLimit.max}` : ''}
+                                </span>
+                                {planLimit.max !== null && (
+                                    <span className="ml-1 text-xs text-brand-text-secondary">(todas tus barberías)</span>
+                                )}
+                                {planLimit.max === null && (
+                                    <span className="ml-1 text-xs font-normal text-brand-text-secondary">sin límite</span>
                                 )}
                             </div>
-                        ) : (
+                        </div>
+                        {planLimit.max !== null && (
                             <>
-                                {/* ── Mobile: cards ── */}
-                                <ul className="divide-y divide-brand-border md:hidden">
-                                    {barberos.map((b) => (
-                                        <li key={b.id} className="px-4 py-4">
-                                            <div className="flex items-start gap-3">
-                                                <Avatar name={b.name} />
-                                                <div className="min-w-0 flex-1">
-                                                    <p className="truncate font-medium text-brand-text">{b.name}</p>
-                                                    <div className="mt-1.5">
-                                                        <SalaryBadge barbero={b} />
-                                                    </div>
-                                                </div>
-                                                <Link
-                                                    href={route('owner.barberias.barberos.edit', { barberia: barbId, barbero: b.id })}
-                                                    aria-label={`Editar ${b.name}`}
-                                                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-link transition hover:bg-brand-primary-soft"
-                                                >
-                                                    <IconEdit size={16} />
-                                                </Link>
-                                            </div>
-                                            <div className="mt-3 flex gap-1 border-t border-brand-border pt-3">
-                                                <ActionButton
-                                                    onClick={() => handleResetPassword(b)}
-                                                    label={`Resetear contraseña de ${b.name}`}
-                                                    icon={IconKey}
-                                                    colorClass="text-brand-text-secondary"
-                                                />
-                                                <ActionButton
-                                                    onClick={() => handleDeactivate(b)}
-                                                    label={`Dar de baja a ${b.name}`}
-                                                    icon={IconUserX}
-                                                    colorClass="text-brand-danger"
-                                                />
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
+                                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-brand-primary-soft">
+                                    <div
+                                        className={`h-1.5 rounded-full transition-all ${atLimit ? 'bg-brand-danger' : 'bg-brand-primary'}`}
+                                        style={{ width: `${Math.min(100, (planLimit.totalOwner / planLimit.max) * 100)}%` }}
+                                    />
+                                </div>
+                                {atLimit && (
+                                    <p className="mt-1.5 text-xs text-brand-danger">
+                                        Alcanzaste el límite de tu plan — actualizá tu plan para agregar más barberos
+                                    </p>
+                                )}
+                            </>
+                        )}
+                    </div>
 
-                                {/* ── Desktop: tabla ── */}
-                                <table className="hidden w-full text-left text-sm md:table">
+                    {barberos.length === 0 ? (
+                        <div className="rounded-xl border border-brand-border bg-brand-surface p-8 text-center text-brand-text-secondary shadow-brand-card">
+                            Todavía no hay barberos en esta barbería.{' '}
+                            {! atLimit && (
+                                <Link
+                                    href={route('owner.barberias.barberos.create', { barberia: barbId })}
+                                    className="text-brand-link hover:underline"
+                                >
+                                    Crear el primero
+                                </Link>
+                            )}
+                        </div>
+                    ) : (
+                        <>
+                            {/* ── Mobile: cards ── */}
+                            <div className="grid gap-4 sm:grid-cols-2 md:hidden">
+                                {barberos.map((b) => (
+                                    <Link
+                                        key={b.id}
+                                        href={route('owner.barberias.barberos.show', { barberia: barbId, barbero: b.id })}
+                                        className="flex items-center gap-3 rounded-brand-lg border border-brand-border bg-brand-surface p-5 shadow-brand-card transition hover:shadow-brand-card-hover"
+                                    >
+                                        <Avatar name={b.name} />
+                                        <div className="min-w-0 flex-1">
+                                            <p className="truncate font-semibold text-brand-text">{b.name}</p>
+                                            <div className="mt-1.5">
+                                                <SalaryBadge barbero={b} />
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+
+                            {/* ── Desktop: tabla ── */}
+                            <div className="hidden overflow-hidden rounded-xl border border-brand-border bg-brand-surface shadow-brand-card md:block">
+                                <table className="w-full text-left text-sm">
                                     <thead className="bg-brand-bg text-xs uppercase text-brand-text-secondary">
                                         <tr>
                                             <th className="px-6 py-3">Nombre</th>
                                             <th className="px-6 py-3">Contacto</th>
                                             <th className="px-6 py-3">Sueldo</th>
-                                            <th className="px-6 py-3 text-right">Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-brand-border">
                                         {barberos.map((b) => (
-                                            <tr key={b.id} className="hover:bg-brand-bg">
+                                            <tr
+                                                key={b.id}
+                                                onClick={() => router.visit(route('owner.barberias.barberos.show', { barberia: barbId, barbero: b.id }))}
+                                                className="cursor-pointer hover:bg-brand-bg"
+                                            >
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-3">
                                                         <Avatar name={b.name} />
-                                                        <span className="font-medium text-brand-text">{b.name}</span>
+                                                        <Link
+                                                            href={route('owner.barberias.barberos.show', { barberia: barbId, barbero: b.id })}
+                                                            className="font-medium text-brand-text hover:text-brand-link hover:underline"
+                                                        >
+                                                            {b.name}
+                                                        </Link>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4">
@@ -236,36 +204,13 @@ export default function Index({ barberos, planLimit }) {
                                                 <td className="px-6 py-4">
                                                     <SalaryBadge barbero={b} />
                                                 </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center justify-end gap-1">
-                                                        <Link
-                                                            href={route('owner.barberias.barberos.edit', { barberia: barbId, barbero: b.id })}
-                                                            aria-label={`Editar ${b.name}`}
-                                                            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-brand-link transition hover:bg-brand-primary-soft"
-                                                        >
-                                                            <IconEdit size={16} />
-                                                        </Link>
-                                                        <ActionButton
-                                                            onClick={() => handleResetPassword(b)}
-                                                            label={`Resetear contraseña de ${b.name}`}
-                                                            icon={IconKey}
-                                                            colorClass="text-brand-text-secondary"
-                                                        />
-                                                        <ActionButton
-                                                            onClick={() => handleDeactivate(b)}
-                                                            label={`Dar de baja a ${b.name}`}
-                                                            icon={IconUserX}
-                                                            colorClass="text-brand-danger"
-                                                        />
-                                                    </div>
-                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
-                            </>
-                        )}
-                    </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </AuthenticatedLayout>

@@ -1,10 +1,11 @@
 import DaySelector from '@/Components/DaySelector';
+import MobileMenuButton from '@/Components/MobileMenuButton';
 import MonthSelector from '@/Components/MonthSelector';
 import PeriodModeToggle from '@/Components/PeriodModeToggle';
 import RankingList from '@/Components/RankingList';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { IconCoin, IconLock, IconLockSquareRounded, IconMenu2, IconReceipt2 } from '@tabler/icons-react';
+import { IconCoin, IconLock, IconLockSquareRounded, IconReceipt2 } from '@tabler/icons-react';
 
 function formatMoney(value) {
     return `$${Number(value).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -68,14 +69,7 @@ export default function Dashboard({
                         </h2>
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={onOpenMobileMenu}
-                        aria-label="Abrir menú"
-                        className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-brand-pill text-brand-text-secondary transition hover:bg-brand-primary-soft hover:text-brand-link md:hidden"
-                    >
-                        <IconMenu2 size={22} stroke={1.75} />
-                    </button>
+                    <MobileMenuButton onClick={onOpenMobileMenu} />
                 </div>
             )}
         >

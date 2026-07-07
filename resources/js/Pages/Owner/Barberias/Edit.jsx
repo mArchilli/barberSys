@@ -1,6 +1,7 @@
 import DangerButton from '@/Components/DangerButton';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
+import MobileMenuButton from '@/Components/MobileMenuButton';
 import Modal from '@/Components/Modal';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
@@ -45,19 +46,22 @@ export default function Edit({ barberia, activeBarberosCount }) {
 
     return (
         <AuthenticatedLayout
-            header={
-                <div className="flex items-center gap-3">
-                    <h2 className="text-xl font-semibold leading-tight text-brand-text">
-                        Editar barbería
-                    </h2>
-                    {! barberia.active && (
-                        <span className="inline-flex items-center gap-1 rounded-brand-pill border border-brand-border bg-brand-surface-alt px-2.5 py-1 text-xs font-medium text-brand-text-secondary">
-                            <IconLock size={12} />
-                            Cerrada
-                        </span>
-                    )}
+            header={({ onOpenMobileMenu }) => (
+                <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                        <h2 className="text-xl font-semibold leading-tight text-brand-text">
+                            Editar barbería
+                        </h2>
+                        {! barberia.active && (
+                            <span className="inline-flex items-center gap-1 rounded-brand-pill border border-brand-border bg-brand-surface-alt px-2.5 py-1 text-xs font-medium text-brand-text-secondary">
+                                <IconLock size={12} />
+                                Cerrada
+                            </span>
+                        )}
+                    </div>
+                    <MobileMenuButton onClick={onOpenMobileMenu} />
                 </div>
-            }
+            )}
         >
             <Head title="Editar barbería" />
 

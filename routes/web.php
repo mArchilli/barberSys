@@ -74,7 +74,7 @@ Route::prefix('owner')
                 Route::get('cortes', [CorteController::class, 'index'])->name('cortes.index');
                 Route::post('cortes', [CorteController::class, 'store'])->name('cortes.store');
 
-                Route::resource('barberos', BarberoController::class)->except(['destroy', 'show']);
+                Route::resource('barberos', BarberoController::class)->except(['destroy']);
                 Route::patch('barberos/{barbero}/deactivate', [BarberoController::class, 'deactivate'])->name('barberos.deactivate');
                 Route::patch('barberos/{barbero}/reset-password', [BarberoController::class, 'resetPassword'])->name('barberos.resetPassword');
 

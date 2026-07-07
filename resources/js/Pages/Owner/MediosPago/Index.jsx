@@ -1,3 +1,4 @@
+import MobileMenuButton from '@/Components/MobileMenuButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { IconEdit, IconSearch, IconToggleLeft } from '@tabler/icons-react';
@@ -20,11 +21,14 @@ export default function Index({ mediosPago }) {
 
     return (
         <AuthenticatedLayout
-            header={
+            header={({ onOpenMobileMenu }) => (
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <h2 className="text-xl font-semibold leading-tight text-brand-text">
-                        Medios de pago
-                    </h2>
+                    <div className="flex items-center justify-between gap-3">
+                        <h2 className="text-xl font-semibold leading-tight text-brand-text">
+                            Medios de pago
+                        </h2>
+                        <MobileMenuButton onClick={onOpenMobileMenu} />
+                    </div>
                     <Link
                         href={route('owner.barberias.medios-pago.create', { barberia: barbId })}
                         className="inline-flex items-center justify-center rounded-brand-pill bg-brand-primary px-4 py-3 text-sm font-medium text-brand-on-primary shadow-sm transition hover:bg-brand-primary-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 sm:py-2"
@@ -32,7 +36,7 @@ export default function Index({ mediosPago }) {
                         + Nuevo medio de pago
                     </Link>
                 </div>
-            }
+            )}
         >
             <Head title="Medios de pago" />
 

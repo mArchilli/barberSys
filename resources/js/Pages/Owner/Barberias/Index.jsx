@@ -1,3 +1,4 @@
+import MobileMenuButton from '@/Components/MobileMenuButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { IconChevronDown, IconEdit, IconLock } from '@tabler/icons-react';
@@ -10,11 +11,14 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
 
     return (
         <AuthenticatedLayout
-            header={
+            header={({ onOpenMobileMenu }) => (
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <h2 className="text-xl font-semibold leading-tight text-brand-text">
-                        Mis barberías
-                    </h2>
+                    <div className="flex items-center justify-between gap-3">
+                        <h2 className="text-xl font-semibold leading-tight text-brand-text">
+                            Mis barberías
+                        </h2>
+                        <MobileMenuButton onClick={onOpenMobileMenu} />
+                    </div>
                     <Link
                         href={route('owner.barberias.create')}
                         className={`inline-flex items-center justify-center rounded-brand-pill px-4 py-3 text-sm font-medium text-brand-on-primary shadow-sm transition sm:py-2 ${
@@ -27,7 +31,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                         + Nueva barbería
                     </Link>
                 </div>
-            }
+            )}
         >
             <Head title="Mis barberías" />
 

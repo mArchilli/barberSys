@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
+import MobileMenuButton from '@/Components/MobileMenuButton';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
@@ -24,11 +25,14 @@ export default function Edit({ gasto }) {
 
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-brand-text">
-                    Editar gasto
-                </h2>
-            }
+            header={({ onOpenMobileMenu }) => (
+                <div className="flex items-center justify-between gap-3">
+                    <h2 className="text-xl font-semibold leading-tight text-brand-text">
+                        Editar gasto
+                    </h2>
+                    <MobileMenuButton onClick={onOpenMobileMenu} />
+                </div>
+            )}
         >
             <Head title="Editar gasto" />
 

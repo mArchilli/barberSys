@@ -1,5 +1,6 @@
 import { dayLabel } from '@/Components/DaySelector';
 import MetricCard from '@/Components/MetricCard';
+import MobileMenuButton from '@/Components/MobileMenuButton';
 import MonthSelector from '@/Components/MonthSelector';
 import RankingList from '@/Components/RankingList';
 import TextInput from '@/Components/TextInput';
@@ -129,11 +130,14 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
 
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-brand-text">
-                    Finanzas — {currentBarberia?.name}
-                </h2>
-            }
+            header={({ onOpenMobileMenu }) => (
+                <div className="flex items-center justify-between gap-3">
+                    <h2 className="min-w-0 flex-1 truncate text-xl font-semibold leading-tight text-brand-text">
+                        Finanzas — {currentBarberia?.name}
+                    </h2>
+                    <MobileMenuButton onClick={onOpenMobileMenu} />
+                </div>
+            )}
         >
             <Head title="Finanzas" />
 
