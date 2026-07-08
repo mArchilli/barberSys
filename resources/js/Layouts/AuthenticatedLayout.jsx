@@ -52,7 +52,7 @@ export default function AuthenticatedLayout({ header, children }) {
     const consolidadoActive = route().current('owner.consolidado');
 
     return (
-        <div className="min-h-screen bg-brand-bg md:flex">
+        <div className="panel-theme min-h-screen bg-brand-bg md:flex">
             {/* Sidebar (desktop) */}
             <aside
                 className={

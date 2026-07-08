@@ -5,11 +5,41 @@
 @tailwind utilities;
 
 @layer base {
+    :root {
+        --brand-bg-rgb: 237 241 242;
+        --brand-surface-rgb: 248 250 250;
+        --brand-surface-alt-rgb: 237 241 242;
+        --brand-text-rgb: 36 39 38;
+        --brand-text-secondary-rgb: 105 116 117;
+        --brand-text-strong-rgb: 29 34 33;
+        --brand-text-on-dark-rgb: 237 241 242;
+        --brand-border-rgb: 200 208 210;
+        --brand-border-subtle-rgb: 223 230 232;
+        --brand-link-hover-rgb: 29 34 33;
+        --brand-nav-bg-rgb: 29 34 33;
+        --brand-nav-text-rgb: 200 208 210;
+    }
+
     html {
         scroll-behavior: smooth;
     }
 
     body {
         @apply bg-brand-bg font-sans text-brand-text antialiased;
+    }
+
+    .panel-theme {
+        --brand-bg-rgb: 29 34 33;
+        --brand-surface-rgb: 36 39 38;
+        --brand-surface-alt-rgb: 29 34 33;
+        --brand-text-rgb: 237 241 242;
+        --brand-text-secondary-rgb: 200 208 210;
+        --brand-text-strong-rgb: 248 250 250;
+        --brand-text-on-dark-rgb: 237 241 242;
+        --brand-border-rgb: 105 116 117;
+        --brand-border-subtle-rgb: 105 116 117;
+        --brand-link-hover-rgb: 248 250 250;
+        --brand-nav-bg-rgb: 29 34 33;
+        --brand-nav-text-rgb: 200 208 210;
     }
 }

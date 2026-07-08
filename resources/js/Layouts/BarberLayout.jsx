@@ -7,7 +7,7 @@ export default function BarberLayout({ header, children }) {
     const cuentaActive = route().current('profile.edit');
 
     return (
-        <div className="min-h-screen bg-brand-bg">
+        <div className="panel-theme min-h-screen bg-brand-bg">
             {header && (
                 <header className="bg-transparent">
                     <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-6">{header}</div>

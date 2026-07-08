@@ -13,6 +13,8 @@ const palette = {
     dark: '#1D2221',
 };
 
+const colorVar = (name) => `rgb(var(${name}) / <alpha-value>)`;
+
 const withOpacity = (hex, alpha) => {
     const normalizedHex = hex.replace('#', '');
     const r = parseInt(normalizedHex.slice(0, 2), 16);
@@ -39,9 +41,9 @@ export default {
             },
             colors: {
                 brand: {
-                    bg: palette.bg,
-                    surface: palette.surface,
-                    'surface-alt': palette.bg,
+                    bg: colorVar('--brand-bg-rgb'),
+                    surface: colorVar('--brand-surface-rgb'),
+                    'surface-alt': colorVar('--brand-surface-alt-rgb'),
                     primary: palette.primary,
                     'primary-hover': palette['primary-dark'],
                     'primary-pressed': palette['primary-dark'],
@@ -53,17 +55,17 @@ export default {
                     // Alias de compatibilidad: el esquema actual no define accent.
                     accent: palette.secondary,
                     link: palette.secondary,
-                    'link-hover': palette.dark,
-                    'nav-bg': palette.dark,
-                    'nav-text': palette.border,
+                    'link-hover': colorVar('--brand-link-hover-rgb'),
+                    'nav-bg': colorVar('--brand-nav-bg-rgb'),
+                    'nav-text': colorVar('--brand-nav-text-rgb'),
                     'nav-active': palette.primary,
-                    text: palette.text,
-                    'text-secondary': palette.muted,
-                    'text-strong': palette.dark,
-                    'text-on-dark': palette.bg,
+                    text: colorVar('--brand-text-rgb'),
+                    'text-secondary': colorVar('--brand-text-secondary-rgb'),
+                    'text-strong': colorVar('--brand-text-strong-rgb'),
+                    'text-on-dark': colorVar('--brand-text-on-dark-rgb'),
                     'on-primary': palette.text,
-                    border: palette.border,
-                    'border-subtle': '#DFE6E8',
+                    border: colorVar('--brand-border-rgb'),
+                    'border-subtle': colorVar('--brand-border-subtle-rgb'),
                     success: '#1F9D68',
                     'success-soft': '#DDF5EA',
                     danger: '#D94B5B',

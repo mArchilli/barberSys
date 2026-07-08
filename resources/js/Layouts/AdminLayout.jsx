@@ -27,7 +27,7 @@ export default function AdminLayout({ header, children }) {
     const ownersActive = route().current('admin.owners.*');
 
     return (
-        <div className="min-h-screen bg-brand-bg md:flex">
+        <div className="panel-theme min-h-screen bg-brand-bg md:flex">
             {/* Sidebar (desktop) */}
             <aside
                 className={

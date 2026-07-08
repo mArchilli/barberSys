@@ -106,20 +106,20 @@ export default function Dashboard({
                             </span>
                             <div className="min-w-0">
                                 <p className="text-sm text-brand-text-on-dark">Facturación del período</p>
-                                <p className="truncate font-display text-3xl font-bold text-white sm:text-4xl">
+                                <p className="truncate font-display text-3xl font-bold text-brand-text-on-dark sm:text-4xl">
                                     {formatMoney(totalFacturado)}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="mt-6 grid grid-cols-2 divide-x divide-white/10 border-t border-white/10 pt-4">
+                        <div className="mt-6 grid grid-cols-2 divide-x divide-brand-nav-text/10 border-t border-brand-nav-text/10 pt-4">
                             <div className="pr-4">
                                 <p className="text-xs text-brand-text-on-dark">Cortes cargados</p>
-                                <p className="mt-1 text-lg font-semibold text-white">{totalCortes}</p>
+                                <p className="mt-1 text-lg font-semibold text-brand-text-on-dark">{totalCortes}</p>
                             </div>
                             <div className="pl-4">
                                 <p className="text-xs text-brand-text-on-dark">Barberos activos</p>
-                                <p className="mt-1 text-lg font-semibold text-white">{barberosActivos}</p>
+                                <p className="mt-1 text-lg font-semibold text-brand-text-on-dark">{barberosActivos}</p>
                             </div>
                         </div>
                     </div>
