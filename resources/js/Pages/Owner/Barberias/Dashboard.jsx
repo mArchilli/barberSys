@@ -8,6 +8,7 @@ import {
     IconBuildingStore,
     IconChartBar,
     IconChartPie,
+    IconChevronDown,
     IconCreditCard,
     IconEye,
     IconEyeOff,
@@ -159,6 +160,7 @@ export default function Dashboard({
     const maxFacturacionDiaria = Math.max(...facturacionUltimosSieteDias.map((item) => item.total), 1);
     const facturacionHoy = facturacionUltimosSieteDias.at(-1)?.total ?? 0;
     const [showFacturacion, setShowFacturacion] = useState(true);
+    const [profileMenuOpen, setProfileMenuOpen] = useState(false);
     const topActionClassName =
         'inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full px-2.5 py-2 text-[12px] font-medium transition';
     const dashboardActions = [
@@ -205,7 +207,7 @@ export default function Dashboard({
             active: false,
         },
     ];
-    const utilityActions = [
+    const profileMenuActions = [
         ...(ownerBarberiaCount > 1
             ? [
                 {
@@ -261,31 +263,71 @@ export default function Dashboard({
             header={(
                 <div className="space-y-4">
                     <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-                        <div className="flex flex-wrap gap-1.5">
-                            {[...dashboardActions, ...utilityActions].map(({ href, label, icon: Icon, active, method, as }) => (
-                                <Link
-                                    key={label}
-                                    href={href}
-                                    method={method}
-                                    as={as}
-                                    className={
-                                        topActionClassName +
-                                        ' ' +
-                                        (active
-                                            ? 'bg-brand-primary text-brand-on-primary shadow-brand-cta'
-                                            : 'border border-brand-border bg-brand-surface text-brand-text-secondary hover:border-brand-primary/20 hover:text-brand-text')
-                                    }
+                        <div className="flex flex-col gap-3 xl:w-full xl:flex-row xl:items-start xl:justify-between">
+                            <div className="flex flex-wrap gap-1.5">
+                                {dashboardActions.map(({ href, label, icon: Icon, active, method, as }) => (
+                                    <Link
+                                        key={label}
+                                        href={href}
+                                        method={method}
+                                        as={as}
+                                        className={
+                                            topActionClassName +
+                                            ' ' +
+                                            (active
+                                                ? 'bg-brand-primary text-brand-on-primary shadow-brand-cta'
+                                                : 'border border-brand-border bg-brand-surface text-brand-text-secondary hover:border-brand-primary/20 hover:text-brand-text')
+                                        }
+                                    >
+                                        <Icon size={17} stroke={1.9} />
+                                        <span>{label}</span>
+                                    </Link>
+                                ))}
+                            </div>
+
+                            <div className="relative xl:ml-4 xl:self-start">
+                                <button
+                                    type="button"
+                                    onClick={() => setProfileMenuOpen((value) => !value)}
+                                    aria-haspopup="menu"
+                                    aria-expanded={profileMenuOpen}
+                                    className={`${topActionClassName} border border-brand-border bg-brand-surface text-brand-text-secondary hover:border-brand-primary/20 hover:text-brand-text`}
                                 >
-                                    <Icon size={17} stroke={1.9} />
-                                    <span>{label}</span>
-                                </Link>
-                            ))}
+                                    <IconUserCog size={17} stroke={1.9} />
+                                    <span>Mi perfil</span>
+                                    <IconChevronDown
+                                        size={15}
+                                        stroke={2}
+                                        className={`transition-transform ${profileMenuOpen ? 'rotate-180' : ''}`}
+                                    />
+                                </button>
+
+                                {profileMenuOpen && (
+                                    <div className="absolute right-0 top-full z-30 mt-2 min-w-[220px] rounded-[22px] border border-brand-border bg-brand-surface p-2 shadow-brand-card">
+                                        {profileMenuActions.map(({ href, label, icon: Icon, method, as }) => (
+                                            <Link
+                                                key={label}
+                                                href={href}
+                                                method={method}
+                                                as={as}
+                                                onClick={() => setProfileMenuOpen(false)}
+                                                className="flex w-full items-center gap-2 rounded-[16px] px-3 py-2.5 text-left text-sm font-medium text-brand-text-secondary transition hover:bg-brand-surface-alt hover:text-brand-text"
+                                            >
+                                                <Icon size={17} stroke={1.9} />
+                                                <span>{label}</span>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
                     <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-base font-semibold text-brand-text">Bienvenido {primerNombre}</p>
-                        <p className="text-sm font-medium text-brand-text-secondary sm:text-base sm:text-right">
+                        <p className="font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl">
+                            Bienvenido {primerNombre}
+                        </p>
+                        <p className="font-display text-2xl font-semibold tracking-[-0.04em] text-brand-text sm:text-3xl sm:text-right">
                             {currentBarberia?.name}
                         </p>
                     </div>
