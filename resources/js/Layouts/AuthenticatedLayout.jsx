@@ -22,7 +22,7 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
-export default function AuthenticatedLayout({ header, children }) {
+export default function AuthenticatedLayout({ header, children, hideOwnerBarberiaNav = false }) {
     const { auth, currentBarberia, ownerBarberiaCount } = usePage().props;
     const user = auth.user;
 
@@ -50,6 +50,8 @@ export default function AuthenticatedLayout({ header, children }) {
     const clientesActive = route().current('owner.barberias.clientes.*');
     const finanzasActive = route().current('owner.barberias.finanzas') || route().current('owner.barberias.gastos.*') || route().current('owner.barberias.gasto-registros.*');
     const consolidadoActive = route().current('owner.consolidado');
+    const showOwnerBarberiaNav = user.role === 'owner' && currentBarberia && !hideOwnerBarberiaNav;
+    const showDashboardNavLink = !(hideOwnerBarberiaNav && user.role === 'owner' && currentBarberia);
 
     return (
         <div className="panel-theme min-h-screen bg-brand-bg md:flex">
@@ -98,11 +100,13 @@ export default function AuthenticatedLayout({ header, children }) {
                 )}
 
                 <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3">
-                    <SidebarLink href={dashboardHref} active={dashboardActive} icon={IconLayoutDashboard} collapsed={collapsed}>
-                        Dashboard
-                    </SidebarLink>
+                    {showDashboardNavLink && (
+                        <SidebarLink href={dashboardHref} active={dashboardActive} icon={IconLayoutDashboard} collapsed={collapsed}>
+                            Dashboard
+                        </SidebarLink>
+                    )}
 
-                    {user.role === 'owner' && currentBarberia && (
+                    {showOwnerBarberiaNav && (
                         <>
                             <SidebarLink
                                 href={route('owner.barberias.cortes.index', { barberia: currentBarberia.id })}
@@ -214,11 +218,13 @@ export default function AuthenticatedLayout({ header, children }) {
 
             {/* Menú de pantalla completa (mobile) */}
             <MobileNavOverlay open={mobileMenuOpen} onClose={closeMobileMenu}>
-                <MobileMenuLink href={dashboardHref} active={dashboardActive} onClick={closeMobileMenu}>
-                    Dashboard
-                </MobileMenuLink>
+                {showDashboardNavLink && (
+                    <MobileMenuLink href={dashboardHref} active={dashboardActive} onClick={closeMobileMenu}>
+                        Dashboard
+                    </MobileMenuLink>
+                )}
 
-                {user.role === 'owner' && currentBarberia && (
+                {showOwnerBarberiaNav && (
                     <>
                         <MobileMenuLink
                             href={route('owner.barberias.cortes.index', { barberia: currentBarberia.id })}

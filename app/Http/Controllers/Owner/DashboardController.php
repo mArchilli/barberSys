@@ -10,6 +10,7 @@ use App\Models\Corte;
 use App\Models\GastoRegistro;
 use App\Models\User;
 use App\Services\ComisionCalculator;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -108,6 +109,36 @@ class DashboardController extends Controller
 
         $neto = $totalFacturadoMes - $totalSueldos - $totalGastos;
 
+        $hoy = Carbon::today();
+        $inicioUltimosSieteDias = $hoy->copy()->subDays(6);
+
+        $facturacionUltimosSieteDias = Corte::where('barberia_id', $barberia->id)
+            ->whereBetween('performed_at', [$inicioUltimosSieteDias->toDateString(), $hoy->toDateString()])
+            ->selectRaw('performed_at as date, SUM(price) as total')
+            ->groupBy('performed_at')
+            ->pluck('total', 'date');
+
+        $facturacionUltimosSieteDias = collect(range(0, 6))
+            ->map(function (int $offset) use ($inicioUltimosSieteDias, $facturacionUltimosSieteDias) {
+                $fecha = $inicioUltimosSieteDias->copy()->addDays($offset)->toDateString();
+
+                return [
+                    'date' => $fecha,
+                    'total' => (float) ($facturacionUltimosSieteDias[$fecha] ?? 0),
+                ];
+            })
+            ->all();
+
+        $porMedioPagoHoy = Corte::where('cortes.barberia_id', $barberia->id)
+            ->whereDate('cortes.performed_at', $hoy->toDateString())
+            ->join('medios_pago', 'medios_pago.id', '=', 'cortes.medio_pago_id')
+            ->selectRaw('medios_pago.id as id, medios_pago.name as name, SUM(cortes.price) as total, COUNT(*) as cantidad')
+            ->groupBy('medios_pago.id', 'medios_pago.name')
+            ->orderByDesc('total')
+            ->get();
+
+        $totalPorMedioPagoHoy = (float) $porMedioPagoHoy->sum('total');
+
         return Inertia::render('Owner/Barberias/Dashboard', [
             'period' => [
                 'mode' => $range->mode,
@@ -124,6 +155,8 @@ class DashboardController extends Controller
             'porMedioPago' => $this->mapFilas($porMedioPago, $totalFacturado),
             'miRendimiento' => $miRendimiento,
             'neto' => $neto,
+            'facturacionUltimosSieteDias' => $facturacionUltimosSieteDias,
+            'porMedioPagoHoy' => $this->mapFilas($porMedioPagoHoy, $totalPorMedioPagoHoy),
         ]);
     }
 
