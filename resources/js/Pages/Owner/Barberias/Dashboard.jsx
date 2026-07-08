@@ -1,11 +1,11 @@
 ﻿import DaySelector from '@/Components/DaySelector';
-import MobileMenuButton from '@/Components/MobileMenuButton';
 import MonthSelector from '@/Components/MonthSelector';
 import PeriodModeToggle from '@/Components/PeriodModeToggle';
 import RankingList from '@/Components/RankingList';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
+    IconBuildingStore,
     IconChartBar,
     IconChartPie,
     IconCreditCard,
@@ -15,9 +15,11 @@ import {
     IconList,
     IconLock,
     IconLockSquareRounded,
+    IconLogout,
     IconReceipt2,
     IconReportMoney,
     IconUserCircle,
+    IconUserCog,
     IconUsers,
 } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -151,12 +153,14 @@ export default function Dashboard({
     facturacionUltimosSieteDias,
     porMedioPagoHoy,
 }) {
-    const { currentBarberia, auth } = usePage().props;
+    const { currentBarberia, auth, ownerBarberiaCount } = usePage().props;
     const dashboardUrl = route('owner.barberias.dashboard', currentBarberia.id);
     const primerNombre = auth.user.name.split(' ')[0];
     const maxFacturacionDiaria = Math.max(...facturacionUltimosSieteDias.map((item) => item.total), 1);
     const facturacionHoy = facturacionUltimosSieteDias.at(-1)?.total ?? 0;
     const [showFacturacion, setShowFacturacion] = useState(true);
+    const topActionClassName =
+        'inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full px-2.5 py-2 text-[12px] font-medium transition';
     const dashboardActions = [
         {
             href: route('owner.barberias.dashboard', { barberia: currentBarberia.id }),
@@ -201,6 +205,34 @@ export default function Dashboard({
             active: false,
         },
     ];
+    const utilityActions = [
+        ...(ownerBarberiaCount > 1
+            ? [
+                {
+                    href: route('owner.barberias.index'),
+                    label: 'Cambiar barbería',
+                    icon: IconBuildingStore,
+                },
+                {
+                    href: route('owner.consolidado'),
+                    label: 'Ver consolidado',
+                    icon: IconChartPie,
+                },
+            ]
+            : []),
+        {
+            href: route('profile.edit'),
+            label: 'Perfil',
+            icon: IconUserCog,
+        },
+        {
+            href: route('logout'),
+            label: 'Cerrar sesión',
+            icon: IconLogout,
+            method: 'post',
+            as: 'button',
+        },
+    ];
 
     function handleModeChange(newMode) {
         if (newMode === period.mode) return;
@@ -223,22 +255,46 @@ export default function Dashboard({
     return (
         <AuthenticatedLayout
             hideOwnerBarberiaNav
-            header={({ onOpenMobileMenu }) => (
-                <div className="flex items-center justify-between gap-3">
-                    <div className="min-w-0">
-                        <p className="text-sm text-brand-text-secondary">Hola, {primerNombre}</p>
-                        <h2 className="truncate font-display text-xl font-bold text-brand-text">
-                            {currentBarberia?.name}
-                        </h2>
+            hideSidebar
+            headerClassName="bg-brand-bg"
+            headerContainerClassName="mx-auto max-w-[1720px] px-2 py-4 sm:px-3 sm:py-5 lg:px-4"
+            header={(
+                <div className="space-y-4">
+                    <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+                        <div className="flex flex-wrap gap-1.5">
+                            {[...dashboardActions, ...utilityActions].map(({ href, label, icon: Icon, active, method, as }) => (
+                                <Link
+                                    key={label}
+                                    href={href}
+                                    method={method}
+                                    as={as}
+                                    className={
+                                        topActionClassName +
+                                        ' ' +
+                                        (active
+                                            ? 'bg-brand-primary text-brand-on-primary shadow-brand-cta'
+                                            : 'border border-brand-border bg-brand-surface text-brand-text-secondary hover:border-brand-primary/20 hover:text-brand-text')
+                                    }
+                                >
+                                    <Icon size={17} stroke={1.9} />
+                                    <span>{label}</span>
+                                </Link>
+                            ))}
+                        </div>
                     </div>
 
-                    <MobileMenuButton onClick={onOpenMobileMenu} />
+                    <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:justify-between">
+                        <p className="text-base font-semibold text-brand-text">Bienvenido {primerNombre}</p>
+                        <p className="text-sm font-medium text-brand-text-secondary sm:text-base sm:text-right">
+                            {currentBarberia?.name}
+                        </p>
+                    </div>
                 </div>
             )}
         >
             <Head title="Dashboard" />
 
-            <div className={`pt-6 sm:pt-12 ${currentBarberia?.active ? 'pb-36 sm:pb-24' : 'pb-12'}`}>
+            <div className="pb-12">
                 <div className="mx-auto max-w-[1720px] space-y-8 px-2 sm:px-3 lg:px-4">
                     {! currentBarberia?.active && (
                         <div className="flex items-center gap-3 rounded-brand-md border border-brand-border bg-brand-surface-alt px-4 py-3 text-sm text-brand-text-secondary">
@@ -251,40 +307,6 @@ export default function Dashboard({
                             </span>
                         </div>
                     )}
-
-                    <div className="space-y-3">
-                        <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-                            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-2">
-                                <PeriodModeToggle mode={period.mode} onChange={handleModeChange} />
-
-                                <div className="flex flex-nowrap gap-1.5 overflow-x-auto pb-1">
-                                    {dashboardActions.map(({ href, label, icon: Icon, active }) => (
-                                        <Link
-                                            key={label}
-                                            href={href}
-                                            className={
-                                                'inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full px-2.5 py-2 text-[12px] font-medium transition ' +
-                                                (active
-                                                    ? 'bg-brand-primary text-brand-on-primary shadow-brand-cta'
-                                                    : 'border border-brand-border bg-brand-surface text-brand-text-secondary hover:border-brand-primary/20 hover:text-brand-text')
-                                            }
-                                        >
-                                            <Icon size={17} stroke={1.9} />
-                                            <span>{label}</span>
-                                        </Link>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="w-full xl:w-auto">
-                                {period.mode === 'day' ? (
-                                    <DaySelector date={period.day} esHoy={period.diaEsHoy} url={dashboardUrl} onDark={false} fullWidth />
-                                ) : (
-                                    <MonthSelector month={period.month} url={dashboardUrl} fullWidth />
-                                )}
-                            </div>
-                        </div>
-                    </div>
 
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)_minmax(320px,0.8fr)]">
                         <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
@@ -312,7 +334,19 @@ export default function Dashboard({
                                 </button>
                             </div>
 
-                            <div className="mt-6 grid grid-cols-2 gap-3 border-t border-brand-border-subtle pt-5">
+                            <div className="mt-6 flex flex-col gap-3 border-t border-brand-border-subtle pt-5 lg:flex-row lg:items-center lg:justify-between">
+                                <PeriodModeToggle mode={period.mode} onChange={handleModeChange} />
+
+                                <div className="w-full lg:w-auto">
+                                    {period.mode === 'day' ? (
+                                        <DaySelector date={period.day} esHoy={period.diaEsHoy} url={dashboardUrl} onDark={false} fullWidth />
+                                    ) : (
+                                        <MonthSelector month={period.month} url={dashboardUrl} fullWidth />
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="mt-5 grid grid-cols-2 gap-3">
                                 <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
                                     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
                                         Cortes cargados
@@ -458,7 +492,7 @@ export default function Dashboard({
                             href={route('owner.barberias.finanzas', currentBarberia.id)}
                             className="mt-3 inline-block text-sm font-semibold text-brand-link hover:text-brand-link-hover"
                         >
-                            Ver Finanzas ->
+                            Ver Finanzas {'->'}
                         </Link>
                     </div>
 
@@ -482,7 +516,7 @@ export default function Dashboard({
                                     </p>
                                     {/* Placeholder: todavía no existe un flujo de upgrade de plan dentro del panel */}
                                     <a href="#" className="text-sm font-semibold text-brand-link hover:text-brand-link-hover">
-                                        Ver planes ->
+                                        Ver planes {'->'}
                                     </a>
                                 </div>
                             )}

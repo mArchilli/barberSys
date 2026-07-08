@@ -22,7 +22,14 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
-export default function AuthenticatedLayout({ header, children, hideOwnerBarberiaNav = false }) {
+export default function AuthenticatedLayout({
+    header,
+    children,
+    hideOwnerBarberiaNav = false,
+    hideSidebar = false,
+    headerContainerClassName = 'mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8',
+    headerClassName,
+}) {
     const { auth, currentBarberia, ownerBarberiaCount } = usePage().props;
     const user = auth.user;
 
@@ -52,10 +59,12 @@ export default function AuthenticatedLayout({ header, children, hideOwnerBarberi
     const consolidadoActive = route().current('owner.consolidado');
     const showOwnerBarberiaNav = user.role === 'owner' && currentBarberia && !hideOwnerBarberiaNav;
     const showDashboardNavLink = !(hideOwnerBarberiaNav && user.role === 'owner' && currentBarberia);
+    const contentOffsetClass = hideSidebar ? '' : `${rendersOwnMobileTrigger ? '' : 'pt-16 md:pt-0'} ${collapsed ? 'md:pl-20' : 'md:pl-64'}`;
 
     return (
         <div className="panel-theme min-h-screen bg-brand-bg md:flex">
             {/* Sidebar (desktop) */}
+            {!hideSidebar && (
             <aside
                 className={
                     'hidden md:fixed md:inset-y-0 md:left-0 md:z-30 md:flex md:flex-col md:bg-brand-nav-bg md:transition-[width] md:duration-150 ' +
@@ -202,10 +211,11 @@ export default function AuthenticatedLayout({ header, children, hideOwnerBarberi
                     </div>
                 </div>
             </aside>
+            )}
 
             {/* Botón flotante de menú (mobile) — se oculta cuando la pantalla
                 renderiza su propio disparador dentro del header. */}
-            {!rendersOwnMobileTrigger && (
+            {!hideSidebar && !rendersOwnMobileTrigger && (
                 <button
                     type="button"
                     onClick={() => setMobileMenuOpen(true)}
@@ -217,6 +227,7 @@ export default function AuthenticatedLayout({ header, children, hideOwnerBarberi
             )}
 
             {/* Menú de pantalla completa (mobile) */}
+            {!hideSidebar && (
             <MobileNavOverlay open={mobileMenuOpen} onClose={closeMobileMenu}>
                 {showDashboardNavLink && (
                     <MobileMenuLink href={dashboardHref} active={dashboardActive} onClick={closeMobileMenu}>
@@ -305,20 +316,23 @@ export default function AuthenticatedLayout({ header, children, hideOwnerBarberi
                     Cerrar sesión
                 </MobileMenuLink>
             </MobileNavOverlay>
+            )}
 
             {/* Columna de contenido */}
             <div
-                className={`flex-1 transition-[padding] duration-150 ${rendersOwnMobileTrigger ? '' : 'pt-16 md:pt-0'} ${collapsed ? 'md:pl-20' : 'md:pl-64'}`}
+                className={`flex-1 transition-[padding] duration-150 ${contentOffsetClass}`}
             >
                 {headerContent && (
                     <header
                         className={
+                            headerClassName ?? (
                             rendersOwnMobileTrigger
                                 ? 'sticky top-0 z-20 bg-brand-bg/95 backdrop-blur-sm md:static md:bg-brand-surface md:shadow-sm'
                                 : 'bg-transparent shadow-none md:bg-brand-surface md:shadow-sm'
+                            )
                         }
                     >
-                        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                        <div className={headerContainerClassName}>
                             {headerContent}
                         </div>
                     </header>
