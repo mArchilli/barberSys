@@ -1,8 +1,8 @@
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Link, useForm, usePage } from '@inertiajs/react';
+import { IconReceipt2, IconSearch, IconScissors } from '@tabler/icons-react';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 
@@ -14,12 +14,30 @@ function formatPrice(price) {
     return Number(price).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, routes }) {
+function SectionBlock({ title, description, children }) {
+    return (
+        <div className="rounded-[24px] bg-brand-surface-alt p-5">
+            <div className="mb-4">
+                <p className="text-sm font-semibold text-brand-text">{title}</p>
+                {description && (
+                    <p className="mt-1 text-xs text-brand-text-secondary">
+                        {description}
+                    </p>
+                )}
+            </div>
+            {children}
+        </div>
+    );
+}
+
+export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, routes, variant = 'default' }) {
     const { flash, auth, currentBarberia } = usePage().props;
     const faltaServicios = servicios.length === 0;
     const faltaMediosPago = mediosPago.length === 0;
     const faltaCatalogo = faltaServicios || faltaMediosPago;
     const puedeCargarCatalogo = auth.user.role === 'owner' && currentBarberia;
+    const totalHoy = cortesHoy.reduce((sum, corte) => sum + Number(corte.price), 0);
+    const isOwnerVariant = variant === 'owner';
 
     const { data, setData, post, processing, errors, reset } = useForm({
         servicio_id: '',
@@ -35,20 +53,19 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
     const [showResults, setShowResults] = useState(false);
     const searchTimeout = useRef(null);
 
-    useEffect(() => {
-        return () => clearTimeout(searchTimeout.current);
-    }, []);
+    useEffect(() => () => clearTimeout(searchTimeout.current), []);
 
     function selectServicio(id) {
-        const servicio = servicios.find((s) => String(s.id) === String(id));
+        const servicio = servicios.find((item) => String(item.id) === String(id));
         setData('servicio_id', String(id));
+
         if (servicio) {
             setData('price', String(servicio.price));
         }
     }
 
-    function handleClienteQueryChange(e) {
-        const value = e.target.value;
+    function handleClienteQueryChange(event) {
+        const value = event.target.value;
         setClienteQuery(value);
         setData('cliente_id', '');
         setData('cliente_nombre', value);
@@ -63,8 +80,8 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
 
         searchTimeout.current = setTimeout(async () => {
             try {
-                const res = await axios.get(routes.search, { params: { q: value.trim() } });
-                setClienteResults(res.data);
+                const response = await axios.get(routes.search, { params: { q: value.trim() } });
+                setClienteResults(response.data);
             } catch {
                 setClienteResults([]);
             }
@@ -79,8 +96,8 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
         setShowResults(false);
     }
 
-    function submit(e) {
-        e.preventDefault();
+    function submit(event) {
+        event.preventDefault();
         post(routes.store, {
             preserveScroll: true,
             onSuccess: () => {
@@ -92,32 +109,84 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
     }
 
     return (
-        <div className="grid gap-6 md:grid-cols-[1fr_320px]">
-            <div className="overflow-hidden rounded-brand-xl border border-brand-border bg-brand-surface shadow-brand-card">
-                <div className="p-4 sm:p-6">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+            <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                <div className="flex items-start justify-between gap-4">
+                    <div className="flex min-w-0 items-start gap-4">
+                        <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px] bg-brand-primary/12 text-brand-primary shadow-sm">
+                            <IconScissors size={30} stroke={1.8} />
+                        </span>
+                        <div className="min-w-0">
+                            <p className="text-sm font-medium text-brand-text-secondary">
+                                {isOwnerVariant ? 'Nuevo registro' : 'Carga de corte'}
+                            </p>
+                            <p className="mt-3 truncate font-display text-4xl font-extrabold tracking-[-0.04em] text-brand-text sm:text-[3.25rem]">
+                                {data.cliente_nombre || 'Sin cliente'}
+                            </p>
+                            <p className="mt-2 text-sm text-brand-text-secondary">
+                                Completa los datos del corte para actualizar clientes, ventas y medios de pago en un solo paso.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                    <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                            Servicio
+                        </p>
+                        <p className="mt-2 text-sm font-semibold text-brand-text">
+                            {data.servicio_id
+                                ? servicios.find((item) => String(item.id) === String(data.servicio_id))?.name
+                                : 'Sin seleccionar'}
+                        </p>
+                    </div>
+                    <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                            Cobro
+                        </p>
+                        <p className="mt-2 text-sm font-semibold text-brand-text">
+                            {data.medio_pago_id
+                                ? mediosPago.find((item) => String(item.id) === String(data.medio_pago_id))?.name
+                                : 'Sin seleccionar'}
+                        </p>
+                    </div>
+                    <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                            Importe
+                        </p>
+                        <p className="mt-2 text-sm font-semibold text-brand-text">
+                            {`$${formatPrice(data.price || 0)}`}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="mt-8">
                     {flash?.success && (
-                        <div className="mb-4 rounded-brand-md border border-brand-success/30 bg-brand-success/10 p-4 text-sm text-brand-success">
+                        <div className="mb-6 rounded-[24px] border border-brand-success/20 bg-brand-success-soft px-5 py-4 text-sm text-brand-success shadow-brand-card">
                             {flash.success}
                         </div>
                     )}
 
                     {faltaCatalogo ? (
-                        <div className="rounded-brand-md border border-dashed border-brand-border bg-brand-surface-alt p-6 text-center text-sm text-brand-text-secondary">
-                            <p>
-                                Todavía falta cargar{' '}
+                        <div className="rounded-[28px] border border-dashed border-brand-border bg-brand-surface-alt p-8 text-center">
+                            <h3 className="font-display text-xl font-bold text-brand-text">
+                                Falta completar el catalogo operativo
+                            </h3>
+                            <p className="mx-auto mt-3 max-w-xl text-sm text-brand-text-secondary">
                                 {faltaServicios && faltaMediosPago
-                                    ? 'servicios y medios de pago'
+                                    ? 'Necesitas cargar servicios y medios de pago antes de poder registrar cortes.'
                                     : faltaServicios
-                                        ? 'servicios'
-                                        : 'medios de pago'}{' '}
-                                para poder registrar cortes en esta barbería.
+                                        ? 'Necesitas cargar al menos un servicio antes de poder registrar cortes.'
+                                        : 'Necesitas cargar al menos un medio de pago antes de poder registrar cortes.'}
                             </p>
+
                             {puedeCargarCatalogo && (
-                                <div className="mt-3 flex flex-wrap justify-center gap-4">
+                                <div className="mt-5 flex flex-wrap justify-center gap-3">
                                     {faltaServicios && (
                                         <Link
                                             href={route('owner.barberias.servicios.create', currentBarberia.id)}
-                                            className="font-medium text-brand-link hover:underline"
+                                            className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-brand-border bg-brand-surface px-5 text-sm font-semibold text-brand-text transition hover:border-brand-primary/20 hover:bg-brand-primary/5 hover:text-brand-link"
                                         >
                                             Cargar servicios
                                         </Link>
@@ -125,7 +194,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                                     {faltaMediosPago && (
                                         <Link
                                             href={route('owner.barberias.medios-pago.create', currentBarberia.id)}
-                                            className="font-medium text-brand-link hover:underline"
+                                            className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-brand-border bg-brand-surface px-5 text-sm font-semibold text-brand-text transition hover:border-brand-primary/20 hover:bg-brand-primary/5 hover:text-brand-link"
                                         >
                                             Cargar medios de pago
                                         </Link>
@@ -134,159 +203,228 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                             )}
                         </div>
                     ) : (
-                    <form onSubmit={submit} className="space-y-5">
-                        <div className="relative">
-                            <InputLabel htmlFor="cliente_query" value="Cliente * — Nombre y apellido" />
-                            <TextInput
-                                id="cliente_query"
-                                value={clienteQuery}
-                                onChange={handleClienteQueryChange}
-                                onFocus={() => setShowResults(true)}
-                                onBlur={() => setTimeout(() => setShowResults(false), 150)}
-                                className="mt-1 block min-h-[48px] w-full text-base"
-                                placeholder="Ej: Juan Pérez"
-                                autoComplete="off"
-                                autoFocus
-                            />
-                            {showResults && clienteResults.length > 0 && (
-                                <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded-brand-md border border-brand-border bg-brand-surface shadow-brand-card">
-                                    {clienteResults.map((c) => (
-                                        <li key={c.id}>
+                        <form onSubmit={submit} className="space-y-6">
+                            <SectionBlock
+                                title="Cliente"
+                                description="Busca un cliente existente o escribe un nombre nuevo para crearlo al guardar."
+                            >
+                                <div className="relative">
+                                    <InputLabel htmlFor="cliente_query" value="Nombre y apellido *" />
+                                    <div className="relative mt-2">
+                                        <IconSearch
+                                            size={18}
+                                            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-brand-text-secondary"
+                                        />
+                                        <TextInput
+                                            id="cliente_query"
+                                            value={clienteQuery}
+                                            onChange={handleClienteQueryChange}
+                                            onFocus={() => setShowResults(true)}
+                                            onBlur={() => setTimeout(() => setShowResults(false), 150)}
+                                            className="block min-h-[52px] w-full rounded-full border-brand-border bg-brand-surface pl-11 pr-4 text-base"
+                                            placeholder="Ej: Juan Perez"
+                                            autoComplete="off"
+                                            autoFocus
+                                        />
+                                    </div>
+                                    {showResults && clienteResults.length > 0 && (
+                                        <ul className="absolute z-10 mt-2 w-full overflow-hidden rounded-[22px] border border-brand-border bg-brand-surface shadow-brand-card">
+                                            {clienteResults.map((cliente) => (
+                                                <li key={cliente.id}>
+                                                    <button
+                                                        type="button"
+                                                        onMouseDown={() => selectCliente(cliente)}
+                                                        className="flex min-h-[48px] w-full items-center px-4 text-left text-sm text-brand-text transition hover:bg-brand-primary/5"
+                                                    >
+                                                        {cliente.name}
+                                                        {cliente.phone && (
+                                                            <span className="ml-2 text-brand-text-secondary">{cliente.phone}</span>
+                                                        )}
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                    {!data.cliente_id && data.cliente_nombre && (
+                                        <p className="mt-2 text-xs text-brand-text-secondary">
+                                            Se va a crear un cliente nuevo: "{data.cliente_nombre}".
+                                        </p>
+                                    )}
+                                    <InputError message={errors.cliente_nombre} className="mt-2" />
+                                </div>
+                            </SectionBlock>
+
+                            <SectionBlock
+                                title="Servicio"
+                                description="Selecciona el servicio realizado. El precio se completa automaticamente, pero puedes ajustarlo."
+                            >
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                                    {servicios.map((servicio) => {
+                                        const selected = String(data.servicio_id) === String(servicio.id);
+
+                                        return (
                                             <button
+                                                key={servicio.id}
                                                 type="button"
-                                                onMouseDown={() => selectCliente(c)}
-                                                className="flex min-h-[44px] w-full items-center px-4 text-left text-sm text-brand-text hover:bg-brand-primary-soft"
+                                                onClick={() => selectServicio(servicio.id)}
+                                                aria-pressed={selected}
+                                                className={`flex min-h-[88px] flex-col items-start justify-center gap-1 rounded-[22px] border px-4 py-4 text-left transition ${
+                                                    selected
+                                                        ? 'border-brand-primary bg-brand-primary text-brand-on-primary shadow-brand-cta'
+                                                        : 'border-brand-border bg-brand-surface text-brand-text hover:border-brand-primary/20 hover:bg-brand-primary/5'
+                                                }`}
                                             >
-                                                {c.name}
-                                                {c.phone && (
-                                                    <span className="ml-2 text-brand-text-secondary">{c.phone}</span>
-                                                )}
+                                                <span className="text-sm font-semibold">{servicio.name}</span>
+                                                <span className={selected ? 'text-xs text-brand-on-primary/75' : 'text-xs text-brand-text-secondary'}>
+                                                    {`$${formatPrice(servicio.price)}`}
+                                                </span>
                                             </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                            {! data.cliente_id && data.cliente_nombre && (
-                                <p className="mt-1 text-xs text-brand-text-secondary">
-                                    Se va a crear un cliente nuevo: "{data.cliente_nombre}".
-                                </p>
-                            )}
-                            <InputError message={errors.cliente_nombre} className="mt-1" />
-                        </div>
+                                        );
+                                    })}
+                                </div>
+                                <InputError message={errors.servicio_id} className="mt-2" />
+                            </SectionBlock>
 
-                        <div>
-                            <InputLabel value="Servicio *" />
-                            <div className="mt-2 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-                                {servicios.map((s) => {
-                                    const selected = String(data.servicio_id) === String(s.id);
-                                    return (
-                                        <button
-                                            key={s.id}
-                                            type="button"
-                                            onClick={() => selectServicio(s.id)}
-                                            aria-pressed={selected}
-                                            className={`flex min-h-[64px] flex-col items-start justify-center gap-0.5 rounded-brand-md border px-4 py-3 text-left transition-colors ${
-                                                selected
-                                                    ? 'border-brand-primary bg-brand-primary text-brand-on-primary shadow-brand-cta'
-                                                    : 'border-brand-border bg-brand-surface text-brand-text hover:border-brand-primary-muted hover:bg-brand-primary-soft'
-                                            }`}
-                                        >
-                                            <span className="text-sm font-semibold">{s.name}</span>
-                                            <span className={selected ? 'text-xs text-brand-on-primary/70' : 'text-xs text-brand-text-secondary'}>
-                                                ${formatPrice(s.price)}
-                                            </span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                            <InputError message={errors.servicio_id} className="mt-1" />
-                        </div>
+                            <SectionBlock
+                                title="Medio de pago"
+                                description="Define como se cobro este corte para que la caja y los reportes queden correctos."
+                            >
+                                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                                    {mediosPago.map((medio) => {
+                                        const selected = String(data.medio_pago_id) === String(medio.id);
 
-                        <div>
-                            <InputLabel value="Medio de pago *" />
-                            <div className="mt-2 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-                                {mediosPago.map((m) => {
-                                    const selected = String(data.medio_pago_id) === String(m.id);
-                                    return (
-                                        <button
-                                            key={m.id}
-                                            type="button"
-                                            onClick={() => setData('medio_pago_id', String(m.id))}
-                                            aria-pressed={selected}
-                                            className={`flex min-h-[56px] items-center justify-center rounded-brand-md border px-4 py-3 text-center text-sm font-semibold transition-colors ${
-                                                selected
-                                                    ? 'border-brand-primary bg-brand-primary text-brand-on-primary shadow-brand-cta'
-                                                    : 'border-brand-border bg-brand-surface text-brand-text hover:border-brand-primary-muted hover:bg-brand-primary-soft'
-                                            }`}
-                                        >
-                                            {m.name}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                            <InputError message={errors.medio_pago_id} className="mt-1" />
-                        </div>
+                                        return (
+                                            <button
+                                                key={medio.id}
+                                                type="button"
+                                                onClick={() => setData('medio_pago_id', String(medio.id))}
+                                                aria-pressed={selected}
+                                                className={`flex min-h-[64px] items-center justify-center rounded-[22px] border px-4 py-3 text-center text-sm font-semibold transition ${
+                                                    selected
+                                                        ? 'border-brand-primary bg-brand-primary text-brand-on-primary shadow-brand-cta'
+                                                        : 'border-brand-border bg-brand-surface text-brand-text hover:border-brand-primary/20 hover:bg-brand-primary/5'
+                                                }`}
+                                            >
+                                                {medio.name}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                <InputError message={errors.medio_pago_id} className="mt-2" />
+                            </SectionBlock>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <InputLabel htmlFor="price" value="Precio ($) *" />
-                                <TextInput
-                                    id="price"
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    value={data.price}
-                                    onChange={(e) => setData('price', e.target.value)}
-                                    className="mt-1 block min-h-[48px] w-full text-base"
-                                />
-                                <InputError message={errors.price} className="mt-1" />
+                            <div className="grid gap-6 md:grid-cols-2">
+                                <SectionBlock title="Precio" description="Puedes mantener el valor del servicio o editarlo si hubo una variacion.">
+                                    <InputLabel htmlFor="price" value="Precio final ($) *" />
+                                    <TextInput
+                                        id="price"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        value={data.price}
+                                        onChange={(event) => setData('price', event.target.value)}
+                                        className="mt-2 block min-h-[52px] w-full rounded-full border-brand-border bg-brand-surface px-4 text-base"
+                                    />
+                                    <InputError message={errors.price} className="mt-2" />
+                                </SectionBlock>
+
+                                <SectionBlock title="Fecha" description="Define cuando se realizo el corte para que impacte en el dia correcto.">
+                                    <InputLabel htmlFor="performed_at" value="Fecha *" />
+                                    <TextInput
+                                        id="performed_at"
+                                        type="date"
+                                        value={data.performed_at}
+                                        onChange={(event) => setData('performed_at', event.target.value)}
+                                        className="mt-2 block min-h-[52px] w-full rounded-full border-brand-border bg-brand-surface px-4 text-base"
+                                    />
+                                    <InputError message={errors.performed_at} className="mt-2" />
+                                </SectionBlock>
                             </div>
 
-                            <div>
-                                <InputLabel htmlFor="performed_at" value="Fecha *" />
-                                <TextInput
-                                    id="performed_at"
-                                    type="date"
-                                    value={data.performed_at}
-                                    onChange={(e) => setData('performed_at', e.target.value)}
-                                    className="mt-1 block min-h-[48px] w-full text-base"
-                                />
-                                <InputError message={errors.performed_at} className="mt-1" />
+                            <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-brand-primary px-6 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition hover:bg-brand-primary-hover disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                                >
+                                    Cargar corte
+                                </button>
                             </div>
-                        </div>
-
-                        <PrimaryButton disabled={processing} className="min-h-[48px] w-full justify-center text-sm">
-                            Cargar corte
-                        </PrimaryButton>
-                    </form>
+                        </form>
                     )}
                 </div>
-            </div>
+            </section>
 
-            <div className="overflow-hidden rounded-brand-xl border border-brand-border bg-brand-surface shadow-brand-card">
-                <div className="border-b border-brand-border-subtle px-4 py-3">
-                    <h3 className="font-display text-base font-bold text-brand-text">Hoy cargaste</h3>
+            <aside className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                <div className="flex items-start justify-between gap-4">
+                    <div>
+                        <p className="text-sm font-medium text-brand-text-secondary">
+                            Actividad de hoy
+                        </p>
+                        <h3 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-brand-text">
+                            Cortes cargados
+                        </h3>
+                        <p className="mt-2 text-xs text-brand-text-secondary">
+                            Revisa rapidamente lo registrado durante la jornada.
+                        </p>
+                    </div>
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-link shadow-sm">
+                        <IconReceipt2 size={22} stroke={1.8} />
+                    </span>
                 </div>
+
+                <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                    <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                            Cantidad
+                        </p>
+                        <p className="mt-2 text-2xl font-bold text-brand-text">
+                            {cortesHoy.length}
+                        </p>
+                    </div>
+
+                    <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                            Total del dia
+                        </p>
+                        <p className="mt-2 text-2xl font-bold text-brand-success">
+                            {`$${formatPrice(totalHoy)}`}
+                        </p>
+                    </div>
+                </div>
+
                 {cortesHoy.length === 0 ? (
-                    <p className="p-4 text-sm text-brand-text-secondary">
-                        Todavía no cargaste ningún corte hoy.
-                    </p>
+                    <div className="mt-5 rounded-[24px] border border-dashed border-brand-border bg-brand-surface-alt p-6 text-center">
+                        <p className="text-sm font-medium text-brand-text">
+                            Todavia no cargaste cortes hoy
+                        </p>
+                        <p className="mt-2 text-sm text-brand-text-secondary">
+                            Cuando registres el primero, lo veras aqui junto con el total acumulado del dia.
+                        </p>
+                    </div>
                 ) : (
-                    <ul className="divide-y divide-brand-border-subtle">
-                        {cortesHoy.map((c) => (
-                            <li key={c.id} className="px-4 py-3">
-                                <div className="flex items-center justify-between gap-2">
-                                    <p className="truncate font-medium text-brand-text">{c.cliente.name}</p>
-                                    <p className="shrink-0 font-semibold text-brand-text">${formatPrice(c.price)}</p>
+                    <div className="mt-5 space-y-3">
+                        {cortesHoy.map((corte) => (
+                            <article
+                                key={corte.id}
+                                className="rounded-[22px] bg-brand-surface-alt px-4 py-4"
+                            >
+                                <div className="flex items-center justify-between gap-3">
+                                    <p className="truncate text-sm font-semibold text-brand-text">
+                                        {corte.cliente.name}
+                                    </p>
+                                    <p className="shrink-0 text-sm font-bold text-brand-text">
+                                        {`$${formatPrice(corte.price)}`}
+                                    </p>
                                 </div>
-                                <p className="mt-0.5 text-sm text-brand-text-secondary">
-                                    {c.servicio.name} · {c.medio_pago.name}
+                                <p className="mt-2 text-sm text-brand-text-secondary">
+                                    {corte.servicio.name} - {corte.medio_pago.name}
                                 </p>
-                            </li>
+                            </article>
                         ))}
-                    </ul>
+                    </div>
                 )}
-            </div>
+            </aside>
         </div>
     );
 }
