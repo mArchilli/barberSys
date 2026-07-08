@@ -1,7 +1,6 @@
 import { dayLabel } from '@/Components/DaySelector';
 import DangerButton from '@/Components/DangerButton';
 import MetricCard from '@/Components/MetricCard';
-import MobileMenuButton from '@/Components/MobileMenuButton';
 import Modal from '@/Components/Modal';
 import MonthSelector from '@/Components/MonthSelector';
 import RankingList from '@/Components/RankingList';
@@ -169,12 +168,11 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
 
     return (
         <AuthenticatedLayout
-            header={({ onOpenMobileMenu }) => (
+            header={(
                 <div className="flex items-center justify-between gap-3">
                     <h2 className="min-w-0 flex-1 truncate text-xl font-semibold leading-tight text-brand-text">
                         Finanzas
                     </h2>
-                    <MobileMenuButton onClick={onOpenMobileMenu} />
                 </div>
             )}
         >

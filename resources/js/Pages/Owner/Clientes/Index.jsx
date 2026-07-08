@@ -1,4 +1,3 @@
-import MobileMenuButton from '@/Components/MobileMenuButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { IconEdit, IconToggleLeft } from '@tabler/icons-react';
@@ -22,12 +21,11 @@ export default function Index({ clientes }) {
 
     return (
         <AuthenticatedLayout
-            header={({ onOpenMobileMenu }) => (
+            header={(
                 <div className="flex items-center justify-between gap-3">
                     <h2 className="text-xl font-semibold leading-tight text-brand-text">
                         Clientes
                     </h2>
-                    <MobileMenuButton onClick={onOpenMobileMenu} />
                 </div>
             )}
         >

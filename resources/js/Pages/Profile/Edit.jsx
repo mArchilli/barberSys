@@ -1,3 +1,4 @@
+import AdminLayout from '@/Layouts/AdminLayout';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BarberLayout from '@/Layouts/BarberLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
@@ -8,7 +9,8 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 export default function Edit({ mustVerifyEmail, status }) {
     const { auth } = usePage().props;
     const isBarber = auth.user.role === 'barber';
-    const Layout = isBarber ? BarberLayout : AuthenticatedLayout;
+    const isAdmin = auth.user.role === 'admin';
+    const Layout = isBarber ? BarberLayout : isAdmin ? AdminLayout : AuthenticatedLayout;
 
     return (
         <Layout

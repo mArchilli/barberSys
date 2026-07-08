@@ -1,5 +1,4 @@
 import MetricCard from '@/Components/MetricCard';
-import MobileMenuButton from '@/Components/MobileMenuButton';
 import MonthSelector from '@/Components/MonthSelector';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
@@ -16,12 +15,11 @@ function formatPrice(value) {
 export default function Consolidado({ period, totalFacturado, totalCortes, totalSueldos, totalGastos, totalNeto, comparativa }) {
     return (
         <AuthenticatedLayout
-            header={({ onOpenMobileMenu }) => (
+            header={(
                 <div className="flex items-center justify-between gap-3">
                     <h2 className="text-xl font-semibold leading-tight text-brand-text">
                         Consolidado de barberías
                     </h2>
-                    <MobileMenuButton onClick={onOpenMobileMenu} />
                 </div>
             )}
         >

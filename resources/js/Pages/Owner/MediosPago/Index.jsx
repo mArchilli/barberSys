@@ -1,4 +1,3 @@
-import MobileMenuButton from '@/Components/MobileMenuButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { IconEdit, IconSearch, IconToggleLeft } from '@tabler/icons-react';
@@ -21,13 +20,12 @@ export default function Index({ mediosPago }) {
 
     return (
         <AuthenticatedLayout
-            header={({ onOpenMobileMenu }) => (
+            header={(
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center justify-between gap-3">
                         <h2 className="text-xl font-semibold leading-tight text-brand-text">
                             Medios de pago
                         </h2>
-                        <MobileMenuButton onClick={onOpenMobileMenu} />
                     </div>
                     <Link
                         href={route('owner.barberias.medios-pago.create', { barberia: barbId })}

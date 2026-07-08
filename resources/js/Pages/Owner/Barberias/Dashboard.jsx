@@ -5,23 +5,13 @@ import RankingList from '@/Components/RankingList';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
-    IconBuildingStore,
     IconChartBar,
     IconChartPie,
-    IconChevronDown,
-    IconCreditCard,
     IconEye,
     IconEyeOff,
-    IconLayoutDashboard,
-    IconList,
     IconLock,
     IconLockSquareRounded,
-    IconLogout,
-    IconReceipt2,
     IconReportMoney,
-    IconUserCircle,
-    IconUserCog,
-    IconUsers,
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
@@ -154,87 +144,12 @@ export default function Dashboard({
     facturacionUltimosSieteDias,
     porMedioPagoHoy,
 }) {
-    const { currentBarberia, auth, ownerBarberiaCount } = usePage().props;
+    const { currentBarberia, auth } = usePage().props;
     const dashboardUrl = route('owner.barberias.dashboard', currentBarberia.id);
     const primerNombre = auth.user.name.split(' ')[0];
     const maxFacturacionDiaria = Math.max(...facturacionUltimosSieteDias.map((item) => item.total), 1);
     const facturacionHoy = facturacionUltimosSieteDias.at(-1)?.total ?? 0;
     const [showFacturacion, setShowFacturacion] = useState(true);
-    const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-    const topActionClassName =
-        'inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full px-2.5 py-2 text-[12px] font-medium transition';
-    const dashboardActions = [
-        {
-            href: route('owner.barberias.dashboard', { barberia: currentBarberia.id }),
-            label: 'Dashboard',
-            icon: IconLayoutDashboard,
-            active: true,
-        },
-        {
-            href: route('owner.barberias.cortes.index', { barberia: currentBarberia.id }),
-            label: 'Cargar corte',
-            icon: IconReceipt2,
-            active: false,
-        },
-        {
-            href: route('owner.barberias.barberos.index', { barberia: currentBarberia.id }),
-            label: 'Barberos',
-            icon: IconUsers,
-            active: false,
-        },
-        {
-            href: route('owner.barberias.servicios.index', { barberia: currentBarberia.id }),
-            label: 'Servicios',
-            icon: IconList,
-            active: false,
-        },
-        {
-            href: route('owner.barberias.medios-pago.index', { barberia: currentBarberia.id }),
-            label: 'Medios de pago',
-            icon: IconCreditCard,
-            active: false,
-        },
-        {
-            href: route('owner.barberias.clientes.index', { barberia: currentBarberia.id }),
-            label: 'Clientes',
-            icon: IconUserCircle,
-            active: false,
-        },
-        {
-            href: route('owner.barberias.finanzas', { barberia: currentBarberia.id }),
-            label: 'Finanzas',
-            icon: IconReportMoney,
-            active: false,
-        },
-    ];
-    const profileMenuActions = [
-        ...(ownerBarberiaCount > 1
-            ? [
-                {
-                    href: route('owner.barberias.index'),
-                    label: 'Cambiar barbería',
-                    icon: IconBuildingStore,
-                },
-                {
-                    href: route('owner.consolidado'),
-                    label: 'Ver consolidado',
-                    icon: IconChartPie,
-                },
-            ]
-            : []),
-        {
-            href: route('profile.edit'),
-            label: 'Perfil',
-            icon: IconUserCog,
-        },
-        {
-            href: route('logout'),
-            label: 'Cerrar sesión',
-            icon: IconLogout,
-            method: 'post',
-            as: 'button',
-        },
-    ];
 
     function handleModeChange(newMode) {
         if (newMode === period.mode) return;
@@ -256,81 +171,16 @@ export default function Dashboard({
 
     return (
         <AuthenticatedLayout
-            hideOwnerBarberiaNav
-            hideSidebar
             headerClassName="bg-brand-bg"
             headerContainerClassName="mx-auto max-w-[1720px] px-2 py-4 sm:px-3 sm:py-5 lg:px-4"
             header={(
-                <div className="space-y-4">
-                    <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
-                        <div className="flex flex-col gap-3 xl:w-full xl:flex-row xl:items-start xl:justify-between">
-                            <div className="flex flex-wrap gap-1.5">
-                                {dashboardActions.map(({ href, label, icon: Icon, active, method, as }) => (
-                                    <Link
-                                        key={label}
-                                        href={href}
-                                        method={method}
-                                        as={as}
-                                        className={
-                                            topActionClassName +
-                                            ' ' +
-                                            (active
-                                                ? 'bg-brand-primary text-brand-on-primary shadow-brand-cta'
-                                                : 'border border-brand-border bg-brand-surface text-brand-text-secondary hover:border-brand-primary/20 hover:text-brand-text')
-                                        }
-                                    >
-                                        <Icon size={17} stroke={1.9} />
-                                        <span>{label}</span>
-                                    </Link>
-                                ))}
-                            </div>
-
-                            <div className="relative xl:ml-4 xl:self-start">
-                                <button
-                                    type="button"
-                                    onClick={() => setProfileMenuOpen((value) => !value)}
-                                    aria-haspopup="menu"
-                                    aria-expanded={profileMenuOpen}
-                                    className={`${topActionClassName} border border-brand-border bg-brand-surface text-brand-text-secondary hover:border-brand-primary/20 hover:text-brand-text`}
-                                >
-                                    <IconUserCog size={17} stroke={1.9} />
-                                    <span>Mi perfil</span>
-                                    <IconChevronDown
-                                        size={15}
-                                        stroke={2}
-                                        className={`transition-transform ${profileMenuOpen ? 'rotate-180' : ''}`}
-                                    />
-                                </button>
-
-                                {profileMenuOpen && (
-                                    <div className="absolute right-0 top-full z-30 mt-2 min-w-[220px] rounded-[22px] border border-brand-border bg-brand-surface p-2 shadow-brand-card">
-                                        {profileMenuActions.map(({ href, label, icon: Icon, method, as }) => (
-                                            <Link
-                                                key={label}
-                                                href={href}
-                                                method={method}
-                                                as={as}
-                                                onClick={() => setProfileMenuOpen(false)}
-                                                className="flex w-full items-center gap-2 rounded-[16px] px-3 py-2.5 text-left text-sm font-medium text-brand-text-secondary transition hover:bg-brand-surface-alt hover:text-brand-text"
-                                            >
-                                                <Icon size={17} stroke={1.9} />
-                                                <span>{label}</span>
-                                            </Link>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl">
-                            Bienvenido {primerNombre}
-                        </p>
-                        <p className="font-display text-2xl font-semibold tracking-[-0.04em] text-brand-text sm:text-3xl sm:text-right">
-                            {currentBarberia?.name}
-                        </p>
-                    </div>
+                <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl">
+                        Bienvenido {primerNombre}
+                    </p>
+                    <p className="font-display text-2xl font-semibold tracking-[-0.04em] text-brand-text sm:text-3xl sm:text-right">
+                        {currentBarberia?.name}
+                    </p>
                 </div>
             )}
         >

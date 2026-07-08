@@ -1,7 +1,6 @@
 import DangerButton from '@/Components/DangerButton';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
-import MobileMenuButton from '@/Components/MobileMenuButton';
 import Modal from '@/Components/Modal';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
@@ -46,7 +45,7 @@ export default function Edit({ barberia, activeBarberosCount }) {
 
     return (
         <AuthenticatedLayout
-            header={({ onOpenMobileMenu }) => (
+            header={(
                 <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                         <h2 className="text-xl font-semibold leading-tight text-brand-text">
@@ -59,7 +58,6 @@ export default function Edit({ barberia, activeBarberosCount }) {
                             </span>
                         )}
                     </div>
-                    <MobileMenuButton onClick={onOpenMobileMenu} />
                 </div>
             )}
         >

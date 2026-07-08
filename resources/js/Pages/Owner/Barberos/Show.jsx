@@ -1,4 +1,3 @@
-import MobileMenuButton from '@/Components/MobileMenuButton';
 import RankingList from '@/Components/RankingList';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
@@ -53,7 +52,7 @@ export default function Show({ barbero, stats, porServicio, clientesFrecuentes }
 
     return (
         <AuthenticatedLayout
-            header={({ onOpenMobileMenu }) => (
+            header={(
                 <div className="flex items-center justify-between gap-3">
                     <h2 className="text-xl font-semibold leading-tight text-brand-text">
                         Perfil del barbero
@@ -65,8 +64,7 @@ export default function Show({ barbero, stats, porServicio, clientesFrecuentes }
                         >
                             ← Volver a Barberos
                         </Link>
-                        <MobileMenuButton onClick={onOpenMobileMenu} />
-                    </div>
+                </div>
                 </div>
             )}
         >
