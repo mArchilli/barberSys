@@ -68,7 +68,7 @@ function PaymentMethodsDonut({ items }) {
         return (
             <div className="flex h-44 items-center justify-center rounded-[24px] bg-brand-surface-alt">
                 <p className="max-w-[12rem] text-center text-sm text-brand-text-secondary">
-                    TodavÃƒÂ­a no hay movimientos cargados hoy.
+                    Todavía no hay movimientos cargados hoy.
                 </p>
             </div>
         );
@@ -97,7 +97,7 @@ function PaymentMethodsDonut({ items }) {
             <div className="relative flex h-44 w-44 items-center justify-center rounded-full" style={{ background }}>
                 <div className="flex h-[68%] w-[68%] flex-col items-center justify-center rounded-full bg-brand-surface shadow-inner">
                     <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                        Total del dÃƒÂ­a
+                        Total del día
                     </span>
                     <span className="mt-2 text-center font-display text-2xl font-extrabold tracking-[-0.04em] text-brand-text">
                         {formatMoney(items.reduce((sum, item) => sum + Number(item.total), 0))}
@@ -130,8 +130,8 @@ function PaymentMethodsDonut({ items }) {
     );
 }
 
-// Al pasar a vista DÃ­a sin un dÃ­a previamente elegido, arranca en hoy si el
-// mes seleccionado es el actual, o en el dÃ­a 1 si es un mes distinto.
+// Al pasar a vista Día sin un día previamente elegido, arranca en hoy si el
+// mes seleccionado es el actual, o en el día 1 si es un mes distinto.
 function defaultDayForMonth(month) {
     const todayIso = new Date().toLocaleDateString('sv-SE');
     return month === todayIso.slice(0, 7) ? todayIso : `${month}-01`;
@@ -244,7 +244,7 @@ export default function Dashboard({
                         <div className="flex items-center gap-3 rounded-brand-md border border-brand-border bg-brand-surface-alt px-4 py-3 text-sm text-brand-text-secondary">
                             <IconLockSquareRounded size={20} className="shrink-0" stroke={1.75} />
                             <span>
-                                Esta barberÃ­a estÃ¡ cerrada â€” estÃ¡s viendo su informaciÃ³n en solo lectura.{' '}
+                                Esta barbería está cerrada - estás viendo su información en solo lectura.{' '}
                                 <Link href={route('owner.barberias.edit', currentBarberia.id)} className="font-medium text-brand-link hover:underline">
                                     Reactivarla
                                 </Link>
@@ -292,7 +292,7 @@ export default function Dashboard({
                                 <div className="flex min-w-0 items-start gap-4">
                                     <CurrencyBadge />
                                     <div className="min-w-0">
-                                        <p className="text-sm font-medium text-brand-text-secondary">FacturaciÃ³n del perÃ­odo</p>
+                                        <p className="text-sm font-medium text-brand-text-secondary">Facturación del período</p>
                                         <p className="mt-3 truncate font-display text-4xl font-extrabold tracking-[-0.04em] text-brand-text sm:text-[3.25rem]">
                                             {showFacturacion ? formatAmount(totalFacturado) : '***'}
                                         </p>
@@ -301,7 +301,7 @@ export default function Dashboard({
                                 <button
                                     type="button"
                                     onClick={() => setShowFacturacion((value) => !value)}
-                                    aria-label={showFacturacion ? 'Ocultar facturaciÃ³n' : 'Mostrar facturaciÃ³n'}
+                                    aria-label={showFacturacion ? 'Ocultar facturación' : 'Mostrar facturación'}
                                     className="mb-1 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-brand-border bg-brand-surface-alt text-brand-link transition hover:border-brand-primary/20 hover:bg-brand-primary/5"
                                 >
                                     {showFacturacion ? (
@@ -331,9 +331,9 @@ export default function Dashboard({
                         <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-start justify-between gap-4">
                                 <div>
-                                    <p className="text-sm font-medium text-brand-text-secondary">FacturaciÃ³n diaria</p>
+                                    <p className="text-sm font-medium text-brand-text-secondary">Facturación diaria</p>
                                     <h3 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-brand-text">
-                                        Hoy + Ãºltimos 6 dÃ­as
+                                        Hoy + últimos 6 días
                                     </h3>
                                 </div>
                                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-link shadow-sm">
@@ -420,7 +420,7 @@ export default function Dashboard({
                                 <div className="grid grid-cols-3 divide-x divide-brand-border-subtle">
                                     <div className="pr-3 sm:pr-4">
                                         <p className="text-[11px] font-medium uppercase tracking-wide text-brand-text-secondary sm:text-xs">
-                                            Mi facturaciÃ³n
+                                            Mi facturación
                                         </p>
                                         <p className="mt-1 truncate text-lg font-bold text-brand-text sm:text-xl">
                                             {formatMoney(miRendimiento.totalFacturado)}
@@ -458,17 +458,17 @@ export default function Dashboard({
                             href={route('owner.barberias.finanzas', currentBarberia.id)}
                             className="mt-3 inline-block text-sm font-semibold text-brand-link hover:text-brand-link-hover"
                         >
-                            Ver Finanzas â†’
+                            Ver Finanzas ->
                         </Link>
                     </div>
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                         <section className="space-y-3">
-                            <h3 className="font-display text-lg font-bold text-brand-text">FacturaciÃ³n por barbero</h3>
+                            <h3 className="font-display text-lg font-bold text-brand-text">Facturación por barbero</h3>
                             {rankingBarberosEnabled ? (
                                 <RankingList
                                     items={porBarbero}
-                                    emptyLabel="TodavÃ­a no hay cortes cargados en este perÃ­odo."
+                                    emptyLabel="Todavía no hay cortes cargados en este período."
                                     avatars
                                 />
                             ) : (
@@ -478,26 +478,26 @@ export default function Dashboard({
                                     </span>
                                     <p className="text-sm font-semibold text-brand-text">Disponible desde el plan Crecimiento</p>
                                     <p className="max-w-sm text-xs text-brand-text-secondary">
-                                        DescubrÃ­ quÃ© barbero factura mÃ¡s y tomÃ¡ mejores decisiones sobre tu equipo.
+                                        Descubrí qué barbero factura más y tomá mejores decisiones sobre tu equipo.
                                     </p>
-                                    {/* Placeholder: todavÃ­a no existe un flujo de upgrade de plan dentro del panel */}
+                                    {/* Placeholder: todavía no existe un flujo de upgrade de plan dentro del panel */}
                                     <a href="#" className="text-sm font-semibold text-brand-link hover:text-brand-link-hover">
-                                        Ver planes â†’
+                                        Ver planes ->
                                     </a>
                                 </div>
                             )}
                         </section>
 
                         <section className="space-y-3">
-                            <h3 className="font-display text-lg font-bold text-brand-text">Servicios mÃ¡s vendidos</h3>
-                            <RankingList items={porServicio} emptyLabel="TodavÃ­a no hay servicios cargados en este perÃ­odo." />
+                            <h3 className="font-display text-lg font-bold text-brand-text">Servicios más vendidos</h3>
+                            <RankingList items={porServicio} emptyLabel="Todavía no hay servicios cargados en este período." />
                         </section>
 
                         <section className="space-y-3 lg:col-span-2">
                             <h3 className="font-display text-lg font-bold text-brand-text">Medios de pago</h3>
                             <RankingList
                                 items={porMedioPago}
-                                emptyLabel="TodavÃ­a no hay cortes cargados en este perÃ­odo."
+                                emptyLabel="Todavía no hay cortes cargados en este período."
                                 columns={3}
                             />
                         </section>
