@@ -11,6 +11,18 @@ use Illuminate\Support\Carbon;
  */
 trait ResolvesPeriod
 {
+    protected function resolveRangeDate(?string $value): ?Carbon
+    {
+        if (! is_string($value) || ! preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value, $matches)
+            || ! checkdate((int) $matches[2], (int) $matches[3], (int) $matches[1])) {
+            return null;
+        }
+
+        $date = Carbon::createFromDate((int) $matches[1], (int) $matches[2], (int) $matches[3])->startOfDay();
+
+        return $date->isFuture() ? null : $date;
+    }
+
     protected function resolvePeriod(Request $request): Carbon
     {
         $month = $request->query('month');
@@ -32,6 +44,23 @@ trait ResolvesPeriod
      */
     protected function resolvePeriodRange(Request $request): object
     {
+        if ($request->filled('from') && $request->filled('to')) {
+            $from = $this->resolveRangeDate($request->query('from'));
+            $to = $this->resolveRangeDate($request->query('to'));
+
+            if ($from && $to) {
+                if ($from->gt($to)) {
+                    [$from, $to] = [$to, $from];
+                }
+
+                return (object) [
+                    'mode' => 'range',
+                    'start' => $from->copy(),
+                    'end' => $to->copy()->endOfDay(),
+                ];
+            }
+        }
+
         if ($request->filled('day')) {
             $dia = $this->resolveDay($request);
 

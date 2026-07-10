@@ -202,11 +202,93 @@ export default function Dashboard({
 
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)_minmax(320px,0.8fr)]">
                         <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                            <div className="flex items-start justify-between gap-3">
+                                <div>
+                                    <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">
+                                        Caja del dia
+                                    </h3>
+                                    <p className="mt-2 text-xs text-brand-text-secondary">
+                                        Incluye efectivo, transferencia, tarjeta y cualquier método nuevo cargado.
+                                    </p>
+                                </div>
+                                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-link shadow-sm">
+                                    <IconChartPie size={22} stroke={1.8} />
+                                </span>
+                            </div>
+
+                            <div className="mt-5">
+                                <PaymentMethodsDonut items={porMedioPagoHoy} />
+                            </div>
+                        </section>
+
+                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                            <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">
+                                        Hoy + últimos 6 días
+                                    </h3>
+                                </div>
+                                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-link shadow-sm">
+                                    <IconChartBar size={24} stroke={1.8} />
+                                </span>
+                            </div>
+
+                            <div className="mt-4 rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                                    Lo que va de hoy
+                                </p>
+                                <p className="mt-2 font-display text-3xl font-extrabold tracking-[-0.04em] text-brand-text">
+                                    {formatMoney(facturacionHoy)}
+                                </p>
+                            </div>
+
+                            <div className="mt-5">
+                                <div>
+                                    <div className="flex h-48 items-end gap-3 sm:gap-4">
+                                        {facturacionUltimosSieteDias.map((item) => {
+                                            const height = item.total > 0 ? Math.max((item.total / maxFacturacionDiaria) * 100, 10) : 6;
+                                            const esHoy = item.date === facturacionUltimosSieteDias.at(-1)?.date;
+
+                                            return (
+                                                <div key={item.date} className="flex flex-1 flex-col items-center justify-end gap-2">
+                                                    <p className={`text-[11px] font-semibold ${esHoy ? 'text-brand-link' : 'text-brand-text-secondary'}`}>
+                                                        {item.total > 0
+                                                            ? Number(item.total).toLocaleString('es-AR', { maximumFractionDigits: 0 })
+                                                            : '0'}
+                                                    </p>
+                                                    <div className="flex h-32 w-full items-end rounded-full bg-brand-surface-alt/80 px-1.5 py-1.5">
+                                                        <div
+                                                            className={`w-full rounded-full transition-all ${
+                                                                esHoy
+                                                                    ? 'bg-[linear-gradient(180deg,#48D5FC_0%,#4E75A5_100%)] shadow-[0_12px_24px_rgba(72,213,252,0.22)]'
+                                                                    : 'bg-brand-primary/45'
+                                                            }`}
+                                                            style={{ height: `${height}%` }}
+                                                        />
+                                                    </div>
+                                                    <div className="text-center">
+                                                        <p className={`text-xs font-semibold uppercase ${esHoy ? 'text-brand-link' : 'text-brand-text-secondary'}`}>
+                                                            {dayShortLabel(item.date)}
+                                                        </p>
+                                                        <p className="text-[11px] text-brand-text-secondary">
+                                                            {item.date.slice(8, 10)}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </section>
+
+                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-end justify-between gap-4">
                                 <div className="flex min-w-0 items-start gap-4">
                                     <CurrencyBadge />
                                     <div className="min-w-0">
-                                        <p className="text-sm font-medium text-brand-text-secondary">Facturación del período</p>
+                                        <p className="text-sm font-medium text-brand-text-secondary">Perdiodo de facturación</p>
                                         <p className="mt-3 truncate font-display text-4xl font-extrabold tracking-[-0.04em] text-brand-text sm:text-[3.25rem]">
                                             {showFacturacion ? formatAmount(totalFacturado) : '***'}
                                         </p>
@@ -251,90 +333,6 @@ export default function Dashboard({
                                     </p>
                                     <p className="mt-2 text-2xl font-bold text-brand-text">{barberosActivos}</p>
                                 </div>
-                            </div>
-                        </section>
-
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
-                            <div className="flex items-start justify-between gap-4">
-                                <div>
-                                    <p className="text-sm font-medium text-brand-text-secondary">Facturación diaria</p>
-                                    <h3 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-brand-text">
-                                        Hoy + últimos 6 días
-                                    </h3>
-                                </div>
-                                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-link shadow-sm">
-                                    <IconChartBar size={24} stroke={1.8} />
-                                </span>
-                            </div>
-
-                            <div className="mt-5 rounded-[22px] bg-brand-surface-alt px-4 py-4">
-                                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                                    Lo que va de hoy
-                                </p>
-                                <p className="mt-2 font-display text-3xl font-extrabold tracking-[-0.04em] text-brand-text">
-                                    {formatMoney(facturacionHoy)}
-                                </p>
-                            </div>
-
-                            <div className="mt-6">
-                                <div>
-                                    <div className="flex h-48 items-end gap-3 sm:gap-4">
-                                        {facturacionUltimosSieteDias.map((item) => {
-                                            const height = item.total > 0 ? Math.max((item.total / maxFacturacionDiaria) * 100, 10) : 6;
-                                            const esHoy = item.date === facturacionUltimosSieteDias.at(-1)?.date;
-
-                                            return (
-                                                <div key={item.date} className="flex flex-1 flex-col items-center justify-end gap-2">
-                                                    <p className={`text-[11px] font-semibold ${esHoy ? 'text-brand-link' : 'text-brand-text-secondary'}`}>
-                                                        {item.total > 0
-                                                            ? Number(item.total).toLocaleString('es-AR', { maximumFractionDigits: 0 })
-                                                            : '0'}
-                                                    </p>
-                                                    <div className="flex h-32 w-full items-end rounded-full bg-brand-surface-alt/80 px-1.5 py-1.5">
-                                                        <div
-                                                            className={`w-full rounded-full transition-all ${
-                                                                esHoy
-                                                                    ? 'bg-[linear-gradient(180deg,#48D5FC_0%,#4E75A5_100%)] shadow-[0_12px_24px_rgba(72,213,252,0.22)]'
-                                                                    : 'bg-brand-primary/45'
-                                                            }`}
-                                                            style={{ height: `${height}%` }}
-                                                        />
-                                                    </div>
-                                                    <div className="text-center">
-                                                        <p className={`text-xs font-semibold uppercase ${esHoy ? 'text-brand-link' : 'text-brand-text-secondary'}`}>
-                                                            {dayShortLabel(item.date)}
-                                                        </p>
-                                                        <p className="text-[11px] text-brand-text-secondary">
-                                                            {item.date.slice(8, 10)}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-
-                            </div>
-                        </section>
-
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
-                            <div className="flex items-start justify-between gap-3">
-                                <div>
-                                    <p className="text-sm font-medium text-brand-text-secondary">Medios de pago de hoy</p>
-                                    <h3 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-brand-text">
-                                        Distribución porcentual
-                                    </h3>
-                                    <p className="mt-2 text-xs text-brand-text-secondary">
-                                        Incluye efectivo, transferencia, tarjeta y cualquier método nuevo cargado.
-                                    </p>
-                                </div>
-                                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-link shadow-sm">
-                                    <IconChartPie size={22} stroke={1.8} />
-                                </span>
-                            </div>
-
-                            <div className="mt-6">
-                                <PaymentMethodsDonut items={porMedioPagoHoy} />
                             </div>
                         </section>
                     </div>
@@ -434,4 +432,3 @@ export default function Dashboard({
         </AuthenticatedLayout>
     );
 }
-

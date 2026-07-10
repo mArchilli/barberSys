@@ -38,6 +38,8 @@ export default function Edit({ mustVerifyEmail, status }) {
 
     return (
         <Layout
+            headerClassName="bg-brand-bg"
+            headerContainerClassName="mx-auto max-w-[1720px] px-2 py-4 sm:px-3 sm:py-5 lg:px-4"
             header={(
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                     <div>

@@ -113,9 +113,10 @@ class DashboardController extends Controller
         $inicioUltimosSieteDias = $hoy->copy()->subDays(6);
 
         $facturacionUltimosSieteDias = Corte::where('barberia_id', $barberia->id)
-            ->whereBetween('performed_at', [$inicioUltimosSieteDias->toDateString(), $hoy->toDateString()])
-            ->selectRaw('performed_at as date, SUM(price) as total')
-            ->groupBy('performed_at')
+            ->whereDate('performed_at', '>=', $inicioUltimosSieteDias->toDateString())
+            ->whereDate('performed_at', '<=', $hoy->toDateString())
+            ->selectRaw('DATE(performed_at) as date, SUM(price) as total')
+            ->groupByRaw('DATE(performed_at)')
             ->pluck('total', 'date');
 
         $facturacionUltimosSieteDias = collect(range(0, 6))
