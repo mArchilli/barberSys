@@ -224,13 +224,8 @@ function DashboardPeriodFilter({ period, url }) {
     ];
 
     return (
-        <div className="flex w-full min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">Filtro</p>
-                <p className="mt-1 break-words text-sm font-medium text-brand-text" aria-live="polite">{periodLabel(period)}</p>
-            </div>
-
-            <div className="flex w-full min-w-0 flex-col gap-3 lg:w-auto lg:items-end">
+        <div className="flex min-w-0 flex-col gap-3">
+            <div className="flex w-full min-w-0 flex-col gap-3 md:flex-row md:items-center md:justify-center">
                 <div
                     className="grid w-full min-w-0 grid-cols-2 gap-1 rounded-[24px] border border-brand-border bg-brand-surface p-1 shadow-brand-card sm:flex sm:w-auto sm:rounded-brand-pill"
                     role="group"
@@ -261,39 +256,44 @@ function DashboardPeriodFilter({ period, url }) {
                     })}
                 </div>
 
-                {rangeOpen && (
-                    <form id="dashboard-custom-range" onSubmit={applyRange} className="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:items-end">
-                        <label className="grid w-full min-w-0 grid-cols-1 gap-1 text-xs font-medium text-brand-text-secondary sm:w-auto">
-                            Desde
-                            <input
-                                ref={fromInputRef}
-                                type="date"
-                                value={from}
-                                max={period.today}
-                                onChange={(event) => setFrom(event.target.value)}
-                                className="h-11 w-full min-w-0 max-w-full rounded-brand-pill border-brand-border bg-brand-surface px-4 text-sm text-brand-text shadow-brand-card focus:border-brand-primary focus:ring-brand-primary sm:w-[10.5rem]"
-                            />
-                        </label>
-                        <label className="grid w-full min-w-0 grid-cols-1 gap-1 text-xs font-medium text-brand-text-secondary sm:w-auto">
-                            Hasta
-                            <input
-                                type="date"
-                                value={to}
-                                max={period.today}
-                                onChange={(event) => setTo(event.target.value)}
-                                className="h-11 w-full min-w-0 max-w-full rounded-brand-pill border-brand-border bg-brand-surface px-4 text-sm text-brand-text shadow-brand-card focus:border-brand-primary focus:ring-brand-primary sm:w-[10.5rem]"
-                            />
-                        </label>
-                        <button
-                            type="submit"
-                            disabled={! from || ! to}
-                            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-brand-pill bg-brand-primary px-5 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition hover:bg-brand-primary-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-                        >
-                            Aplicar
-                        </button>
-                    </form>
-                )}
+                <p className="min-w-0 break-words text-sm font-medium text-brand-text" aria-live="polite">
+                    <span className="font-semibold text-brand-text-secondary">Filtro:</span>{' '}
+                    {periodLabel(period)}
+                </p>
             </div>
+
+            {rangeOpen && (
+                <form id="dashboard-custom-range" onSubmit={applyRange} className="flex w-full min-w-0 flex-col justify-center gap-2 sm:flex-row sm:items-end">
+                    <label className="grid w-full min-w-0 grid-cols-1 gap-1 text-xs font-medium text-brand-text-secondary sm:w-auto">
+                        Desde
+                        <input
+                            ref={fromInputRef}
+                            type="date"
+                            value={from}
+                            max={period.today}
+                            onChange={(event) => setFrom(event.target.value)}
+                            className="h-11 w-full min-w-0 max-w-full rounded-brand-pill border-brand-border bg-brand-surface px-4 text-sm text-brand-text shadow-brand-card focus:border-brand-primary focus:ring-brand-primary sm:w-[10.5rem]"
+                        />
+                    </label>
+                    <label className="grid w-full min-w-0 grid-cols-1 gap-1 text-xs font-medium text-brand-text-secondary sm:w-auto">
+                        Hasta
+                        <input
+                            type="date"
+                            value={to}
+                            max={period.today}
+                            onChange={(event) => setTo(event.target.value)}
+                            className="h-11 w-full min-w-0 max-w-full rounded-brand-pill border-brand-border bg-brand-surface px-4 text-sm text-brand-text shadow-brand-card focus:border-brand-primary focus:ring-brand-primary sm:w-[10.5rem]"
+                        />
+                    </label>
+                    <button
+                        type="submit"
+                        disabled={! from || ! to}
+                        className="inline-flex min-h-[44px] w-full items-center justify-center rounded-brand-pill bg-brand-primary px-5 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition hover:bg-brand-primary-hover disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                    >
+                        Aplicar
+                    </button>
+                </form>
+            )}
         </div>
     );
 }
@@ -432,24 +432,25 @@ export default function Dashboard({
             headerClassName="bg-brand-bg"
             headerContainerClassName="mx-auto max-w-[1720px] px-2 py-4 sm:px-3 sm:py-5 lg:px-4"
             header={(
-                <div className="w-full min-w-0 space-y-5 pt-1">
-                    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <h1 className="min-w-0 break-words font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl">
-                            Bienvenido {primerNombre}
-                        </h1>
-                        <p className="min-w-0 break-words font-display text-2xl font-semibold tracking-[-0.04em] text-brand-text sm:text-right sm:text-3xl">
-                            {currentBarberia?.name}
-                        </p>
+                <div className="grid w-full min-w-0 grid-cols-1 gap-4 pt-1 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-start xl:gap-6">
+                    <h1 className="min-w-0 break-words font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl xl:pt-1">
+                        Bienvenido, {primerNombre}
+                    </h1>
+
+                    <div className="min-w-0 xl:justify-self-center">
+                        <DashboardPeriodFilter period={period} url={dashboardUrl} />
                     </div>
 
-                    <DashboardPeriodFilter period={period} url={dashboardUrl} />
+                    <p className="min-w-0 break-words font-display text-2xl font-semibold tracking-[-0.04em] text-brand-text sm:text-3xl xl:justify-self-end xl:pt-1 xl:text-right">
+                        {currentBarberia?.name}
+                    </p>
                 </div>
             )}
         >
             <Head title="Dashboard" />
 
             <div className="w-full min-w-0 max-w-full pb-12">
-                <div className="mx-auto w-full min-w-0 max-w-[1720px] space-y-8 px-2 sm:px-3 lg:px-4">
+                <div className="mx-auto grid w-full min-w-0 max-w-[1720px] gap-6 px-2 sm:px-3 lg:px-4">
                     {! currentBarberia?.active && (
                         <div className="flex items-center gap-3 rounded-brand-md border border-brand-border bg-brand-surface-alt px-4 py-3 text-sm text-brand-text-secondary">
                             <IconLockSquareRounded size={20} className="shrink-0" stroke={1.75} />
@@ -462,9 +463,8 @@ export default function Dashboard({
                         </div>
                     )}
 
-                    <section className="min-w-0 space-y-3" aria-labelledby="dashboard-kpis-title">
-                        <h2 id="dashboard-kpis-title" className="font-display text-lg font-bold text-brand-text">Indicadores principales</h2>
-                        <dl className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                    <section className="min-w-0" aria-label="Métricas del dashboard">
+                        <dl className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                             <KpiCard
                                 label="Facturación"
                                 value={showFacturacion ? formatMoney(kpis.facturacion) : '$***'}
@@ -509,10 +509,9 @@ export default function Dashboard({
                         </dl>
                     </section>
 
-                    <section className="min-w-0 space-y-3" aria-labelledby="dashboard-analysis-title">
-                        <h2 id="dashboard-analysis-title" className="font-display text-lg font-bold text-brand-text">Análisis</h2>
+                    <section className="min-w-0" aria-label="Facturación y pagos">
                         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
-                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-7">
+                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="min-w-0">
                                         <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">Evolución de facturación</h3>
@@ -531,7 +530,7 @@ export default function Dashboard({
                                 </div>
                             </article>
 
-                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-7">
+                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="min-w-0">
                                         <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">Medios de pago</h3>
@@ -549,8 +548,7 @@ export default function Dashboard({
                         </div>
                     </section>
 
-                    <section className="min-w-0 space-y-3" aria-labelledby="dashboard-performance-title">
-                        <h2 id="dashboard-performance-title" className="font-display text-lg font-bold text-brand-text">Rendimiento</h2>
+                    <section className="min-w-0" aria-label="Rankings">
                         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2">
                             <article className="min-w-0 space-y-3">
                                 <h3 className="font-display text-lg font-bold text-brand-text">Ranking de barberos</h3>
@@ -578,10 +576,9 @@ export default function Dashboard({
                         </div>
                     </section>
 
-                    <section className="min-w-0 space-y-3" aria-labelledby="dashboard-management-title">
-                        <h2 id="dashboard-management-title" className="font-display text-lg font-bold text-brand-text">Gestión</h2>
+                    <section className="min-w-0" aria-label="Caja y finanzas">
                         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2">
-                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-7">
+                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="min-w-0">
                                         <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">Cierre de caja</h3>
@@ -620,7 +617,7 @@ export default function Dashboard({
                                 )}
                             </article>
 
-                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-7">
+                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="min-w-0">
                                         <p className="text-sm font-medium text-brand-text-secondary">{monthLabel(gestion.month)}</p>
@@ -647,10 +644,9 @@ export default function Dashboard({
                         </div>
                     </section>
 
-                    <section className="min-w-0 space-y-3" aria-labelledby="dashboard-action-title">
-                        <h2 id="dashboard-action-title" className="font-display text-lg font-bold text-brand-text">Acción</h2>
+                    <section className="min-w-0" aria-label="Actividad y alertas">
                         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2">
-                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-7">
+                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="min-w-0">
                                         <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">Actividad reciente</h3>
@@ -683,7 +679,7 @@ export default function Dashboard({
                                 )}
                             </article>
 
-                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-7">
+                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="min-w-0">
                                         <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">Alertas inteligentes</h3>
