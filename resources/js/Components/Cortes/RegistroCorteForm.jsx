@@ -120,41 +120,10 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                             {! isOwnerVariant && (
                                 <p className="text-sm font-medium text-brand-text-secondary">Carga de corte</p>
                             )}
-                            <p className={`${isOwnerVariant ? '' : 'mt-3'} truncate font-display text-4xl font-extrabold tracking-[-0.04em] text-brand-text sm:text-[3.25rem]`}>
-                                {data.cliente_nombre || 'Sin cliente'}
+                            <p className={`${isOwnerVariant ? '' : 'mt-3'} break-words pb-1 font-display text-4xl font-extrabold leading-[1.15] tracking-[-0.04em] text-brand-text sm:text-[3.25rem]`}>
+                                {data.cliente_nombre || 'Cliente sin nombre'}
                             </p>
                         </div>
-                    </div>
-                </div>
-
-                <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                            Servicio
-                        </p>
-                        <p className="mt-2 text-sm font-semibold text-brand-text">
-                            {data.servicio_id
-                                ? servicios.find((item) => String(item.id) === String(data.servicio_id))?.name
-                                : 'Sin seleccionar'}
-                        </p>
-                    </div>
-                    <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                            Cobro
-                        </p>
-                        <p className="mt-2 text-sm font-semibold text-brand-text">
-                            {data.medio_pago_id
-                                ? mediosPago.find((item) => String(item.id) === String(data.medio_pago_id))?.name
-                                : 'Sin seleccionar'}
-                        </p>
-                    </div>
-                    <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                            Importe
-                        </p>
-                        <p className="mt-2 text-sm font-semibold text-brand-text">
-                            {`$${formatPrice(data.price || 0)}`}
-                        </p>
                     </div>
                 </div>
 
@@ -334,6 +303,40 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                                     />
                                     <InputError message={errors.performed_at} className="mt-2" />
                                 </SectionBlock>
+                            </div>
+
+                            <div
+                                className="grid gap-3 border-t border-brand-border-subtle pt-6 sm:grid-cols-3"
+                                aria-label="Resumen del corte antes de guardar"
+                            >
+                                <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                                        Servicio
+                                    </p>
+                                    <p className="mt-2 break-words text-sm font-semibold text-brand-text">
+                                        {data.servicio_id
+                                            ? servicios.find((item) => String(item.id) === String(data.servicio_id))?.name
+                                            : 'Sin seleccionar'}
+                                    </p>
+                                </div>
+                                <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                                        Cobro
+                                    </p>
+                                    <p className="mt-2 break-words text-sm font-semibold text-brand-text">
+                                        {data.medio_pago_id
+                                            ? mediosPago.find((item) => String(item.id) === String(data.medio_pago_id))?.name
+                                            : 'Sin seleccionar'}
+                                    </p>
+                                </div>
+                                <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                                        Importe
+                                    </p>
+                                    <p className="mt-2 break-words text-sm font-semibold tabular-nums text-brand-text">
+                                        {`$${formatPrice(data.price || 0)}`}
+                                    </p>
+                                </div>
                             </div>
 
                             <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">

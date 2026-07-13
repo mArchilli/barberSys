@@ -46,10 +46,7 @@ export default function Index({ mediosPago }) {
             header={(
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                     <div>
-                        <p className="text-sm font-medium text-brand-text-secondary">
-                            Catalogo operativo
-                        </p>
-                        <h2 className="mt-2 font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl">
+                        <h2 className="font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl">
                             Medios de pago
                         </h2>
                         <p className="mt-2 max-w-2xl text-sm text-brand-text-secondary">
@@ -108,10 +105,7 @@ export default function Index({ mediosPago }) {
                             <div className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                                 <div className="flex items-start justify-between gap-4">
                                     <div>
-                                        <p className="text-sm font-medium text-brand-text-secondary">
-                                            Busqueda rapida
-                                        </p>
-                                        <h3 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-brand-text">
+                                        <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">
                                             Encuentra un medio al instante
                                         </h3>
                                         <p className="mt-2 text-xs text-brand-text-secondary">
