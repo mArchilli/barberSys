@@ -10,7 +10,7 @@ use App\Models\Corte;
 use App\Models\MedioPago;
 use App\Models\Servicio;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -42,11 +42,11 @@ class CorteController extends Controller
         $page = $user->isBarber() ? 'Barber/Cortes/Index' : 'Owner/Cortes/Index';
 
         return Inertia::render($page, [
-            'servicios'  => $servicios,
+            'servicios' => $servicios,
             'mediosPago' => $mediosPago,
-            'cortesHoy'  => $cortesHoy,
-            'routes'     => [
-                'store'  => $user->isBarber()
+            'cortesHoy' => $cortesHoy,
+            'routes' => [
+                'store' => $user->isBarber()
                     ? route('barber.cortes.store')
                     : route('owner.barberias.cortes.store', $barberia->id),
                 'search' => $user->isBarber()
@@ -61,27 +61,55 @@ class CorteController extends Controller
         $barberia = $this->resolveBarberia($request, $barberia);
         $user = $request->user();
 
-        $servicio = Servicio::where('barberia_id', $barberia->id)->findOrFail($request->servicio_id);
-        $medioPago = MedioPago::where('barberia_id', $barberia->id)->findOrFail($request->medio_pago_id);
+        $servicio = Servicio::where('barberia_id', $barberia->id)
+            ->where('active', true)
+            ->findOrFail($request->servicio_id);
+        $medioPago = MedioPago::where('barberia_id', $barberia->id)
+            ->where('active', true)
+            ->findOrFail($request->medio_pago_id);
 
-        if ($request->filled('cliente_id')) {
-            $cliente = Cliente::where('barberia_id', $barberia->id)->findOrFail($request->cliente_id);
-        } else {
-            $cliente = Cliente::create([
+        DB::transaction(function () use ($request, $barberia, $user, $servicio, $medioPago) {
+            if ($request->filled('cliente_id')) {
+                $cliente = Cliente::where('barberia_id', $barberia->id)
+                    ->where('active', true)
+                    ->findOrFail($request->cliente_id);
+
+                $contactoFaltante = [];
+
+                if (blank($cliente->phone) && $request->filled('cliente_phone')) {
+                    $contactoFaltante['phone'] = $request->cliente_phone;
+                }
+
+                if (blank($cliente->email) && $request->filled('cliente_email')) {
+                    $contactoFaltante['email'] = $request->cliente_email;
+                }
+
+                if ($contactoFaltante !== []) {
+                    $cliente->update($contactoFaltante);
+                }
+            } else {
+                $cliente = Cliente::create([
+                    'barberia_id' => $barberia->id,
+                    'name' => $request->cliente_nombre,
+                    'phone' => $request->cliente_phone,
+                    'email' => $request->cliente_email,
+                ]);
+            }
+
+            Corte::create([
                 'barberia_id' => $barberia->id,
-                'name'        => $request->cliente_nombre,
+                'barbero_id' => $user->id,
+                'servicio_id' => $servicio->id,
+                'cliente_id' => $cliente->id,
+                'medio_pago_id' => $medioPago->id,
+                'price' => $request->price,
+                'performed_at' => $request->performed_at,
             ]);
-        }
+        });
 
-        Corte::create([
-            'barberia_id'   => $barberia->id,
-            'barbero_id'    => Auth::id(),
-            'servicio_id'   => $servicio->id,
-            'cliente_id'    => $cliente->id,
-            'medio_pago_id' => $medioPago->id,
-            'price'         => $request->price,
-            'performed_at'  => $request->performed_at,
-        ]);
+        if ($request->boolean('quick_entry')) {
+            return back()->with('success', 'Corte cargado correctamente.');
+        }
 
         return $user->isBarber()
             ? redirect()->route('barber.cortes.index')->with('success', 'Corte cargado correctamente.')

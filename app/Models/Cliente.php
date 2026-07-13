@@ -11,7 +11,7 @@ class Cliente extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['barberia_id', 'name', 'phone', 'active'];
+    protected $fillable = ['barberia_id', 'name', 'phone', 'email', 'active'];
 
     protected function casts(): array
     {

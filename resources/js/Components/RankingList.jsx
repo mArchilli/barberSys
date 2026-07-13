@@ -46,14 +46,14 @@ export default function RankingList({ items, emptyLabel, hrefFor, unitLabel = 'c
                                     <span
                                         className={
                                             avatars
-                                                ? 'flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-primary-soft text-xs font-semibold text-brand-primary-soft-text'
-                                                : 'flex h-7 w-7 shrink-0 items-center justify-center rounded-brand-pill bg-brand-primary-soft text-xs font-semibold text-brand-primary-soft-text'
+                                                ? 'flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-primary-soft text-xs font-semibold text-brand-on-primary'
+                                                : 'flex h-7 w-7 shrink-0 items-center justify-center rounded-brand-pill bg-brand-primary-soft text-xs font-semibold text-brand-on-primary'
                                         }
                                     >
                                         {avatars ? initials(item.name) : index + 1}
                                     </span>
                                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1">
-                                        <span className="truncate text-sm font-medium text-brand-text">{item.name}</span>
+                                        <span className="min-w-0 break-words text-sm font-medium leading-5 text-brand-text">{item.name}</span>
                                         {item.badge && (
                                             <span className="inline-flex shrink-0 items-center rounded-brand-pill bg-brand-surface-alt px-2 py-0.5 text-xs font-medium text-brand-text-secondary">
                                                 {item.badge}
@@ -61,8 +61,8 @@ export default function RankingList({ items, emptyLabel, hrefFor, unitLabel = 'c
                                         )}
                                     </div>
                                 </div>
-                                <div className="shrink-0 text-right">
-                                    <p className="text-sm font-semibold text-brand-text">${formatPrice(item.total)}</p>
+                                <div className="max-w-[45%] shrink-0 text-right">
+                                    <p className="break-words text-sm font-semibold tabular-nums text-brand-text">${formatPrice(item.total)}</p>
                                     {(item.cantidad !== undefined || item.pct !== undefined) && (
                                         <p className="text-xs text-brand-text-secondary">
                                             {item.cantidad !== undefined && (
@@ -78,7 +78,7 @@ export default function RankingList({ items, emptyLabel, hrefFor, unitLabel = 'c
                             {item.pct !== undefined && (
                                 <div className="h-1.5 w-full overflow-hidden rounded-brand-pill bg-brand-primary-soft">
                                     <div
-                                        className="h-1.5 rounded-brand-pill bg-brand-primary transition-all"
+                                        className="h-1.5 rounded-brand-pill bg-brand-secondary transition-all"
                                         style={{ width: `${Math.min(100, item.pct)}%` }}
                                     />
                                 </div>

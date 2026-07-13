@@ -18,7 +18,7 @@ import {
 import { useState } from 'react';
 
 const topActionClassName =
-    'inline-flex min-h-[42px] shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-medium transition';
+    'inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-medium transition';
 const flyoutPanelClassName =
     'rounded-[24px] border border-brand-border bg-brand-surface-alt/70 p-2 shadow-brand-card backdrop-blur-sm';
 
@@ -159,6 +159,7 @@ export default function DashNavbar() {
                             setProfileMenuOpen(false);
                         }}
                         aria-expanded={mobileMenuOpen}
+                        aria-controls="owner-mobile-navigation"
                         aria-label={mobileMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
                         className="inline-flex min-h-[46px] items-center gap-2 rounded-full border border-brand-border bg-brand-surface-alt px-4 py-2.5 text-sm font-semibold text-brand-text transition hover:border-brand-primary/20 hover:bg-brand-primary/5"
                     >
@@ -197,10 +198,12 @@ export default function DashNavbar() {
                 </div>
 
                 <div
+                    id="owner-mobile-navigation"
+                    aria-hidden={! mobileMenuOpen}
                     className={`overflow-hidden transition-all duration-200 ease-out md:hidden ${
                         mobileMenuOpen
-                            ? 'pointer-events-auto max-h-[520px] translate-y-0 opacity-100'
-                            : 'pointer-events-none max-h-0 -translate-y-2 opacity-0'
+                            ? 'visible pointer-events-auto max-h-[520px] translate-y-0 opacity-100'
+                            : 'invisible pointer-events-none max-h-0 -translate-y-2 opacity-0'
                     }`}
                 >
                     <div className={`${flyoutPanelClassName} grid gap-2`}>

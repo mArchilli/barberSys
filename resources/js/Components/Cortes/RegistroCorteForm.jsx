@@ -117,14 +117,11 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                             <IconScissors size={30} stroke={1.8} />
                         </span>
                         <div className="min-w-0">
-                            <p className="text-sm font-medium text-brand-text-secondary">
-                                {isOwnerVariant ? 'Nuevo registro' : 'Carga de corte'}
-                            </p>
-                            <p className="mt-3 truncate font-display text-4xl font-extrabold tracking-[-0.04em] text-brand-text sm:text-[3.25rem]">
+                            {! isOwnerVariant && (
+                                <p className="text-sm font-medium text-brand-text-secondary">Carga de corte</p>
+                            )}
+                            <p className={`${isOwnerVariant ? '' : 'mt-3'} truncate font-display text-4xl font-extrabold tracking-[-0.04em] text-brand-text sm:text-[3.25rem]`}>
                                 {data.cliente_nombre || 'Sin cliente'}
-                            </p>
-                            <p className="mt-2 text-sm text-brand-text-secondary">
-                                Completa los datos del corte para actualizar clientes, ventas y medios de pago en un solo paso.
                             </p>
                         </div>
                     </div>
@@ -256,7 +253,6 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
 
                             <SectionBlock
                                 title="Servicio"
-                                description="Selecciona el servicio realizado. El precio se completa automaticamente, pero puedes ajustarlo."
                             >
                                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
                                     {servicios.map((servicio) => {
@@ -287,7 +283,6 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
 
                             <SectionBlock
                                 title="Medio de pago"
-                                description="Define como se cobro este corte para que la caja y los reportes queden correctos."
                             >
                                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
                                     {mediosPago.map((medio) => {
@@ -358,15 +353,9 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
             <aside className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                 <div className="flex items-start justify-between gap-4">
                     <div>
-                        <p className="text-sm font-medium text-brand-text-secondary">
-                            Actividad de hoy
-                        </p>
-                        <h3 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-brand-text">
+                        <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">
                             Cortes cargados
                         </h3>
-                        <p className="mt-2 text-xs text-brand-text-secondary">
-                            Revisa rapidamente lo registrado durante la jornada.
-                        </p>
                     </div>
                     <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-link shadow-sm">
                         <IconReceipt2 size={22} stroke={1.8} />

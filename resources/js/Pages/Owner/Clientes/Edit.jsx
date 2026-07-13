@@ -12,6 +12,7 @@ export default function Edit({ cliente }) {
     const { data, setData, patch, processing, errors } = useForm({
         name: cliente.name,
         phone: cliente.phone ?? '',
+        email: cliente.email ?? '',
         active: cliente.active,
     });
 
@@ -57,8 +58,23 @@ export default function Edit({ cliente }) {
                                         value={data.phone}
                                         onChange={(e) => setData('phone', e.target.value)}
                                         className="mt-1 block w-full"
+                                        autoComplete="tel"
                                     />
                                     <InputError message={errors.phone} className="mt-1" />
+                                </div>
+
+                                <div>
+                                    <InputLabel htmlFor="email" value="Email (opcional)" />
+                                    <TextInput
+                                        id="email"
+                                        type="email"
+                                        value={data.email}
+                                        onChange={(e) => setData('email', e.target.value)}
+                                        className="mt-1 block w-full"
+                                        autoComplete="email"
+                                        inputMode="email"
+                                    />
+                                    <InputError message={errors.email} className="mt-1" />
                                 </div>
 
                                 <div className="flex items-center gap-3">

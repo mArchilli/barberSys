@@ -44,14 +44,16 @@ export default function Index({ clientes }) {
     const barbId = currentBarberia?.id;
     const [busqueda, setBusqueda] = useState('');
 
-    const clientesFiltrados = clientes.filter((cliente) =>
-        cliente.name.toLowerCase().includes(busqueda.toLowerCase()) ||
-        (cliente.phone && cliente.phone.includes(busqueda)),
-    );
+    const terminoBusqueda = busqueda.trim().toLowerCase();
+    const clientesFiltrados = clientes.filter((cliente) => (
+        cliente.name.toLowerCase().includes(terminoBusqueda) ||
+        cliente.phone?.toLowerCase().includes(terminoBusqueda) ||
+        cliente.email?.toLowerCase().includes(terminoBusqueda)
+    ));
 
     const activos = clientes.filter((cliente) => cliente.active).length;
     const inactivos = clientes.length - activos;
-    const conTelefono = clientes.filter((cliente) => cliente.phone).length;
+    const conContacto = clientes.filter((cliente) => cliente.phone || cliente.email).length;
 
     function handleDeactivate(cliente) {
         if (!confirm(`Desactivar a "${cliente.name}"? Dejara de aparecer disponible para nuevos cortes.`)) return;
@@ -112,7 +114,7 @@ export default function Index({ clientes }) {
                             <div className="mt-6 grid gap-3 sm:grid-cols-3">
                                 <MetricTile label="Activos" value={activos} tone="success" />
                                 <MetricTile label="Inactivos" value={inactivos} tone={inactivos > 0 ? 'danger' : 'default'} />
-                                <MetricTile label="Con telefono" value={conTelefono} />
+                                <MetricTile label="Con contacto" value={conContacto} />
                             </div>
                         </section>
 
@@ -126,7 +128,7 @@ export default function Index({ clientes }) {
                                         Encuentra un cliente al instante
                                     </h3>
                                     <p className="mt-2 text-xs text-brand-text-secondary">
-                                        Filtra por nombre o telefono para editar datos o dejar un cliente fuera del flujo operativo.
+                                        Filtra por nombre, telefono o email para editar datos o dejar un cliente fuera del flujo operativo.
                                     </p>
                                 </div>
                                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-link shadow-sm">
@@ -144,7 +146,8 @@ export default function Index({ clientes }) {
                                         type="search"
                                         value={busqueda}
                                         onChange={(event) => setBusqueda(event.target.value)}
-                                        placeholder="Buscar por nombre o telefono..."
+                                        placeholder="Buscar por nombre, telefono o email..."
+                                        aria-label="Buscar clientes por nombre, telefono o email"
                                         className="w-full rounded-full border border-brand-border bg-brand-surface py-3.5 pl-11 pr-4 text-sm text-brand-text placeholder-brand-text-secondary shadow-sm transition focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
                                     />
                                 </div>
@@ -221,13 +224,24 @@ export default function Index({ clientes }) {
                                             )}
                                         </div>
 
-                                        <div className="mt-6 rounded-[22px] bg-brand-surface-alt px-4 py-4">
-                                            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                                                Telefono
-                                            </p>
-                                            <p className="mt-2 text-sm font-semibold text-brand-text">
-                                                {cliente.phone || 'Sin telefono cargado'}
-                                            </p>
+                                        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                                            <div className="min-w-0 rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                                                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                                                    Telefono
+                                                </p>
+                                                <p className="mt-2 break-words text-sm font-semibold text-brand-text">
+                                                    {cliente.phone || 'Sin telefono cargado'}
+                                                </p>
+                                            </div>
+
+                                            <div className="min-w-0 rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                                                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                                                    Email
+                                                </p>
+                                                <p className="mt-2 break-words text-sm font-semibold text-brand-text">
+                                                    {cliente.email || 'Sin email cargado'}
+                                                </p>
+                                            </div>
                                         </div>
 
                                         <div className="mt-4 flex items-center justify-between gap-3 rounded-[18px] bg-brand-surface-alt px-4 py-3 text-sm">
@@ -235,7 +249,7 @@ export default function Index({ clientes }) {
                                                 {cliente.active ? 'Disponible para nuevos cortes.' : 'Fuera del flujo operativo.'}
                                             </span>
                                             <span className="rounded-full bg-brand-surface px-2.5 py-1 text-xs font-semibold text-brand-text-secondary">
-                                                {cliente.phone ? 'Contacto' : 'Pendiente'}
+                                                {cliente.phone || cliente.email ? 'Contacto' : 'Pendiente'}
                                             </span>
                                         </div>
 

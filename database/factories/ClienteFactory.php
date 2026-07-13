@@ -3,10 +3,11 @@
 namespace Database\Factories;
 
 use App\Models\Barberia;
+use App\Models\Cliente;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<\App\Models\Cliente>
+ * @extends Factory<Cliente>
  */
 class ClienteFactory extends Factory
 {
@@ -16,6 +17,7 @@ class ClienteFactory extends Factory
             'barberia_id' => Barberia::factory(),
             'name' => fake()->name(),
             'phone' => fake()->phoneNumber(),
+            'email' => fake()->optional()->safeEmail(),
             'active' => true,
         ];
     }

@@ -20,7 +20,7 @@ class ClienteController extends Controller
     {
         $clientes = Cliente::where('barberia_id', $barberia->id)
             ->orderBy('name')
-            ->get(['id', 'name', 'phone', 'active']);
+            ->get(['id', 'name', 'phone', 'email', 'active']);
 
         return Inertia::render('Owner/Clientes/Index', [
             'clientes' => $clientes,
@@ -31,12 +31,13 @@ class ClienteController extends Controller
     {
         $cliente = Cliente::create([
             'barberia_id' => $barberia->id,
-            'name'        => $request->name,
-            'phone'       => $request->phone,
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'email' => $request->email,
         ]);
 
         if ($request->wantsJson()) {
-            return response()->json($cliente->only(['id', 'name', 'phone']));
+            return response()->json($cliente->only(['id', 'name', 'phone', 'email']));
         }
 
         return redirect()
@@ -49,7 +50,7 @@ class ClienteController extends Controller
         $this->authorizeCliente($cliente, $barberia);
 
         return Inertia::render('Owner/Clientes/Edit', [
-            'cliente' => $cliente->only(['id', 'name', 'phone', 'active']),
+            'cliente' => $cliente->only(['id', 'name', 'phone', 'email', 'active']),
         ]);
     }
 
@@ -58,8 +59,9 @@ class ClienteController extends Controller
         $this->authorizeCliente($cliente, $barberia);
 
         $cliente->update([
-            'name'   => $request->name,
-            'phone'  => $request->phone,
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'email' => $request->email,
             'active' => $request->active,
         ]);
 
@@ -86,10 +88,16 @@ class ClienteController extends Controller
 
         $clientes = Cliente::where('barberia_id', $barberia->id)
             ->where('active', true)
-            ->when($q !== '', fn($query) => $query->where('name', 'like', "%{$q}%"))
+            ->when($q !== '', function ($query) use ($q) {
+                $query->where(function ($contactQuery) use ($q) {
+                    $contactQuery->where('name', 'like', "%{$q}%")
+                        ->orWhere('phone', 'like', "%{$q}%")
+                        ->orWhere('email', 'like', "%{$q}%");
+                });
+            })
             ->orderBy('name')
             ->limit(15)
-            ->get(['id', 'name', 'phone']);
+            ->get(['id', 'name', 'phone', 'email']);
 
         return response()->json($clientes);
     }
