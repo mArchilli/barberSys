@@ -23,7 +23,7 @@ Son conceptos distintos y NUNCA deben mezclarse en el código:
 ## Modelo de datos completo
 
 ### plans (catálogo)
-id, name, slug (unique), max_barberias (int, nullable=ilimitado), max_barberos (int, nullable=ilimitado), price (decimal 10,2), is_custom (boolean), active (boolean)
+id, name, slug (unique), max_barberias (int, nullable=ilimitado), max_barberos (int, nullable=ilimitado), price (decimal 10,2), is_custom (boolean), active (boolean), features (json, nullable — feature flags que gatean funcionalidad real, ver regla abajo), included_items (json, nullable, default `[]` — array de strings descriptivos, ver regla abajo)
 
 ### subscriptions
 id, owner_id (FK users), plan_id (FK plans), custom_max_barberias (int, nullable), custom_max_barberos (int, nullable), status (enum: trial/active/past_due/cancelled), starts_at (date), trial_ends_at (date, nullable), ends_at (date, nullable)
@@ -63,6 +63,8 @@ id, gasto_id (FK, nullable), barberia_id (FK), amount (decimal), month (date), i
 - **Neto mensual**: Σ(cortes.price) − Σ(sueldos calculados) − Σ(gasto_registros.amount, excluyendo is_deleted_for_month).
 - **Clientes implícitos**: los clientes se crean de forma implícita al cargar un corte (autocompletar un cliente existente vía search, o crear uno nuevo con el nombre tipeado en el mismo request). No existe alta manual de clientes como flujo principal — el CRUD de Clientes es solo de consulta, edición y baja.
 - **`must_change_password`**: se fuerza en `true` únicamente cuando la contraseña fue generada por un tercero en nombre del usuario (alta de barbero por el owner, reseteo de clave). Cuando el usuario elige su propia contraseña (registro de owner), el flag se setea explícitamente en `false`. Este criterio aplica a cualquier flujo de alta futuro, no solo a los actuales.
+- **Grandfathering de precio de planes**: editar `price` en el catálogo de un plan existente (Admin → Planes) NUNCA afecta retroactivamente a los owners ya suscriptos a ese plan — solo aplica a suscripciones nuevas de ahí en adelante. Hoy, sin billing real integrado, esto no requiere ningún mecanismo especial (no hay nada que recalcule cobros existentes). Cuando se integre MercadoPago, el precio de catálogo NO debe usarse para modificar preapprovals ya autorizados de owners existentes — solo para altas nuevas. Si un owner necesita un precio distinto al de catálogo, se maneja vía `subscriptions.custom_price` (override puntual), nunca editando el plan.
+- **`features` vs. `included_items` (no confundir)**: `features` es un json de flags booleanos (catálogo en `Plan::KNOWN_FEATURES`) que gatea funcionalidad real en código — hoy solo `ranking_barberos`. `included_items` es un array de strings puramente descriptivo (lo que el owner ve al elegir el plan en el registro, y lo que el equipo ve como referencia en Admin → Planes): no activa nada por sí solo. Si un ítem de `included_items` menciona algo que en realidad depende de un feature flag, quien edite el catálogo debe activar también ese flag — si no, el plan promete algo que no cumple. Cada plan carga su propia lista completa y autocontenida (nunca "todo lo anterior +", eso es solo para lectura humana en la especificación de negocio).
 
 ## Estructura de carpetas
 app/Http/Controllers/{Owner,Barber,Admin}/

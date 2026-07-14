@@ -295,6 +295,23 @@ export default function Register({ plans }) {
                                             {formatLimit(plan.max_barberos)} barbero
                                             {plan.max_barberos !== 1 ? 's' : ''}
                                         </span>
+
+                                        {plan.included_items?.length > 0 && (
+                                            <ul className="mt-3 space-y-1 border-t border-brand-border-subtle pt-3">
+                                                {plan.included_items.map((item, i) => (
+                                                    <li
+                                                        key={i}
+                                                        className="flex items-start gap-1.5 text-xs leading-5 text-brand-text-secondary"
+                                                    >
+                                                        <IconCheck
+                                                            className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-primary"
+                                                            stroke={2.6}
+                                                        />
+                                                        <span>{item}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
                                     </label>
                                 );
                             })}

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\OwnerController as AdminOwnerController;
+use App\Http\Controllers\Admin\PlanController as AdminPlanController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
 use App\Http\Controllers\CorteController;
@@ -128,6 +129,10 @@ Route::prefix('admin')
         Route::get('/owners/{owner}', [AdminOwnerController::class, 'show'])->name('owners.show');
         Route::patch('/owners/{owner}/reset-password', [AdminOwnerController::class, 'resetPassword'])->name('owners.resetPassword');
         Route::patch('/owners/{owner}/subscription', [AdminSubscriptionController::class, 'update'])->name('subscriptions.update');
+
+        // Catálogo comercial de planes — sin destroy: un plan se desactiva
+        // (active=false), nunca se borra, porque subscriptions.plan_id lo referencia.
+        Route::resource('plans', AdminPlanController::class)->except(['destroy', 'show']);
     });
 
 // --- Cambio de contraseña forzado ---

@@ -19,6 +19,12 @@ class PlanSeeder extends Seeder
                 'is_custom'     => false,
                 'active'        => true,
                 'features'      => null,
+                'included_items' => [
+                    'Registro de servicios prestados',
+                    'Catálogo de servicios y medios de pago',
+                    'Módulo financiero: sueldos y gastos',
+                    'Métricas básicas de facturación',
+                ],
             ],
             [
                 'name'          => 'Plan 2',
@@ -29,6 +35,14 @@ class PlanSeeder extends Seeder
                 'is_custom'     => false,
                 'active'        => true,
                 'features'      => ['ranking_barberos' => true],
+                'included_items' => [
+                    'Registro de servicios prestados',
+                    'Catálogo de servicios y medios de pago',
+                    'Módulo financiero: sueldos y gastos',
+                    'Métricas básicas de facturación',
+                    'Panel consolidado entre barberías',
+                    'Ranking de productividad por barbero',
+                ],
             ],
             [
                 'name'          => 'Plan 3',
@@ -39,6 +53,15 @@ class PlanSeeder extends Seeder
                 'is_custom'     => false,
                 'active'        => true,
                 'features'      => ['ranking_barberos' => true],
+                'included_items' => [
+                    'Registro de servicios prestados',
+                    'Catálogo de servicios y medios de pago',
+                    'Módulo financiero: sueldos y gastos',
+                    'Métricas de facturación',
+                    'Panel consolidado ampliado: neto por sucursal y neto total',
+                    'Ranking de productividad por barbero',
+                    'Sin límite de barberos por sucursal',
+                ],
             ],
             [
                 'name'          => 'Plan 4',
@@ -49,6 +72,17 @@ class PlanSeeder extends Seeder
                 'is_custom'     => true,
                 'active'        => true,
                 'features'      => ['ranking_barberos' => true],
+                'included_items' => [
+                    'Registro de servicios prestados',
+                    'Catálogo de servicios y medios de pago',
+                    'Módulo financiero: sueldos y gastos',
+                    'Métricas de facturación',
+                    'Panel consolidado ampliado: neto por sucursal y neto total',
+                    'Ranking de productividad por barbero',
+                    'Roles y permisos por sucursal',
+                    'Reportes exportables',
+                    'Soporte prioritario',
+                ],
             ],
         ];
 

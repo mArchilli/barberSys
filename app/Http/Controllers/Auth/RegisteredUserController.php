@@ -23,7 +23,7 @@ class RegisteredUserController extends Controller
     {
         return Inertia::render('Auth/Register', [
             'plans' => Plan::where('active', true)->get([
-                'id', 'name', 'slug', 'max_barberias', 'max_barberos', 'price', 'is_custom',
+                'id', 'name', 'slug', 'max_barberias', 'max_barberos', 'price', 'is_custom', 'included_items',
             ]),
         ]);
     }
