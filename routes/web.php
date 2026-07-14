@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CouponController as AdminCouponController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\OnboardingController as AdminOnboardingController;
 use App\Http\Controllers\Admin\OwnerController as AdminOwnerController;
@@ -131,10 +132,17 @@ Route::prefix('admin')
         Route::get('/owners/{owner}', [AdminOwnerController::class, 'show'])->name('owners.show');
         Route::patch('/owners/{owner}/reset-password', [AdminOwnerController::class, 'resetPassword'])->name('owners.resetPassword');
         Route::patch('/owners/{owner}/subscription', [AdminSubscriptionController::class, 'update'])->name('subscriptions.update');
+        Route::patch('/owners/{owner}/subscription/coupon', [AdminSubscriptionController::class, 'applyCoupon'])->name('subscriptions.applyCoupon');
+        Route::delete('/owners/{owner}/subscription/coupon', [AdminSubscriptionController::class, 'removeCoupon'])->name('subscriptions.removeCoupon');
 
         // Catálogo comercial de planes — sin destroy: un plan se desactiva
         // (active=false), nunca se borra, porque subscriptions.plan_id lo referencia.
         Route::resource('plans', AdminPlanController::class)->except(['destroy', 'show']);
+
+        // Cupones de descuento — sin destroy físico: se desactivan (active=false).
+        // El descuento no tiene efecto real hasta integrar el cobro de MercadoPago
+        // (ver comentario en App\Models\Coupon y CLAUDE.md).
+        Route::resource('coupons', AdminCouponController::class)->except(['destroy', 'show']);
 
         Route::get('/salud', [AdminSaludController::class, 'index'])->name('salud.index');
 

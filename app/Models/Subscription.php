@@ -21,16 +21,19 @@ class Subscription extends Model
         'starts_at',
         'trial_ends_at',
         'ends_at',
+        'coupon_id',
+        'coupon_discount_snapshot',
     ];
 
     protected function casts(): array
     {
         return [
-            'starts_at'       => 'date',
-            'trial_ends_at'   => 'date',
-            'ends_at'         => 'date',
-            'custom_features' => 'array',
-            'custom_price'    => 'decimal:2',
+            'starts_at'                 => 'date',
+            'trial_ends_at'             => 'date',
+            'ends_at'                   => 'date',
+            'custom_features'           => 'array',
+            'custom_price'              => 'decimal:2',
+            'coupon_discount_snapshot'  => 'array',
         ];
     }
 
@@ -42,6 +45,15 @@ class Subscription extends Model
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);
+    }
+
+    /**
+     * El cupón vigente (si el admin lo edita o desactiva después) — para el
+     * monto real aplicado ver `coupon_discount_snapshot`, no esta relación.
+     */
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
     }
 
     public function maxBarberias(): ?int

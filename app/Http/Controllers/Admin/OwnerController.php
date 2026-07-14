@@ -149,6 +149,7 @@ class OwnerController extends Controller
                 'custom_max_barberias'  => $subscription->custom_max_barberias,
                 'custom_max_barberos'   => $subscription->custom_max_barberos,
                 'custom_price'          => $subscription->custom_price,
+                'coupon_discount_snapshot' => $subscription->coupon_discount_snapshot,
             ] : null,
             'plans' => $plans,
             'recentCortes' => $recentCortes->map(fn (Corte $c) => [

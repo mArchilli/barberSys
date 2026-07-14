@@ -26,7 +26,10 @@ Son conceptos distintos y NUNCA deben mezclarse en el código:
 id, name, slug (unique), max_barberias (int, nullable=ilimitado), max_barberos (int, nullable=ilimitado), price (decimal 10,2), is_custom (boolean), active (boolean), features (json, nullable — feature flags que gatean funcionalidad real, ver regla abajo), included_items (json, nullable, default `[]` — array de strings descriptivos, ver regla abajo)
 
 ### subscriptions
-id, owner_id (FK users), plan_id (FK plans), custom_max_barberias (int, nullable), custom_max_barberos (int, nullable), status (enum: trial/active/past_due/cancelled), starts_at (date), trial_ends_at (date, nullable), ends_at (date, nullable)
+id, owner_id (FK users), plan_id (FK plans), custom_max_barberias (int, nullable), custom_max_barberos (int, nullable), status (enum: trial/active/past_due/cancelled), starts_at (date), trial_ends_at (date, nullable), ends_at (date, nullable), coupon_id (FK coupons, nullable), coupon_discount_snapshot (json, nullable — congela type/value/duration_months del cupón al momento del canje, ver regla de cupones abajo)
+
+### coupons (catálogo, alta por admin)
+id, code (string, unique), type (enum: percentage/fixed), value (decimal 10,2), max_uses (int, nullable=ilimitado), used_count (int, default 0), duration_months (int, nullable=indefinido), applicable_plan_ids (json, nullable=aplica a todos los planes), expires_at (date, nullable), active (boolean, default true), created_by (FK users, el admin que lo creó)
 
 ### users (extiende la tabla de Breeze)
 + role (enum: admin/owner/barber), barberia_id (FK barberias, nullable, solo barber), salary_type (enum: fixed/commission, nullable, solo barber), salary_amount (decimal, nullable), commission_pct (decimal, nullable), phone (nullable), active (boolean)
@@ -65,6 +68,7 @@ id, gasto_id (FK, nullable), barberia_id (FK), amount (decimal), month (date), i
 - **`must_change_password`**: se fuerza en `true` únicamente cuando la contraseña fue generada por un tercero en nombre del usuario (alta de barbero por el owner, reseteo de clave). Cuando el usuario elige su propia contraseña (registro de owner), el flag se setea explícitamente en `false`. Este criterio aplica a cualquier flujo de alta futuro, no solo a los actuales.
 - **Grandfathering de precio de planes**: editar `price` en el catálogo de un plan existente (Admin → Planes) NUNCA afecta retroactivamente a los owners ya suscriptos a ese plan — solo aplica a suscripciones nuevas de ahí en adelante. Hoy, sin billing real integrado, esto no requiere ningún mecanismo especial (no hay nada que recalcule cobros existentes). Cuando se integre MercadoPago, el precio de catálogo NO debe usarse para modificar preapprovals ya autorizados de owners existentes — solo para altas nuevas. Si un owner necesita un precio distinto al de catálogo, se maneja vía `subscriptions.custom_price` (override puntual), nunca editando el plan.
 - **`features` vs. `included_items` (no confundir)**: `features` es un json de flags booleanos (catálogo en `Plan::KNOWN_FEATURES`) que gatea funcionalidad real en código — hoy solo `ranking_barberos`. `included_items` es un array de strings puramente descriptivo (lo que el owner ve al elegir el plan en el registro, y lo que el equipo ve como referencia en Admin → Planes): no activa nada por sí solo. Si un ítem de `included_items` menciona algo que en realidad depende de un feature flag, quien edite el catálogo debe activar también ese flag — si no, el plan promete algo que no cumple. Cada plan carga su propia lista completa y autocontenida (nunca "todo lo anterior +", eso es solo para lectura humana en la especificación de negocio).
+- **Cupones de descuento — LIMITACIÓN CONOCIDA sin cobro real integrado**: el sistema de cupones (`Coupon`, `CouponRedemptionService`, Admin → Cupones) está completo a nivel de datos y validación — canje atómico con `lockForUpdate` para evitar condiciones de carrera sobre `max_uses`, snapshot congelado en `subscriptions.coupon_discount_snapshot` (type/value/duration_months tal como estaban al canjear, para que una edición posterior del cupón no altere retroactivamente lo que un owner ya tiene aplicado) — pero **el descuento no tiene ningún efecto sobre un cobro procesado todavía**, porque no existe integración de MercadoPago Suscripciones (solo está documentada la estrategia). Quien construya esa integración de cobro **debe leer `subscriptions.coupon_discount_snapshot`** (nunca el `Coupon` vigente vía `coupon_id`, que puede haber cambiado desde el canje) al calcular el monto a enviar a MercadoPago. Hasta que eso exista, aplicar un cupón no cambia el `effectivePrice()` de la suscripción ni ningún cobro real.
 
 ## Estructura de carpetas
 app/Http/Controllers/{Owner,Barber,Admin}/
@@ -73,7 +77,7 @@ app/Http/Requests/
 app/Models/
 app/Policies/
 app/Scopes/BelongsToBarberiaScope.php
-app/Services/{ComisionCalculator,GastoRecurrenteGenerator,PlanLimitService}.php
+app/Services/{ComisionCalculator,GastoRecurrenteGenerator,PlanLimitService,CouponRedemptionService}.php
 app/Console/Commands/GenerarGastosMensuales.php
 resources/js/Pages/{Owner,Barber,Admin}/
 routes/web.php (rutas agrupadas por prefijo de rol + middleware)

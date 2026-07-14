@@ -7,7 +7,8 @@ import PasswordRequirements, {
 } from '@/Components/PasswordRequirements';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { IconArrowLeft, IconArrowRight, IconCheck } from '@tabler/icons-react';
+import { IconArrowLeft, IconArrowRight, IconCheck, IconX } from '@tabler/icons-react';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 const STEPS = ['Tus datos', 'Tu plan', 'Tu barbería'];
@@ -75,15 +76,45 @@ export default function Register({ plans }) {
         password_confirmation: '',
         plan_id: plans?.[0]?.id ?? '',
         barberia_name: '',
+        coupon_code: '',
     });
 
     const [step, setStep] = useState(1);
     const [stepErrors, setStepErrors] = useState({});
+    const [couponStatus, setCouponStatus] = useState('idle');
+    const [couponMessage, setCouponMessage] = useState('');
+
+    useEffect(() => {
+        const code = data.coupon_code.trim();
+
+        if (!code) {
+            setCouponStatus('idle');
+            setCouponMessage('');
+            return;
+        }
+
+        setCouponStatus('checking');
+
+        const timeout = setTimeout(() => {
+            axios
+                .post(route('coupons.check'), { code, plan_id: data.plan_id })
+                .then(({ data: result }) => {
+                    setCouponStatus(result.valid ? 'valid' : 'invalid');
+                    setCouponMessage(result.message);
+                })
+                .catch(() => {
+                    setCouponStatus('invalid');
+                    setCouponMessage('No pudimos validar el cupón.');
+                });
+        }, 500);
+
+        return () => clearTimeout(timeout);
+    }, [data.coupon_code, data.plan_id]);
 
     useEffect(() => {
         if (errors.name || errors.email || errors.password || errors.password_confirmation) {
             setStep(1);
-        } else if (errors.plan_id) {
+        } else if (errors.plan_id || errors.coupon_code) {
             setStep(2);
         } else if (errors.barberia_name) {
             setStep(3);
@@ -153,6 +184,11 @@ export default function Register({ plans }) {
         const errs = validateStep3();
         setStepErrors(errs);
         if (Object.keys(errs).length) return;
+
+        if (data.coupon_code.trim() && couponStatus === 'invalid') {
+            setStep(2);
+            return;
+        }
 
         post(route('register'), {
             onFinish: () => reset('password', 'password_confirmation'),
@@ -317,6 +353,34 @@ export default function Register({ plans }) {
                             })}
                         </div>
                         <InputError message={errorFor('plan_id')} className="mt-3" />
+
+                        <div className="mt-6">
+                            <AuthLabel htmlFor="coupon_code" value="Código de cupón (opcional)" />
+                            <AuthTextInput
+                                id="coupon_code"
+                                name="coupon_code"
+                                value={data.coupon_code}
+                                error={couponStatus === 'invalid'}
+                                placeholder="Ej: BIENVENIDA20"
+                                onChange={(e) => setField('coupon_code', e.target.value.toUpperCase())}
+                            />
+                            {couponStatus === 'checking' && (
+                                <p className="mt-1.5 text-xs text-brand-text-secondary">Validando cupón…</p>
+                            )}
+                            {couponStatus === 'valid' && (
+                                <p className="mt-1.5 flex items-center gap-1 text-xs font-medium text-brand-success">
+                                    <IconCheck className="h-3.5 w-3.5" stroke={2.6} />
+                                    {couponMessage}
+                                </p>
+                            )}
+                            {couponStatus === 'invalid' && (
+                                <p className="mt-1.5 flex items-center gap-1 text-xs font-medium text-brand-danger">
+                                    <IconX className="h-3.5 w-3.5" stroke={2.6} />
+                                    {couponMessage}
+                                </p>
+                            )}
+                            <InputError message={errors.coupon_code} className="mt-1.5" />
+                        </div>
                     </div>
                 )}
 

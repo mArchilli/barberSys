@@ -12,6 +12,7 @@ import {
     IconLicense,
     IconLogout,
     IconMenu2,
+    IconTicket,
     IconUserCog,
     IconUserPlus,
     IconUsers,
@@ -29,6 +30,7 @@ export default function AdminLayout({ header, children }) {
     const dashboardActive = route().current('admin.dashboard');
     const ownersActive = route().current('admin.owners.*');
     const plansActive = route().current('admin.plans.*');
+    const couponsActive = route().current('admin.coupons.*');
     const saludActive = route().current('admin.salud.*');
     const onboardingActive = route().current('admin.onboarding.*');
 
@@ -88,6 +90,9 @@ export default function AdminLayout({ header, children }) {
                     <SidebarLink href={route('admin.plans.index')} active={plansActive} icon={IconLicense} collapsed={collapsed}>
                         Planes
                     </SidebarLink>
+                    <SidebarLink href={route('admin.coupons.index')} active={couponsActive} icon={IconTicket} collapsed={collapsed}>
+                        Cupones
+                    </SidebarLink>
                     <SidebarLink href={route('admin.salud.index')} active={saludActive} icon={IconActivityHeartbeat} collapsed={collapsed}>
                         Salud técnica
                     </SidebarLink>
@@ -142,6 +147,9 @@ export default function AdminLayout({ header, children }) {
                 </MobileMenuLink>
                 <MobileMenuLink href={route('admin.plans.index')} active={plansActive} onClick={closeMobileMenu}>
                     Planes
+                </MobileMenuLink>
+                <MobileMenuLink href={route('admin.coupons.index')} active={couponsActive} onClick={closeMobileMenu}>
+                    Cupones
                 </MobileMenuLink>
                 <MobileMenuLink href={route('admin.salud.index')} active={saludActive} onClick={closeMobileMenu}>
                     Salud técnica

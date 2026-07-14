@@ -37,12 +37,27 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
         custom_price: subscription?.custom_price ?? '',
     });
 
+    const couponForm = useForm({ code: '' });
+
     const selectedPlan = plans.find((p) => String(p.id) === String(data.plan_id));
     const isCustomPlan = !!selectedPlan?.is_custom;
 
     function submit(e) {
         e.preventDefault();
         patch(route('admin.subscriptions.update', owner.id));
+    }
+
+    function applyCoupon(e) {
+        e.preventDefault();
+        couponForm.patch(route('admin.subscriptions.applyCoupon', owner.id), {
+            preserveScroll: true,
+            onSuccess: () => couponForm.reset(),
+        });
+    }
+
+    function removeCoupon() {
+        if (! confirm('¿Quitar el cupón aplicado a esta suscripción?')) return;
+        router.delete(route('admin.subscriptions.removeCoupon', owner.id), { preserveScroll: true });
     }
 
     function handleResetPassword() {
@@ -342,6 +357,56 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
                                     </PrimaryButton>
                                 </form>
                             </Section>
+
+                            <div className="mt-6">
+                                <Section title="Cupón">
+                                    {! subscription ? (
+                                        <p className="text-sm text-brand-text-secondary">
+                                            Guardá la suscripción primero para poder aplicar un cupón.
+                                        </p>
+                                    ) : subscription.coupon_discount_snapshot ? (
+                                        <div className="space-y-3">
+                                            <div className="rounded-brand-sm border border-brand-border-subtle bg-brand-surface-alt p-3 text-sm">
+                                                <p className="font-semibold text-brand-text">
+                                                    {subscription.coupon_discount_snapshot.code}
+                                                </p>
+                                                <p className="text-brand-text-secondary">
+                                                    {subscription.coupon_discount_snapshot.type === 'percentage'
+                                                        ? `${subscription.coupon_discount_snapshot.value}% de descuento`
+                                                        : `$${subscription.coupon_discount_snapshot.value} de descuento`}
+                                                    {subscription.coupon_discount_snapshot.duration_months
+                                                        ? ` durante ${subscription.coupon_discount_snapshot.duration_months} mes(es)`
+                                                        : ' sin límite de duración'}
+                                                </p>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={removeCoupon}
+                                                className="inline-flex items-center justify-center rounded-brand-pill border border-brand-danger/30 px-4 py-2 text-sm font-medium text-brand-danger transition hover:bg-brand-danger-soft"
+                                            >
+                                                Quitar cupón
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <form onSubmit={applyCoupon} className="space-y-3">
+                                            <div>
+                                                <InputLabel htmlFor="coupon_code" value="Código de cupón" />
+                                                <TextInput
+                                                    id="coupon_code"
+                                                    value={couponForm.data.code}
+                                                    onChange={(e) => couponForm.setData('code', e.target.value.toUpperCase())}
+                                                    className="mt-1 block w-full uppercase"
+                                                    placeholder="Ej: BIENVENIDA20"
+                                                />
+                                                <InputError message={couponForm.errors.code} className="mt-1" />
+                                            </div>
+                                            <PrimaryButton disabled={couponForm.processing} className="w-full justify-center">
+                                                Aplicar cupón
+                                            </PrimaryButton>
+                                        </form>
+                                    )}
+                                </Section>
+                            </div>
                         </div>
                     </div>
                 </div>
