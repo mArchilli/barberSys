@@ -4,8 +4,10 @@ namespace App\Console\Commands;
 
 use App\Models\Gasto;
 use App\Models\GastoRegistro;
+use App\Models\SystemJobRun;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Throwable;
 
 /**
  * Genera el gasto_registro del mes en curso para cada gasto recurrente activo,
@@ -25,24 +27,46 @@ class GenerarGastosMensuales extends Command
 
     public function handle(): int
     {
-        $mes = Carbon::now()->startOfMonth()->toDateString();
-        $generados = 0;
+        $jobRun = SystemJobRun::create([
+            'job_name'    => $this->signature,
+            'started_at'  => Carbon::now(),
+        ]);
 
-        Gasto::where('is_recurring', true)
-            ->where('active', true)
-            ->each(function (Gasto $gasto) use ($mes, &$generados) {
-                $registro = GastoRegistro::firstOrCreate(
-                    ['gasto_id' => $gasto->id, 'month' => $mes],
-                    ['barberia_id' => $gasto->barberia_id, 'amount' => $gasto->amount]
-                );
+        try {
+            $mes = Carbon::now()->startOfMonth()->toDateString();
+            $generados = 0;
 
-                if ($registro->wasRecentlyCreated) {
-                    $generados++;
-                }
-            });
+            Gasto::where('is_recurring', true)
+                ->where('active', true)
+                ->each(function (Gasto $gasto) use ($mes, &$generados) {
+                    $registro = GastoRegistro::firstOrCreate(
+                        ['gasto_id' => $gasto->id, 'month' => $mes],
+                        ['barberia_id' => $gasto->barberia_id, 'amount' => $gasto->amount]
+                    );
 
-        $this->info("Gasto_registros generados para {$mes}: {$generados}");
+                    if ($registro->wasRecentlyCreated) {
+                        $generados++;
+                    }
+                });
 
-        return self::SUCCESS;
+            $summary = "{$generados} gastos generados";
+            $this->info("Gasto_registros generados para {$mes}: {$generados}");
+
+            $jobRun->update([
+                'finished_at' => Carbon::now(),
+                'status'      => 'success',
+                'summary'     => $summary,
+            ]);
+
+            return self::SUCCESS;
+        } catch (Throwable $e) {
+            $jobRun->update([
+                'finished_at'   => Carbon::now(),
+                'status'        => 'failed',
+                'error_message' => $e->getMessage(),
+            ]);
+
+            throw $e;
+        }
     }
 }

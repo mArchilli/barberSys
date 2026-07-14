@@ -4,6 +4,8 @@ namespace App\Services\Admin;
 
 use App\Models\Barberia;
 use App\Models\Corte;
+use App\Models\MedioPago;
+use App\Models\Servicio;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Scopes\BelongsToBarberiaScope;
@@ -101,6 +103,69 @@ class BusinessMetricsService
                 'barberia_name' => $barberia->name,
                 'owner'         => $barberia->owner,
                 'last_corte_at' => $barberia->last_corte_at,
+            ]);
+    }
+
+    /**
+     * Owners registrados en los últimos $days días, con su checklist de activación
+     * (servicio, medio de pago, barbero, corte) y el owner con más días sin activar
+     * (sin corte cargado) primero.
+     */
+    public function newOwnersOnboarding(int $days = 30): Collection
+    {
+        $since = Carbon::now()->subDays($days);
+
+        // Bypass documentado del BelongsToBarberiaScope (excepción admin, ver CLAUDE.md).
+        // Primer registro cargado por owner, across todas sus barberías, en una sola
+        // query agregada (MIN + GROUP BY) por señal, evitando N+1 owner por owner.
+        $firstServicios = Servicio::withoutGlobalScope(BelongsToBarberiaScope::class)
+            ->join('barberias', 'barberias.id', '=', 'servicios.barberia_id')
+            ->selectRaw('barberias.owner_id as owner_id, MIN(servicios.created_at) as first_at')
+            ->groupBy('barberias.owner_id');
+
+        $firstMediosPago = MedioPago::withoutGlobalScope(BelongsToBarberiaScope::class)
+            ->join('barberias', 'barberias.id', '=', 'medios_pago.barberia_id')
+            ->selectRaw('barberias.owner_id as owner_id, MIN(medios_pago.created_at) as first_at')
+            ->groupBy('barberias.owner_id');
+
+        $firstCortes = Corte::withoutGlobalScope(BelongsToBarberiaScope::class)
+            ->join('barberias', 'barberias.id', '=', 'cortes.barberia_id')
+            ->selectRaw('barberias.owner_id as owner_id, MIN(cortes.created_at) as first_at')
+            ->groupBy('barberias.owner_id');
+
+        // User no tiene BelongsToBarberiaScope (ver comentario en OwnerController::index).
+        $firstBarberos = User::where('role', 'barber')
+            ->join('barberias', 'barberias.id', '=', 'users.barberia_id')
+            ->selectRaw('barberias.owner_id as owner_id, MIN(users.created_at) as first_at')
+            ->groupBy('barberias.owner_id');
+
+        return User::where('users.role', 'owner')
+            ->where('users.created_at', '>=', $since)
+            ->leftJoinSub($firstServicios, 'first_servicios', 'first_servicios.owner_id', '=', 'users.id')
+            ->leftJoinSub($firstMediosPago, 'first_medios_pago', 'first_medios_pago.owner_id', '=', 'users.id')
+            ->leftJoinSub($firstBarberos, 'first_barberos', 'first_barberos.owner_id', '=', 'users.id')
+            ->leftJoinSub($firstCortes, 'first_cortes', 'first_cortes.owner_id', '=', 'users.id')
+            ->select(
+                'users.*',
+                'first_servicios.first_at as first_servicio_at',
+                'first_medios_pago.first_at as first_medio_pago_at',
+                'first_barberos.first_at as first_barbero_at',
+                'first_cortes.first_at as first_corte_at'
+            )
+            ->orderByRaw('(first_cortes.first_at IS NULL) DESC')
+            ->orderBy('users.created_at')
+            ->get()
+            ->map(fn (User $owner) => [
+                'owner'               => $owner,
+                'dias_desde_registro' => (int) $owner->created_at->diffInDays(Carbon::now()),
+                'has_servicio'        => $owner->first_servicio_at !== null,
+                'first_servicio_at'   => $owner->first_servicio_at,
+                'has_medio_pago'      => $owner->first_medio_pago_at !== null,
+                'first_medio_pago_at' => $owner->first_medio_pago_at,
+                'has_barbero'         => $owner->first_barbero_at !== null,
+                'first_barbero_at'    => $owner->first_barbero_at,
+                'has_corte'           => $owner->first_corte_at !== null,
+                'first_corte_at'      => $owner->first_corte_at,
             ]);
     }
 

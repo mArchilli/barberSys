@@ -71,6 +71,7 @@ export default {
                     danger: '#D94B5B',
                     'danger-soft': '#FCECEE',
                     warning: '#D8922C',
+                    'warning-soft': '#FBF0DD',
                 },
             },
             borderRadius: {

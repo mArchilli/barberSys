@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Admin\OnboardingController as AdminOnboardingController;
 use App\Http\Controllers\Admin\OwnerController as AdminOwnerController;
 use App\Http\Controllers\Admin\PlanController as AdminPlanController;
+use App\Http\Controllers\Admin\SaludController as AdminSaludController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
 use App\Http\Controllers\CorteController;
@@ -133,6 +135,10 @@ Route::prefix('admin')
         // Catálogo comercial de planes — sin destroy: un plan se desactiva
         // (active=false), nunca se borra, porque subscriptions.plan_id lo referencia.
         Route::resource('plans', AdminPlanController::class)->except(['destroy', 'show']);
+
+        Route::get('/salud', [AdminSaludController::class, 'index'])->name('salud.index');
+
+        Route::get('/onboarding', [AdminOnboardingController::class, 'index'])->name('onboarding.index');
     });
 
 // --- Cambio de contraseña forzado ---

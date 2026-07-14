@@ -5,6 +5,7 @@ import SidebarLink from '@/Components/SidebarLink';
 import useSidebarCollapsed from '@/Hooks/useSidebarCollapsed';
 import { Link, usePage } from '@inertiajs/react';
 import {
+    IconActivityHeartbeat,
     IconLayoutDashboard,
     IconLayoutSidebarLeftCollapse,
     IconLayoutSidebarLeftExpand,
@@ -12,6 +13,7 @@ import {
     IconLogout,
     IconMenu2,
     IconUserCog,
+    IconUserPlus,
     IconUsers,
 } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -27,6 +29,8 @@ export default function AdminLayout({ header, children }) {
     const dashboardActive = route().current('admin.dashboard');
     const ownersActive = route().current('admin.owners.*');
     const plansActive = route().current('admin.plans.*');
+    const saludActive = route().current('admin.salud.*');
+    const onboardingActive = route().current('admin.onboarding.*');
 
     return (
         <div className="panel-theme min-h-screen bg-brand-bg md:flex">
@@ -78,8 +82,14 @@ export default function AdminLayout({ header, children }) {
                     <SidebarLink href={route('admin.owners.index')} active={ownersActive} icon={IconUsers} collapsed={collapsed}>
                         Owners
                     </SidebarLink>
+                    <SidebarLink href={route('admin.onboarding.index')} active={onboardingActive} icon={IconUserPlus} collapsed={collapsed}>
+                        Onboarding
+                    </SidebarLink>
                     <SidebarLink href={route('admin.plans.index')} active={plansActive} icon={IconLicense} collapsed={collapsed}>
                         Planes
+                    </SidebarLink>
+                    <SidebarLink href={route('admin.salud.index')} active={saludActive} icon={IconActivityHeartbeat} collapsed={collapsed}>
+                        Salud técnica
                     </SidebarLink>
                 </nav>
 
@@ -127,8 +137,14 @@ export default function AdminLayout({ header, children }) {
                 <MobileMenuLink href={route('admin.owners.index')} active={ownersActive} onClick={closeMobileMenu}>
                     Owners
                 </MobileMenuLink>
+                <MobileMenuLink href={route('admin.onboarding.index')} active={onboardingActive} onClick={closeMobileMenu}>
+                    Onboarding
+                </MobileMenuLink>
                 <MobileMenuLink href={route('admin.plans.index')} active={plansActive} onClick={closeMobileMenu}>
                     Planes
+                </MobileMenuLink>
+                <MobileMenuLink href={route('admin.salud.index')} active={saludActive} onClick={closeMobileMenu}>
+                    Salud técnica
                 </MobileMenuLink>
 
                 <div className="mt-6 w-full max-w-xs border-t border-brand-nav-text/20 pt-6 text-center">
