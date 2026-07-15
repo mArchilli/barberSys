@@ -3,11 +3,15 @@
 namespace App\Services\MercadoPago;
 
 use App\Models\Subscription;
+use Illuminate\Support\Facades\Http;
 use MercadoPago\Client\Payment\PaymentClient;
 use MercadoPago\Client\PreApproval\PreApprovalClient;
+use MercadoPago\Client\PreApprovalPlan\PreApprovalPlanClient;
 use MercadoPago\MercadoPagoConfig;
+use MercadoPago\Net\MPSearchRequest;
 use MercadoPago\Resources\Payment;
 use MercadoPago\Resources\PreApproval;
+use MercadoPago\Resources\PreApprovalPlan;
 
 /**
  * Wrapper del SDK de MercadoPago Suscripciones (preapproval, NO Checkout Pro).
@@ -55,6 +59,30 @@ class MercadoPagoSubscriptionService
     }
 
     /**
+     * URL absoluta pública para el back_url del checkout (u otras URLs que
+     * MercadoPago necesite alcanzar). En producción APP_URL ya es el dominio
+     * público real y route() alcanza. En desarrollo local detrás de un túnel
+     * (ej. ngrok), la app se navega por localhost pero MercadoPago exige un
+     * dominio público — para eso existe APP_PUBLIC_URL (opcional).
+     *
+     * A propósito NO se resuelve forzando el root URL global de Laravel
+     * (URL::forceRootUrl): eso rompería el resto de la app, que debe seguir
+     * generando rutas same-origin con el host real desde el que se navega
+     * (Ziggy en el frontend, CSRF, cookies de sesión). Solo esta URL puntual
+     * usa el dominio del túnel.
+     */
+    public static function publicRouteUrl(string $routeName, array $parameters = []): string
+    {
+        $publicBase = config('services.mercadopago.public_app_url');
+
+        if (! $publicBase) {
+            return route($routeName, $parameters);
+        }
+
+        return rtrim($publicBase, '/').route($routeName, $parameters, false);
+    }
+
+    /**
      * Monto mensual real a cobrar: precio efectivo de la suscripción
      * (custom_price u override de catálogo) menos el descuento del cupón.
      *
@@ -89,17 +117,32 @@ class MercadoPagoSubscriptionService
     }
 
     /**
-     * Crea el preapproval en MP y devuelve el recurso (incluye init_point,
-     * la URL a la que se redirige al owner para autorizar el débito).
+     * Crea el Plan de MercadoPago (preapproval_plan) para esta suscripción y
+     * devuelve el recurso (incluye init_point, la URL de checkout hosteada a
+     * la que se redirige al owner para autorizar el débito).
+     *
+     * NO se crea el preapproval directamente (auto_recurring suelto): la
+     * aplicación de MercadoPago exige que todo preapproval esté vinculado a
+     * un plan (confirmado empíricamente — sin plan, la API devuelve un 500
+     * genérico), y crear el preapproval nosotros mismos vinculado a un plan
+     * exige tokenizar la tarjeta del owner (card_token_id, documentado por
+     * MP como obligatorio en ese caso). Redirigiendo al init_point del PLAN,
+     * en cambio, MercadoPago aloja todo el checkout (elegir/tokenizar medio
+     * de pago) y crea el preapproval del otro lado — Pelito nunca maneja
+     * datos de tarjeta.
+     *
+     * Cada suscripción recibe su PROPIO plan (no uno compartido por Plan de
+     * Pelito): el checkout hosteado no admite pasar external_reference al
+     * preapproval resultante, así que preapproval_plan_id es la única clave
+     * de correlación disponible para saber, al recibir el webhook, a qué
+     * Subscription le corresponde el preapproval recién autorizado.
      */
-    public function createPreapproval(Subscription $subscription, string $payerEmail, string $backUrl): PreApproval
+    public function createPreapprovalPlan(Subscription $subscription, string $backUrl): PreApprovalPlan
     {
-        $client = new PreApprovalClient;
+        $client = new PreApprovalPlanClient;
 
         return $client->create([
             'reason' => 'Suscripción Pelito — Plan '.$subscription->plan->name,
-            'external_reference' => (string) $subscription->id,
-            'payer_email' => $payerEmail,
             'back_url' => $backUrl,
             'auto_recurring' => [
                 'frequency' => 1,
@@ -113,6 +156,51 @@ class MercadoPagoSubscriptionService
     public function getPreapproval(string $preapprovalId): PreApproval
     {
         return (new PreApprovalClient)->get($preapprovalId);
+    }
+
+    /**
+     * Busca el preapproval generado por el checkout hosteado de un plan
+     * puntual. Se usa tanto en el retorno del checkout (para reflejar el
+     * estado sin esperar al webhook) como en el webhook mismo (para resolver
+     * a qué Subscription corresponde, vía mp_preapproval_plan_id). Devuelve
+     * null si el owner todavía no completó el checkout.
+     *
+     * Puede haber MÁS DE UN preapproval para el mismo plan — confirmado
+     * empíricamente: un intento de pago rechazado dentro del checkout de MP
+     * (ej. tarjeta inválida) genera un preapproval `cancelled`, y el reintento
+     * ("Pagar con otro medio", sin salir del checkout) genera uno SEGUNDO,
+     * `authorized`, para el mismo preapproval_plan_id. Por eso nunca alcanza
+     * con tomar el primer resultado de la búsqueda: se prioriza el que esté
+     * `authorized`, y si ninguno lo está todavía, el más reciente por
+     * date_created (probablemente el intento en curso).
+     */
+    public function findPreapprovalByPlan(string $preapprovalPlanId): ?PreApproval
+    {
+        $client = new PreApprovalClient;
+        $search = $client->search(new MPSearchRequest(10, 0, [
+            'preapproval_plan_id' => $preapprovalPlanId,
+        ]));
+
+        $results = $search->results ?? [];
+
+        if (empty($results)) {
+            return null;
+        }
+
+        $chosen = null;
+
+        foreach ($results as $result) {
+            if ($result->status === 'authorized') {
+                $chosen = $result;
+                break;
+            }
+
+            if ($chosen === null || ($result->date_created ?? '') > ($chosen->date_created ?? '')) {
+                $chosen = $result;
+            }
+        }
+
+        return $this->getPreapproval($chosen->id);
     }
 
     /**
@@ -145,5 +233,25 @@ class MercadoPagoSubscriptionService
     public function getPayment(string $paymentId): Payment
     {
         return (new PaymentClient)->get((int) $paymentId);
+    }
+
+    /**
+     * Igual que getPayment(), pero devuelve el JSON crudo en vez del recurso
+     * tipado del SDK. Necesario porque MercadoPago\Resources\Payment\TransactionData
+     * no declara `subscription_id` ni `plan_id` — son campos reales que la API
+     * devuelve dentro de `point_of_interaction.transaction_data` para pagos
+     * generados por una suscripción, pero el deserializador del SDK descarta
+     * en silencio cualquier campo que la clase de destino no declare como
+     * propiedad (ver MercadoPago\Serialization\Serializer::_deserializeFromJson).
+     * Esos dos campos son la única forma de enlazar un pago recurrente con el
+     * preapproval/plan que lo originó — external_reference viene null.
+     */
+    public function getPaymentRaw(string $paymentId): array
+    {
+        $response = Http::withToken((string) config('services.mercadopago.access_token'))
+            ->get("https://api.mercadopago.com/v1/payments/{$paymentId}")
+            ->throw();
+
+        return $response->json();
     }
 }

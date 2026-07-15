@@ -6,7 +6,9 @@ import TextInput from '@/Components/TextInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import {
+    IconAlertTriangle,
     IconArrowUpRight,
+    IconClockHour4,
     IconCreditCard,
     IconFileInvoice,
     IconRosetteDiscountCheck,
@@ -16,6 +18,9 @@ import { useState } from 'react';
 
 const formatARS = (value) =>
     new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 2 }).format(value);
+
+const formatDateLong = (isoDate) =>
+    new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${isoDate}T00:00:00`));
 
 const STATUS_BADGES = {
     trial: { label: 'En prueba', className: 'bg-brand-warning-soft text-brand-warning' },
@@ -38,6 +43,43 @@ function PaymentStatusBadge({ status }) {
     return (
         <span className={`inline-flex rounded-brand-pill px-3 py-1 text-xs font-semibold ${badge.className}`}>
             {badge.label}
+        </span>
+    );
+}
+
+/**
+ * Contexto de estado junto al botón de activación: días de trial restantes
+ * (mismo umbral de tono que TrialBanner — informativo con más de 5 días,
+ * urgente con 5 o menos) o, si la suscripción ya no está en trial, el estado
+ * real (ej. pago pendiente). El botón en sí NUNCA depende de este umbral —
+ * solo cambia el tono visual del texto que lo acompaña.
+ */
+function ActivationStatusContext({ subscription, statusBadge }) {
+    if (subscription.status === 'trial' && subscription.trial_days_left !== null) {
+        const days = subscription.trial_days_left;
+        const urgent = days <= 5;
+        const message =
+            days === 0
+                ? 'Tu período de prueba termina hoy.'
+                : days === 1
+                  ? 'Tu período de prueba termina mañana.'
+                  : `Te quedan ${days} días de prueba.`;
+
+        return (
+            <span
+                className={`inline-flex items-center gap-1.5 rounded-brand-pill px-3 py-1.5 text-xs font-semibold ${
+                    urgent ? 'bg-brand-warning-soft text-brand-warning' : 'bg-brand-primary-soft text-brand-primary-soft-text'
+                }`}
+            >
+                {urgent ? <IconAlertTriangle size={14} stroke={2} /> : <IconClockHour4 size={14} stroke={2} />}
+                {message}
+            </span>
+        );
+    }
+
+    return (
+        <span className={`inline-flex rounded-brand-pill px-3 py-1.5 text-xs font-semibold ${statusBadge.className}`}>
+            {statusBadge.label}
         </span>
     );
 }
@@ -151,6 +193,13 @@ export default function Index({ subscription, billing, payments, availablePlans,
                                             : `Te quedan ${subscription.trial_days_left} día${subscription.trial_days_left === 1 ? '' : 's'} de prueba.`}
                                     </p>
                                 )}
+
+                                {subscription.status === 'active' && subscription.next_payment_date && (
+                                    <p className="mt-3 text-sm text-brand-text-secondary">
+                                        Vigente hasta el {formatDateLong(subscription.next_payment_date)} — ese día se
+                                        cobra automáticamente el próximo mes, sin que tengas que hacer nada.
+                                    </p>
+                                )}
                             </div>
 
                             <div className="rounded-[22px] bg-brand-surface-alt px-5 py-4 lg:text-right">
@@ -200,9 +249,14 @@ export default function Index({ subscription, billing, payments, availablePlans,
                             </div>
 
                             {subscription.has_preapproval ? (
-                                <div className="mt-6 flex items-center gap-2.5 rounded-[22px] bg-brand-success-soft px-4 py-4 text-sm font-semibold text-brand-success">
-                                    <IconRosetteDiscountCheck size={18} stroke={2} className="shrink-0" />
-                                    Débito automático activado
+                                <div className="mt-6 flex items-start gap-2.5 rounded-[22px] bg-brand-success-soft px-4 py-4 text-sm text-brand-success">
+                                    <IconRosetteDiscountCheck size={18} stroke={2} className="mt-0.5 shrink-0" />
+                                    <div>
+                                        <p className="font-semibold">Débito automático activado</p>
+                                        <p className="mt-0.5 font-normal">
+                                            No tenés que hacer nada más — MercadoPago te cobra solo, todos los meses, hasta que canceles.
+                                        </p>
+                                    </div>
                                 </div>
                             ) : (
                                 <form onSubmit={submitActivation} className="mt-6 space-y-5">
@@ -242,17 +296,21 @@ export default function Index({ subscription, billing, payments, availablePlans,
                                         </div>
                                     </div>
 
-                                    <button
-                                        type="submit"
-                                        disabled={processing || !mpConfigured}
-                                        className={`inline-flex min-h-[46px] w-full items-center justify-center rounded-brand-pill px-5 text-sm font-semibold transition sm:w-auto ${
-                                            !mpConfigured
-                                                ? 'cursor-not-allowed bg-brand-surface-alt text-brand-text-secondary'
-                                                : 'bg-brand-primary text-brand-on-primary shadow-brand-cta hover:bg-brand-primary-hover disabled:opacity-60'
-                                        }`}
-                                    >
-                                        {processing ? 'Conectando con MercadoPago…' : 'Activar con MercadoPago'}
-                                    </button>
+                                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                        <ActivationStatusContext subscription={subscription} statusBadge={statusBadge} />
+
+                                        <button
+                                            type="submit"
+                                            disabled={processing || !mpConfigured}
+                                            className={`inline-flex min-h-[46px] w-full shrink-0 items-center justify-center rounded-brand-pill px-5 text-sm font-semibold transition sm:w-auto ${
+                                                !mpConfigured
+                                                    ? 'cursor-not-allowed bg-brand-surface-alt text-brand-text-secondary'
+                                                    : 'bg-brand-primary text-brand-on-primary shadow-brand-cta hover:bg-brand-primary-hover disabled:opacity-60'
+                                            }`}
+                                        >
+                                            {processing ? 'Conectando con MercadoPago…' : 'Activar con MercadoPago'}
+                                        </button>
+                                    </div>
 
                                     {!mpConfigured && (
                                         <p className="text-xs text-brand-text-secondary">

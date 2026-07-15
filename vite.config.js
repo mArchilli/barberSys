@@ -10,4 +10,17 @@ export default defineConfig({
         }),
         react(),
     ],
+    server: {
+        // Vite >=6.0.9 restringió el CORS por defecto del dev server (antes
+        // era Access-Control-Allow-Origin: * para cualquier origen, fix de
+        // seguridad). Sin esto, al navegar la app detrás de un túnel (ngrok,
+        // necesario para probar redirects de MercadoPago en local) el bundle
+        // de React/Inertia no carga desde ese origen — la página queda
+        // "estática", sin JS. El patrón cubre cualquier subdominio de ngrok
+        // (rota en cada reinicio del túnel gratuito) sin abrir el dev server
+        // a cualquier origen arbitrario.
+        cors: {
+            origin: /^https:\/\/.*\.ngrok-free\.dev$/,
+        },
+    },
 });

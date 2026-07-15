@@ -42,6 +42,13 @@ return [
         'access_token' => env('MERCADOPAGO_ACCESS_TOKEN'),
         'public_key' => env('MERCADOPAGO_PUBLIC_KEY'),
         'webhook_url' => env('MERCADOPAGO_WEBHOOK_URL'),
+        // Opcional, solo para desarrollo local detrás de un túnel (ej. ngrok):
+        // dominio público desde el que MercadoPago puede alcanzar la app para
+        // el back_url del checkout. NO se usa para nada más — no reemplaza
+        // APP_URL ni afecta cómo el resto de la app genera sus rutas (Ziggy,
+        // CSRF, sesión). En producción queda vacío: APP_URL ya es el dominio
+        // público real y route() alcanza. Ver MercadoPagoSubscriptionService::publicRouteUrl().
+        'public_app_url' => env('APP_PUBLIC_URL'),
     ],
 
     // Facturante (facturación electrónica). Si api_key está vacía, el sistema

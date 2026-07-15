@@ -27,6 +27,8 @@ class Subscription extends Model
         'coupon_discount_snapshot',
         'mp_preapproval_id',
         'mp_payer_email',
+        'mp_preapproval_plan_id',
+        'mp_next_payment_date',
     ];
 
     protected function casts(): array
@@ -38,6 +40,7 @@ class Subscription extends Model
             'custom_features' => 'array',
             'custom_price' => 'decimal:2',
             'coupon_discount_snapshot' => 'array',
+            'mp_next_payment_date' => 'datetime',
         ];
     }
 
@@ -80,6 +83,17 @@ class Subscription extends Model
     public function hasPreapproval(): bool
     {
         return $this->mp_preapproval_id !== null;
+    }
+
+    /**
+     * Se creó el Plan de MP para esta suscripción pero todavía no se resolvió
+     * el preapproval real (el owner no completó el checkout, o el webhook
+     * todavía no llegó). Útil para saber si conviene reintentar la búsqueda
+     * en vez de crear un plan nuevo.
+     */
+    public function hasPreapprovalPlan(): bool
+    {
+        return $this->mp_preapproval_plan_id !== null;
     }
 
     public function isOnTrial(): bool

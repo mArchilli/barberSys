@@ -9,6 +9,7 @@ use App\Models\Plan;
 use App\Models\Subscription;
 use App\Services\MercadoPago\MercadoPagoSubscriptionService;
 use App\Services\PlanLimitService;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -57,6 +58,7 @@ class SubscriptionController extends Controller
                 'list_price' => $subscription->effectivePrice(),
                 'coupon' => $subscription->coupon_discount_snapshot,
                 'has_preapproval' => $subscription->hasPreapproval(),
+                'next_payment_date' => optional($subscription->mp_next_payment_date)->toDateString(),
             ],
             'billing' => [
                 'cuit' => $owner->cuit,
@@ -73,9 +75,16 @@ class SubscriptionController extends Controller
     }
 
     /**
-     * Crea el preapproval en MercadoPago y redirige al owner al init_point
-     * para autorizar el débito automático. Los datos fiscales del formulario
-     * son opcionales: sin ellos la factura sale a consumidor final.
+     * Crea el Plan de MercadoPago para esta suscripción y redirige al owner a
+     * su checkout hosteado para autorizar el débito automático. Los datos
+     * fiscales del formulario son opcionales: sin ellos la factura sale a
+     * consumidor final.
+     *
+     * Nunca creamos el preapproval nosotros mismos (ver docblock de
+     * createPreapprovalPlan): redirigimos al init_point del PLAN y dejamos
+     * que MercadoPago aloje todo el checkout — Pelito no toca datos de
+     * tarjeta. El preapproval resultante se resuelve después, en retorno()
+     * o en el webhook, buscando por mp_preapproval_plan_id.
      */
     public function activate(ActivateSubscriptionRequest $request, MercadoPagoSubscriptionService $mp)
     {
@@ -99,10 +108,9 @@ class SubscriptionController extends Controller
         ]);
 
         try {
-            $preapproval = $mp->createPreapproval(
+            $plan = $mp->createPreapprovalPlan(
                 $subscription,
-                $owner->email,
-                route('owner.suscripcion.retorno')
+                MercadoPagoSubscriptionService::publicRouteUrl('owner.suscripcion.retorno')
             );
         } catch (Throwable $e) {
             report($e);
@@ -112,34 +120,48 @@ class SubscriptionController extends Controller
             ]);
         }
 
-        $subscription->update([
-            'mp_preapproval_id' => $preapproval->id,
-            'mp_payer_email' => $owner->email,
-        ]);
+        $subscription->update(['mp_preapproval_plan_id' => $plan->id]);
 
         // Redirección externa al checkout de MP (Inertia::location fuerza un
         // full page visit en lugar de una visita XHR de Inertia).
-        return Inertia::location($preapproval->init_point);
+        return Inertia::location($plan->init_point);
     }
 
     /**
-     * back_url del preapproval: MP redirige acá después de que el owner
-     * autoriza (o cancela) el débito. La fuente de verdad del estado es la
-     * API (se consulta el preapproval); el webhook confirma después.
+     * back_url del plan: MP redirige acá después de que el owner autoriza (o
+     * abandona) el checkout. Buscamos el preapproval resultante por
+     * mp_preapproval_plan_id — el checkout hosteado no expone
+     * external_reference, así que esta es la única forma de encontrarlo. Si
+     * todavía no aparece (el owner puede haber abandonado el checkout, o la
+     * búsqueda puede tardar unos segundos en reflejarlo), no es un error: el
+     * webhook es la fuente de verdad final y lo resuelve después.
+     *
+     * Reintenta la búsqueda mientras la suscripción no esté `active` — no
+     * alcanza con chequear "¿ya tiene mp_preapproval_id?", porque puede haber
+     * quedado enlazada a un intento cancelado (ver docblock de
+     * findPreapprovalByPlan): reintentar acá permite que una segunda visita
+     * se autocorrija sin depender solo del webhook.
      */
     public function retorno(MercadoPagoSubscriptionService $mp)
     {
         $subscription = Auth::user()->subscription()->firstOrFail();
 
-        if (! $subscription->hasPreapproval()) {
+        if (! $subscription->hasPreapprovalPlan() || $subscription->status === 'active') {
             return redirect()->route('owner.suscripcion.index');
         }
 
         try {
-            $preapproval = $mp->getPreapproval($subscription->mp_preapproval_id);
+            $preapproval = $mp->findPreapprovalByPlan($subscription->mp_preapproval_plan_id);
 
-            if ($preapproval->status === 'authorized' && $subscription->status !== 'active') {
-                $subscription->update(['status' => 'active']);
+            if ($preapproval !== null) {
+                $subscription->update([
+                    'mp_preapproval_id' => $preapproval->id,
+                    'mp_payer_email' => $preapproval->payer_email ?: null,
+                    'mp_next_payment_date' => $preapproval->next_payment_date
+                        ? Carbon::parse($preapproval->next_payment_date)
+                        : null,
+                    'status' => $preapproval->status === 'authorized' ? 'active' : $subscription->status,
+                ]);
             }
         } catch (Throwable $e) {
             // Si MP no responde ahora, el webhook actualizará el estado después.

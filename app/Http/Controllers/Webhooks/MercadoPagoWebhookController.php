@@ -64,9 +64,13 @@ class MercadoPagoWebhookController extends Controller
         MercadoPagoSubscriptionService $mp,
         InvoicingServiceInterface $invoicing
     ): void {
-        $mpPayment = $mp->getPayment($paymentId);
+        // JSON crudo (no el recurso tipado del SDK): necesitamos
+        // point_of_interaction.transaction_data.subscription_id/plan_id, que
+        // el deserializador del SDK descarta por no estar declarados en
+        // TransactionData. Ver docblock de getPaymentRaw().
+        $mpPayment = $mp->getPaymentRaw($paymentId);
 
-        $subscription = $this->resolveSubscription($mpPayment->external_reference ?? null);
+        $subscription = $this->resolveSubscriptionFromPayment($mpPayment);
 
         if (! $subscription) {
             // Pago que no corresponde a una suscripción nuestra: se ignora.
@@ -74,12 +78,12 @@ class MercadoPagoWebhookController extends Controller
         }
 
         $payment = SubscriptionPayment::updateOrCreate(
-            ['mp_payment_id' => (string) $mpPayment->id],
+            ['mp_payment_id' => (string) $mpPayment['id']],
             [
                 'subscription_id' => $subscription->id,
-                'amount' => (float) $mpPayment->transaction_amount,
-                'status' => (string) $mpPayment->status,
-                'paid_at' => $mpPayment->date_approved ? Carbon::parse($mpPayment->date_approved) : null,
+                'amount' => (float) $mpPayment['transaction_amount'],
+                'status' => (string) $mpPayment['status'],
+                'paid_at' => ($mpPayment['date_approved'] ?? null) ? Carbon::parse($mpPayment['date_approved']) : null,
             ]
         );
 
@@ -98,11 +102,28 @@ class MercadoPagoWebhookController extends Controller
         }
     }
 
+    /**
+     * A diferencia del flujo "sin plan" original, el checkout hosteado del
+     * Plan no permite pasarle external_reference — así que la primera vez
+     * que sabemos el mp_preapproval_id real es acá, resolviendo la
+     * Subscription por mp_preapproval_plan_id (seteado al activar, ver
+     * SubscriptionController::activate()) y completándolo recién ahora.
+     *
+     * Puede haber más de un preapproval para el mismo plan (un intento
+     * cancelado dentro del checkout + un reintento exitoso — ver docblock de
+     * findPreapprovalByPlan). Si `retorno()` llegó a enlazar el cancelado
+     * antes de que este webhook confirmara el bueno, un preapproval que
+     * llega `authorized` siempre gana y sobreescribe — nunca al revés, para
+     * no pisar una suscripción ya activa con una notificación vieja o de un
+     * intento distinto.
+     */
     private function handlePreapproval(string $preapprovalId, MercadoPagoSubscriptionService $mp): void
     {
         $preapproval = $mp->getPreapproval($preapprovalId);
 
-        $subscription = Subscription::where('mp_preapproval_id', $preapprovalId)->first();
+        $subscription = Subscription::where('mp_preapproval_id', $preapprovalId)
+            ->orWhere('mp_preapproval_plan_id', $preapproval->preapproval_plan_id)
+            ->first();
 
         if (! $subscription) {
             return;
@@ -115,22 +136,66 @@ class MercadoPagoWebhookController extends Controller
             default => null,
         };
 
-        if ($newStatus !== null && $subscription->status !== $newStatus) {
-            $subscription->update(['status' => $newStatus]);
+        $isSamePreapproval = $subscription->mp_preapproval_id === $preapproval->id;
+        $adoptsThisPreapproval = $subscription->mp_preapproval_id === null
+            || $isSamePreapproval
+            || $preapproval->status === 'authorized';
+
+        if ($adoptsThisPreapproval) {
+            $subscription->fill([
+                'mp_preapproval_id' => $preapproval->id,
+                'mp_payer_email' => $preapproval->payer_email ?: $subscription->mp_payer_email,
+                'mp_next_payment_date' => $preapproval->next_payment_date
+                    ? Carbon::parse($preapproval->next_payment_date)
+                    : $subscription->mp_next_payment_date,
+            ]);
+
+            if ($newStatus !== null) {
+                $subscription->status = $newStatus;
+            }
+        }
+
+        if ($subscription->isDirty()) {
+            $subscription->save();
         }
     }
 
     /**
-     * Los pagos generados por un preapproval heredan su external_reference,
-     * que seteamos con el id de la subscription al crearlo.
+     * Un pago generado por el cobro recurrente de una suscripción trae, en
+     * point_of_interaction.transaction_data, el id del preapproval que lo
+     * originó (`subscription_id`, pese al nombre, ES el preapproval_id) y el
+     * plan (`plan_id`). external_reference viene null (el checkout hosteado
+     * del Plan no lo admite) — esta es la única correlación disponible.
+     *
+     * Se intenta primero por mp_preapproval_id (caso normal: el webhook de
+     * subscription_preapproval ya lo enlazó) y se cae a mp_preapproval_plan_id
+     * como resguardo ante una posible condición de carrera si este webhook de
+     * pago llega antes que el de la suscripción — en ese caso, de paso,
+     * autocompleta mp_preapproval_id para que no quede pendiente.
      */
-    private function resolveSubscription(?string $externalReference): ?Subscription
+    private function resolveSubscriptionFromPayment(array $mpPayment): ?Subscription
     {
-        if (! $externalReference || ! ctype_digit($externalReference)) {
+        $transactionData = $mpPayment['point_of_interaction']['transaction_data'] ?? null;
+        $preapprovalId = $transactionData['subscription_id'] ?? null;
+        $planId = $transactionData['plan_id'] ?? null;
+
+        if (! $preapprovalId && ! $planId) {
             return null;
         }
 
-        return Subscription::find((int) $externalReference);
+        $subscription = $preapprovalId
+            ? Subscription::where('mp_preapproval_id', $preapprovalId)->first()
+            : null;
+
+        if (! $subscription && $planId) {
+            $subscription = Subscription::where('mp_preapproval_plan_id', $planId)->first();
+
+            if ($subscription && $preapprovalId && ! $subscription->mp_preapproval_id) {
+                $subscription->update(['mp_preapproval_id' => $preapprovalId]);
+            }
+        }
+
+        return $subscription;
     }
 
     /**
