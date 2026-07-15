@@ -11,11 +11,11 @@ function MetricTile({ label, value, tone = 'default' }) {
             : 'text-brand-text';
 
     return (
-        <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
+        <div className="flex min-h-[112px] flex-col justify-between rounded-[20px] border border-brand-border-subtle bg-brand-surface-alt p-5">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
                 {label}
             </p>
-            <p className={`mt-2 text-2xl font-bold ${toneClassName}`}>
+            <p className={`mt-3 font-display text-3xl font-extrabold tracking-[-0.04em] ${toneClassName}`}>
                 {value}
             </p>
         </div>
@@ -40,7 +40,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                             Mis barberias
                         </h2>
                         <p className="mt-2 max-w-2xl text-sm text-brand-text-secondary">
-                            Elige que sucursal quieres gestionar, revisa el uso de tu plan y mantene ordenadas las barberias activas y cerradas.
+                            Eligi que sucursal gestionar, revisa el uso de tu plan y mantene ordenadas las barberias.
                         </p>
                     </div>
 
@@ -48,7 +48,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                         href={route('owner.barberias.create')}
                         className={`inline-flex min-h-[46px] items-center justify-center rounded-full px-5 text-sm font-semibold shadow-brand-cta transition ${
                             atLimit
-                                ? 'cursor-not-allowed bg-brand-text-secondary text-brand-on-primary'
+                                ? 'cursor-not-allowed bg-brand-primary-hover text-brand-on-primary'
                                 : 'bg-brand-primary text-brand-on-primary hover:bg-brand-primary-hover'
                         }`}
                         onClick={atLimit ? (event) => event.preventDefault() : undefined}
@@ -95,38 +95,23 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                                     >
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="min-w-0">
-                                                <p className="text-sm font-medium text-brand-text-secondary">
-                                                    Barberia
-                                                </p>
-                                                <h4 className="mt-2 truncate font-display text-2xl font-bold tracking-[-0.04em] text-brand-text">
+                                                <h4 className="truncate font-display text-2xl font-bold tracking-[-0.04em] text-brand-text">
                                                     {barberia.name}
                                                 </h4>
                                             </div>
 
-                                            <span className="shrink-0 rounded-full bg-brand-success-soft px-3 py-1 text-xs font-semibold text-brand-success-soft-text">
+                                            <span className="shrink-0 rounded-full bg-brand-primary px-3 py-1 text-xs font-semibold text-brand-on-primary">
                                                 Activa
                                             </span>
                                         </div>
 
                                         <div className="mt-6 rounded-[22px] bg-brand-surface-alt px-4 py-4">
-                                            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                                                Direccion
-                                            </p>
-                                            <div className="mt-2 flex items-start gap-2">
-                                                <IconMapPin size={16} stroke={1.8} className="mt-0.5 shrink-0 text-brand-text-secondary" />
+                                            <div className="flex items-start gap-2">
+                                                <IconMapPin size={16} stroke={1.8} className="mt-0.5 shrink-0 text-brand-primary" />
                                                 <p className="text-sm font-semibold text-brand-text">
                                                     {barberia.address || 'Sin direccion cargada'}
                                                 </p>
                                             </div>
-                                        </div>
-
-                                        <div className="mt-4 flex items-center justify-between gap-3 rounded-[18px] bg-brand-surface-alt px-4 py-3 text-sm">
-                                            <span className="font-medium text-brand-text-secondary">
-                                                Lista para gestion diaria.
-                                            </span>
-                                            <span className="rounded-full bg-brand-surface px-2.5 py-1 text-xs font-semibold text-brand-text-secondary">
-                                                Sucursal
-                                            </span>
                                         </div>
 
                                         <div className="mt-5 flex items-center justify-between gap-3 border-t border-brand-border-subtle pt-5">
@@ -141,7 +126,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                                                 href={route('owner.barberias.edit', barberia.id)}
                                                 aria-label={`Editar ${barberia.name}`}
                                                 title="Editar"
-                                                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-brand-border bg-brand-surface-alt text-brand-link transition hover:border-brand-primary/20 hover:bg-brand-primary/5"
+                                                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-brand-border bg-brand-surface-alt text-brand-primary transition hover:border-brand-primary/20 hover:bg-brand-primary/5"
                                             >
                                                 <IconEdit size={17} />
                                             </Link>
@@ -152,28 +137,34 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                         )}
                     </section>
 
-                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(300px,0.72fr)]">
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
-                            <div className="flex items-start justify-between gap-4">
-                                <div>
-                                    <h3 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-brand-text">
-                                        Capacidad actual
-                                    </h3>
-                                    <p className="mt-2 text-xs text-brand-text-secondary">
-                                        Controla cuantas barberias tienes creadas y cuanto espacio te queda para seguir creciendo.
+                    <section className="rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-8 lg:p-10">
+                        <div className="mx-auto max-w-4xl">
+                            <div className="flex flex-col items-center text-center">
+                                <span className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-brand-primary/12 text-brand-primary shadow-sm">
+                                    <IconScissors size={24} stroke={1.8} />
+                                </span>
+                                <p className="mt-4 text-sm font-semibold text-brand-text-secondary">
+                                    Resumen de tu red
+                                </p>
+                                <div className="mt-4 flex flex-wrap items-end justify-center gap-x-3 gap-y-1">
+                                    <p className="font-display text-5xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-6xl">
+                                        {barberias.length}
+                                    </p>
+                                    <p className="pb-1.5 text-base font-medium text-brand-text-secondary sm:pb-2 sm:text-lg">
+                                        {barberias.length === 1 ? 'barberia operativa' : 'barberias operativas'}
                                     </p>
                                 </div>
-                                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-link shadow-sm">
-                                    <IconLock size={22} stroke={1.8} />
-                                </span>
                             </div>
 
-                            <div className="mt-6 rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                            <div className="mt-8 rounded-[24px] border border-brand-border-subtle bg-brand-surface-alt p-5 sm:p-6">
                                 <div className="flex items-center justify-between gap-3">
-                                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                                        Barberias del plan
-                                    </p>
-                                    <p className={`text-sm font-semibold ${atLimit ? 'text-brand-danger' : 'text-brand-text'}`}>
+                                    <div className="flex items-center gap-2">
+                                        <IconLock size={16} stroke={1.8} className="shrink-0 text-brand-link" />
+                                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                                            Capacidad del plan
+                                        </p>
+                                    </div>
+                                    <p className={`text-base font-bold ${atLimit ? 'text-brand-danger' : 'text-brand-text'}`}>
                                         {planLimit.current}
                                         {planLimit.max !== null ? `/${planLimit.max}` : ''}
                                     </p>
@@ -181,13 +172,13 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
 
                                 {planLimit.max !== null ? (
                                     <>
-                                        <div className="mt-3 h-2 overflow-hidden rounded-full bg-brand-primary-soft">
+                                        <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-brand-primary-soft">
                                             <div
-                                                className={`h-2 rounded-full transition-all ${atLimit ? 'bg-brand-danger' : 'bg-brand-primary'}`}
+                                                className={`h-2.5 rounded-full transition-all ${atLimit ? 'bg-brand-danger' : 'bg-brand-primary'}`}
                                                 style={{ width: `${progresoPlan}%` }}
                                             />
                                         </div>
-                                        <p className={`mt-3 text-sm ${atLimit ? 'text-brand-danger' : 'text-brand-text-secondary'}`}>
+                                        <p className={`mt-4 border-t border-brand-border-subtle pt-4 text-sm leading-6 ${atLimit ? 'text-brand-danger' : 'text-brand-text-secondary'}`}>
                                             {atLimit
                                                 ? 'Alcanzaste el limite de tu plan para sumar mas barberias.'
                                                 : `Tienes ${cuposDisponibles} cupo${cuposDisponibles === 1 ? '' : 's'} disponible${cuposDisponibles === 1 ? '' : 's'} para nuevas barberias.`}
@@ -199,29 +190,8 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                                     </p>
                                 )}
                             </div>
-                        </section>
 
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
-                            <div className="flex items-start gap-3">
-                                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[18px] bg-brand-primary/12 text-brand-primary shadow-sm">
-                                    <IconScissors size={22} stroke={1.8} />
-                                </span>
-                                <div className="min-w-0 flex-1">
-                                    <p className="text-sm font-medium text-brand-text-secondary">
-                                        Red activa
-                                    </p>
-                                    <div className="mt-2 flex items-end gap-3">
-                                        <p className="font-display text-3xl font-extrabold tracking-[-0.04em] text-brand-text">
-                                            {barberias.length}
-                                        </p>
-                                        <p className="pb-1 text-sm text-brand-text-secondary">
-                                            {barberias.length === 1 ? 'barberia operativa' : 'barberias operativas'}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mt-4 grid grid-cols-3 gap-3">
+                            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                                 <MetricTile label="Activas" value={barberias.length} tone="success" />
                                 <MetricTile
                                     label="Cerradas"
@@ -234,8 +204,8 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                                     tone={atLimit ? 'danger' : 'default'}
                                 />
                             </div>
-                        </section>
-                    </div>
+                        </div>
+                    </section>
 
                     {barberiasCerradas.length > 0 && (
                         <section className="space-y-4">
@@ -282,11 +252,8 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                                             </div>
 
                                             <div className="mt-6 rounded-[22px] bg-brand-surface px-4 py-4">
-                                                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                                                    Direccion
-                                                </p>
-                                                <div className="mt-2 flex items-start gap-2">
-                                                    <IconMapPin size={16} stroke={1.8} className="mt-0.5 shrink-0 text-brand-text-secondary" />
+                                                <div className="flex items-start gap-2">
+                                                    <IconMapPin size={16} stroke={1.8} className="mt-0.5 shrink-0 text-brand-primary" />
                                                     <p className="text-sm font-semibold text-brand-text">
                                                         {barberia.address || 'Sin direccion cargada'}
                                                     </p>

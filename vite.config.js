@@ -16,11 +16,14 @@ export default defineConfig({
         // seguridad). Sin esto, al navegar la app detrás de un túnel (ngrok,
         // necesario para probar redirects de MercadoPago en local) el bundle
         // de React/Inertia no carga desde ese origen — la página queda
-        // "estática", sin JS. El patrón cubre cualquier subdominio de ngrok
-        // (rota en cada reinicio del túnel gratuito) sin abrir el dev server
-        // a cualquier origen arbitrario.
+        // "estática", sin JS. Los patrones cubren el servidor local de Laravel
+        // y cualquier subdominio de ngrok (rota en cada reinicio del túnel
+        // gratuito) sin abrir el dev server a cualquier origen arbitrario.
         cors: {
-            origin: /^https:\/\/.*\.ngrok-free\.dev$/,
+            origin: [
+                /^http:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?$/,
+                /^https:\/\/.*\.ngrok-free\.dev$/,
+            ],
         },
     },
 });
