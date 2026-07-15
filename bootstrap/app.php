@@ -1,11 +1,17 @@
 <?php
 
+use App\Http\Middleware\BlockIfBarberiaInactive;
+use App\Http\Middleware\CheckBarberiaOwnership;
+use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\ForcePasswordChange;
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Models\SystemErrorLog;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
@@ -17,15 +23,22 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-            \App\Http\Middleware\ForcePasswordChange::class,
+            HandleInertiaRequests::class,
+            AddLinkHeadersForPreloadedAssets::class,
+            ForcePasswordChange::class,
         ]);
 
         $middleware->alias([
-            'role'                    => \App\Http\Middleware\CheckRole::class,
-            'checkBarberiaOwnership'  => \App\Http\Middleware\CheckBarberiaOwnership::class,
-            'blockIfBarberiaInactive' => \App\Http\Middleware\BlockIfBarberiaInactive::class,
+            'role' => CheckRole::class,
+            'checkBarberiaOwnership' => CheckBarberiaOwnership::class,
+            'blockIfBarberiaInactive' => BlockIfBarberiaInactive::class,
+        ]);
+
+        // MercadoPago hace POST server-to-server sin sesión: no puede enviar
+        // token CSRF. La verificación de autenticidad la hace el controller
+        // consultando el recurso notificado contra la API de MP.
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/mercadopago',
         ]);
     })
     ->withSchedule(function (Schedule $schedule): void {
@@ -34,6 +47,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // en local se dispara a mano con `php artisan app:generar-gastos-mensuales`
         // o simulando el cron con `php artisan schedule:work`.
         $schedule->command('app:generar-gastos-mensuales')->monthlyOn(1, '00:00');
+
+        // Reconciliación de facturas de Facturante pendientes de CAE (autorización
+        // asíncrona de AFIP). Deshabilitado hasta reescribir FacturanteInvoicingService
+        // con el WSDL real — y podría no hacer falta si Facturante ofrece webhooks
+        // de estado. Ver App\Console\Commands\ReconciliarFacturasFacturante.
+        // $schedule->command('app:reconciliar-facturas-facturante')->hourly();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Complementa (no reemplaza) el log de storage/logs con un registro
@@ -49,11 +68,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
             SystemErrorLog::create([
                 'exception_class' => get_class($e),
-                'message'         => $e->getMessage(),
-                'file'            => $e->getFile(),
-                'line'            => $e->getLine(),
-                'url'             => request()->fullUrl(),
-                'user_id'         => request()->user()?->id,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'url' => request()->fullUrl(),
+                'user_id' => request()->user()?->id,
             ]);
         });
     })->create();

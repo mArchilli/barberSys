@@ -16,7 +16,15 @@ class SystemErrorLog extends Model
         'line',
         'url',
         'user_id',
+        'context',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'context' => 'array',
+        ];
+    }
 
     public function user(): BelongsTo
     {

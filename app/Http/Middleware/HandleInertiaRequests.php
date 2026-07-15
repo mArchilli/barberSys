@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Barberia;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,15 +36,16 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'flash' => [
-                'success'       => $request->session()->get('success'),
-                'newBarbero'    => $request->session()->get('newBarbero'),
+                'success' => $request->session()->get('success'),
+                'newBarbero' => $request->session()->get('newBarbero'),
                 'resetPassword' => $request->session()->get('resetPassword'),
             ],
             'currentBarberia' => function () use ($request) {
                 $barberia = $request->route('barberia');
-                if ($barberia instanceof \App\Models\Barberia) {
+                if ($barberia instanceof Barberia) {
                     return ['id' => $barberia->id, 'name' => $barberia->name, 'active' => $barberia->active];
                 }
+
                 return null;
             },
             'ownerBarberiaCount' => function () use ($request) {
@@ -51,7 +53,27 @@ class HandleInertiaRequests extends Middleware
                 if ($user && $user->isOwner()) {
                     return $user->barberias()->where('active', true)->count();
                 }
+
                 return null;
+            },
+            // Estado mínimo de la suscripción para el TrialBanner y el menú.
+            // Lazy: solo se evalúa cuando la página lo consume.
+            'ownerSubscription' => function () use ($request) {
+                $user = $request->user();
+                if (! $user || ! $user->isOwner()) {
+                    return null;
+                }
+
+                $subscription = $user->subscription()->first();
+                if (! $subscription) {
+                    return null;
+                }
+
+                return [
+                    'status' => $subscription->status,
+                    'trial_days_left' => $subscription->trialDaysLeft(),
+                    'has_preapproval' => $subscription->hasPreapproval(),
+                ];
             },
         ];
     }

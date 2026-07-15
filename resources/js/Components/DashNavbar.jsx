@@ -10,6 +10,7 @@ import {
     IconMenu2,
     IconReceipt2,
     IconReportMoney,
+    IconRosetteDiscountCheck,
     IconUserCircle,
     IconUserCog,
     IconUsers,
@@ -110,6 +111,11 @@ export default function DashNavbar() {
                 },
             ]
             : []),
+        {
+            href: route('owner.suscripcion.index'),
+            label: 'Mi suscripción',
+            icon: IconRosetteDiscountCheck,
+        },
         {
             href: route('profile.edit'),
             label: 'Perfil',

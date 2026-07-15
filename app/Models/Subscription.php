@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 class Subscription extends Model
 {
@@ -23,17 +25,19 @@ class Subscription extends Model
         'ends_at',
         'coupon_id',
         'coupon_discount_snapshot',
+        'mp_preapproval_id',
+        'mp_payer_email',
     ];
 
     protected function casts(): array
     {
         return [
-            'starts_at'                 => 'date',
-            'trial_ends_at'             => 'date',
-            'ends_at'                   => 'date',
-            'custom_features'           => 'array',
-            'custom_price'              => 'decimal:2',
-            'coupon_discount_snapshot'  => 'array',
+            'starts_at' => 'date',
+            'trial_ends_at' => 'date',
+            'ends_at' => 'date',
+            'custom_features' => 'array',
+            'custom_price' => 'decimal:2',
+            'coupon_discount_snapshot' => 'array',
         ];
     }
 
@@ -54,6 +58,46 @@ class Subscription extends Model
     public function coupon(): BelongsTo
     {
         return $this->belongsTo(Coupon::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(SubscriptionPayment::class);
+    }
+
+    // --- Helpers de estado de cobro ---
+
+    /**
+     * Cantidad de cobros aprobados — define la ventana de descuento de un
+     * cupón con duration_months (el descuento aplica a los primeros N cobros).
+     */
+    public function approvedPaymentsCount(): int
+    {
+        return $this->payments()->where('status', SubscriptionPayment::STATUS_APPROVED)->count();
+    }
+
+    /** El owner ya autorizó el débito automático en MercadoPago. */
+    public function hasPreapproval(): bool
+    {
+        return $this->mp_preapproval_id !== null;
+    }
+
+    public function isOnTrial(): bool
+    {
+        return $this->status === 'trial';
+    }
+
+    /**
+     * Días de trial restantes (0 si ya venció, null si la suscripción no
+     * está en trial o no tiene fecha de fin de trial).
+     */
+    public function trialDaysLeft(): ?int
+    {
+        if (! $this->isOnTrial() || $this->trial_ends_at === null) {
+            return null;
+        }
+
+        return max(0, (int) Carbon::today()->diffInDays($this->trial_ends_at, false));
     }
 
     public function maxBarberias(): ?int

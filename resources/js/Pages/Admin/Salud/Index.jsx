@@ -1,6 +1,30 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
-import { IconAlertTriangle, IconCircleCheck } from '@tabler/icons-react';
+import { IconAlertTriangle, IconCircleCheck, IconCreditCard, IconFileInvoice } from '@tabler/icons-react';
+
+const MP_MODE_BADGES = {
+    production: { label: 'Modo: Producción', className: 'bg-brand-success-soft text-brand-success' },
+    test: { label: 'Modo: Prueba', className: 'bg-brand-warning-soft text-brand-warning' },
+    not_configured: { label: 'Sin credenciales', className: 'bg-brand-surface-alt text-brand-text-secondary' },
+    unknown: { label: 'Token inválido', className: 'bg-brand-danger-soft text-brand-danger' },
+};
+
+function IntegrationRow({ icon: Icon, name, description, badge }) {
+    return (
+        <li className="flex items-start justify-between gap-3 py-3 first:pt-0 last:pb-0">
+            <div className="flex min-w-0 items-start gap-3">
+                <Icon size={20} stroke={1.75} className="mt-0.5 shrink-0 text-brand-text-secondary" />
+                <div className="min-w-0">
+                    <p className="font-medium text-brand-text">{name}</p>
+                    <p className="text-xs text-brand-text-secondary">{description}</p>
+                </div>
+            </div>
+            <span className={`inline-flex shrink-0 items-center rounded-brand-pill px-2.5 py-0.5 text-xs font-semibold ${badge.className}`}>
+                {badge.label}
+            </span>
+        </li>
+    );
+}
 
 function Section({ title, children }) {
     return (
@@ -35,7 +59,8 @@ function JobStatusBadge({ status }) {
     );
 }
 
-export default function Index({ todoEnOrden, alertaGastos, jobRuns, errorLogs }) {
+export default function Index({ todoEnOrden, alertaGastos, integraciones, jobRuns, errorLogs }) {
+    const mpBadge = MP_MODE_BADGES[integraciones.mercadopago.mode] ?? MP_MODE_BADGES.not_configured;
     return (
         <AdminLayout
             header={
@@ -89,6 +114,37 @@ export default function Index({ todoEnOrden, alertaGastos, jobRuns, errorLogs })
                             </div>
                         </div>
                     )}
+
+                    {/* Estado de integraciones externas: el modo de MP se
+                        detecta del prefijo del token, no de una config manual. */}
+                    <Section title="Estado de integraciones externas">
+                        <ul className="divide-y divide-brand-border">
+                            <IntegrationRow
+                                icon={IconCreditCard}
+                                name="MercadoPago Suscripciones"
+                                description={
+                                    integraciones.mercadopago.mode === 'unknown'
+                                        ? 'El access token cargado no tiene prefijo TEST- ni APP_USR- — revisá la credencial.'
+                                        : 'Cobro recurrente por débito automático. El modo se detecta automáticamente del access token.'
+                                }
+                                badge={mpBadge}
+                            />
+                            <IntegrationRow
+                                icon={IconFileInvoice}
+                                name="Facturante"
+                                description={
+                                    integraciones.facturante.connected
+                                        ? 'Factura C automática por cada cobro aprobado.'
+                                        : 'Sin API key cargada: los cobros no generan factura automática (modo NullInvoicingService).'
+                                }
+                                badge={
+                                    integraciones.facturante.connected
+                                        ? { label: 'Conectado', className: 'bg-brand-success-soft text-brand-success' }
+                                        : { label: 'No conectado', className: 'bg-brand-surface-alt text-brand-text-secondary' }
+                                }
+                            />
+                        </ul>
+                    </Section>
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                         <Section title="Últimas ejecuciones de jobs programados">

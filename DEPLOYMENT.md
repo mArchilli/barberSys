@@ -60,6 +60,32 @@ Para confirmar que quedó bien enganchado sin esperar al día 1 del mes:
 php artisan schedule:list    # muestra la próxima corrida programada
 ```
 
+## Integraciones externas (MercadoPago + Facturante)
+
+Pasar de test a producción es **solo cambiar variables de entorno** — el código no distingue entornos por su cuenta.
+
+### MercadoPago Suscripciones
+
+```
+MERCADOPAGO_ACCESS_TOKEN=   # TEST-... en desarrollo, APP_USR-... en producción
+MERCADOPAGO_PUBLIC_KEY=
+MERCADOPAGO_WEBHOOK_URL=https://tu-dominio.com/webhooks/mercadopago
+```
+
+- El sistema **detecta el modo automáticamente** por el prefijo del access token y lo muestra en Admin → Salud técnica ("Modo: Prueba" / "Modo: Producción"). Antes de dar por cerrado un deploy a producción, verificá ahí que diga **Producción** — si quedó "Modo: Prueba", quedaron credenciales de test olvidadas.
+- Configurá la URL de webhooks en el panel de desarrolladores de MercadoPago apuntando a `POST /webhooks/mercadopago` (eventos `payment` y `subscription_preapproval`). La ruta es pública y está excluida de CSRF; la autenticidad se verifica consultando cada recurso contra la API.
+- Recordá `php artisan config:cache` después de rotar credenciales.
+
+### Facturante
+
+```
+FACTURANTE_API_KEY=         # vacío = sin facturación automática (fallback silencioso)
+```
+
+- Sin API key, los cobros se registran igual pero no generan Factura C (`NullInvoicingService`). Con la key cargada, cada pago aprobado emite factura automáticamente.
+- Las emisiones fallidas NO bloquean el cobro: quedan en Admin → Salud técnica (errores con `subscription_payment_id` en el contexto) para reintento manual o backfill.
+- El estado conectado/no conectado también se ve en Admin → Salud técnica → Estado de integraciones externas.
+
 ## Backups de MySQL
 
 No hay ningún paquete de backup instalado (evaluá `spatie/laravel-backup` si más adelante querés algo integrado a Artisan). Como piso mínimo, dado que son datos financieros reales de terceros:

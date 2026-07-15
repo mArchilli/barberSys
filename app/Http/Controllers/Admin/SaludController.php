@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\SystemErrorLog;
 use App\Models\SystemJobRun;
+use App\Services\MercadoPago\MercadoPagoSubscriptionService;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -50,6 +51,17 @@ class SaludController extends Controller
 
         return Inertia::render('Admin/Salud/Index', [
             'todoEnOrden' => $todoEnOrden,
+            // Estado de integraciones externas: qué está listo para producción
+            // sin tener que revisar el .env a mano. El modo de MP se deduce
+            // del prefijo del access token (TEST-/APP_USR-).
+            'integraciones' => [
+                'mercadopago' => [
+                    'mode' => MercadoPagoSubscriptionService::environment(),
+                ],
+                'facturante' => [
+                    'connected' => (bool) config('services.facturante.api_key'),
+                ],
+            ],
             'alertaGastos' => [
                 'activa' => $alertaGastos,
                 'ultimoStatus' => $ultimoRunGastos?->status,

@@ -25,6 +25,8 @@ class User extends Authenticatable
         'salary_amount',
         'commission_pct',
         'phone',
+        'cuit',
+        'razon_social',
         'active',
         'deactivated_at',
         'must_change_password',
@@ -39,12 +41,12 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-            'salary_amount'     => 'decimal:2',
-            'commission_pct'    => 'decimal:2',
-            'active'                => 'boolean',
-            'deactivated_at'        => 'datetime',
-            'must_change_password'  => 'boolean',
+            'password' => 'hashed',
+            'salary_amount' => 'decimal:2',
+            'commission_pct' => 'decimal:2',
+            'active' => 'boolean',
+            'deactivated_at' => 'datetime',
+            'must_change_password' => 'boolean',
         ];
     }
 

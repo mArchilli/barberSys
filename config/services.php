@@ -35,4 +35,21 @@ return [
         ],
     ],
 
+    // MercadoPago Suscripciones (preapproval). El entorno (test/producción)
+    // se deduce del prefijo del access token — TEST- o APP_USR- — vía
+    // MercadoPagoSubscriptionService::environment(); nunca de una env var aparte.
+    'mercadopago' => [
+        'access_token' => env('MERCADOPAGO_ACCESS_TOKEN'),
+        'public_key' => env('MERCADOPAGO_PUBLIC_KEY'),
+        'webhook_url' => env('MERCADOPAGO_WEBHOOK_URL'),
+    ],
+
+    // Facturante (facturación electrónica). Si api_key está vacía, el sistema
+    // opera con NullInvoicingService (sin facturación automática) — ver el
+    // binding condicional en AppServiceProvider.
+    'facturante' => [
+        'api_key' => env('FACTURANTE_API_KEY'),
+        'base_url' => env('FACTURANTE_BASE_URL', 'https://api.facturante.com'),
+    ],
+
 ];

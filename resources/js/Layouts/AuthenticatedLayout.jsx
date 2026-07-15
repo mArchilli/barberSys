@@ -1,4 +1,5 @@
 import DashNavbar from '@/Components/DashNavbar';
+import TrialBanner from '@/Components/TrialBanner';
 import { usePage } from '@inertiajs/react';
 
 export default function AuthenticatedLayout({
@@ -19,6 +20,7 @@ export default function AuthenticatedLayout({
                     {showDashNavbar && (
                         <div className={ownerNavbarContainerClassName}>
                             <DashNavbar />
+                            <TrialBanner />
                         </div>
                     )}
 

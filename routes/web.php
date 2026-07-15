@@ -11,16 +11,18 @@ use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
 use App\Http\Controllers\CorteController;
 use App\Http\Controllers\Owner\BarberiaController;
 use App\Http\Controllers\Owner\BarberoController;
+use App\Http\Controllers\Owner\ClienteController;
 use App\Http\Controllers\Owner\ConsolidadoController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
-use App\Http\Controllers\Owner\ClienteController;
 use App\Http\Controllers\Owner\FinanzasController;
 use App\Http\Controllers\Owner\GastoController;
 use App\Http\Controllers\Owner\GastoRegistroController;
 use App\Http\Controllers\Owner\MedioPagoController;
 use App\Http\Controllers\Owner\ServicioController;
+use App\Http\Controllers\Owner\SubscriptionController as OwnerSubscriptionController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Webhooks\MercadoPagoWebhookController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -28,20 +30,20 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'canLogin'       => Route::has('login'),
-        'canRegister'    => Route::has('register'),
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
-        'phpVersion'     => PHP_VERSION,
+        'phpVersion' => PHP_VERSION,
     ]);
 });
 
 // Redirige /dashboard al landing del rol correspondiente
 Route::get('/dashboard', function () {
     return match (Auth::user()->role) {
-        'owner'  => redirect()->route('owner.barberias.index'),
+        'owner' => redirect()->route('owner.barberias.index'),
         'barber' => redirect()->route('barber.dashboard'),
-        'admin'  => redirect()->route('admin.dashboard'),
-        default  => abort(403),
+        'admin' => redirect()->route('admin.dashboard'),
+        default => abort(403),
     };
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -60,6 +62,14 @@ Route::prefix('owner')
         // Vista consolidada multi-barbería (solo aplica con 2+ barberías activas;
         // el propio controller redirige si no corresponde)
         Route::get('/consolidado', [ConsolidadoController::class, 'index'])->name('consolidado');
+
+        // Suscripción: panel, activación del débito automático (preapproval),
+        // retorno del checkout de MP y cambio de plan. Vive a nivel owner,
+        // fuera del grupo anidado por barbería.
+        Route::get('/suscripcion', [OwnerSubscriptionController::class, 'index'])->name('suscripcion.index');
+        Route::post('/suscripcion/activar', [OwnerSubscriptionController::class, 'activate'])->name('suscripcion.activate');
+        Route::get('/suscripcion/retorno', [OwnerSubscriptionController::class, 'retorno'])->name('suscripcion.retorno');
+        Route::post('/suscripcion/upgrade', [OwnerSubscriptionController::class, 'upgrade'])->name('suscripcion.upgrade');
 
         // Gestión anidada por barbería (activa o cerrada: el middleware
         // blockIfBarberiaInactive deja pasar las lecturas siempre, y bloquea
@@ -148,6 +158,12 @@ Route::prefix('admin')
 
         Route::get('/onboarding', [AdminOnboardingController::class, 'index'])->name('onboarding.index');
     });
+
+// --- Webhooks (públicos, sin auth ni CSRF — ver bootstrap/app.php) ---
+// La seguridad no depende de esta ruta: el controller verifica cada
+// notificación consultando el recurso contra la API de MP.
+
+Route::post('/webhooks/mercadopago', MercadoPagoWebhookController::class)->name('webhooks.mercadopago');
 
 // --- Cambio de contraseña forzado ---
 
