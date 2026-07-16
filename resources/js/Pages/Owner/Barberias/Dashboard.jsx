@@ -54,7 +54,7 @@ function shortDateLabel(date) {
 }
 
 function periodLabel(period) {
-    if (period.mode === 'day') return 'Hoy';
+    if (period.mode === 'day') return `Hoy, ${shortDateLabel(period.start)}`;
     if (period.mode === 'week') return `Semana del ${shortDateLabel(period.start)}`;
     if (period.mode === 'month') return monthLabel(period.start.slice(0, 7));
 
@@ -256,10 +256,6 @@ function DashboardPeriodFilter({ period, url }) {
                     })}
                 </div>
 
-                <p className="min-w-0 break-words text-sm font-medium text-brand-text" aria-live="polite">
-                    <span className="font-semibold text-brand-text-secondary">Filtro:</span>{' '}
-                    {periodLabel(period)}
-                </p>
             </div>
 
             {rangeOpen && (
@@ -317,7 +313,9 @@ function KpiCard({ label, value, caption, icon: Icon, tone = 'default', action }
             <dd className={`mt-2 break-words font-display text-2xl font-extrabold leading-tight tabular-nums tracking-[-0.04em] ${toneClassName}`}>
                 {value}
             </dd>
-            <dd className="mt-2 break-words text-xs leading-relaxed text-brand-text-secondary">{caption}</dd>
+            {caption && (
+                <dd className="mt-2 break-words text-xs leading-relaxed text-brand-text-secondary">{caption}</dd>
+            )}
         </div>
     );
 }
@@ -421,9 +419,8 @@ export default function Dashboard({
     actividadReciente,
     alertas,
 }) {
-    const { currentBarberia, auth } = usePage().props;
+    const { currentBarberia } = usePage().props;
     const dashboardUrl = route('owner.barberias.dashboard', currentBarberia.id);
-    const primerNombre = auth.user.name.split(' ')[0];
     const [showFacturacion, setShowFacturacion] = useState(true);
     const selectedPeriodLabel = periodLabel(period);
 
@@ -434,7 +431,7 @@ export default function Dashboard({
             header={(
                 <div className="grid w-full min-w-0 grid-cols-1 gap-4 pt-1 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-start xl:gap-6">
                     <h1 className="min-w-0 break-words font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl xl:pt-1">
-                        Bienvenido, {primerNombre}
+                        {selectedPeriodLabel}
                     </h1>
 
                     <div className="min-w-0 xl:justify-self-center">
@@ -468,7 +465,6 @@ export default function Dashboard({
                             <KpiCard
                                 label="Facturación"
                                 value={showFacturacion ? formatMoney(kpis.facturacion) : '$***'}
-                                caption={selectedPeriodLabel}
                                 icon={IconReportMoney}
                                 action={(
                                     <button
@@ -491,7 +487,6 @@ export default function Dashboard({
                             <KpiCard
                                 label="Cortes"
                                 value={Number(kpis.cortes).toLocaleString('es-AR')}
-                                caption={selectedPeriodLabel}
                                 icon={IconScissors}
                             />
                             <KpiCard
@@ -503,7 +498,6 @@ export default function Dashboard({
                             <KpiCard
                                 label="Hoy"
                                 value={formatMoney(kpis.hoy)}
-                                caption="Facturación de la jornada"
                                 icon={IconCalendar}
                             />
                         </dl>

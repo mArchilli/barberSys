@@ -1,9 +1,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { IconChevronDown, IconEdit, IconLock, IconMapPin, IconScissors } from '@tabler/icons-react';
+import { IconChevronDown, IconEdit, IconLock, IconMapPin } from '@tabler/icons-react';
 import { useState } from 'react';
 
-function MetricTile({ label, value, tone = 'default' }) {
+function MetricTile({ label, value, suffix, tone = 'default' }) {
     const toneClassName = tone === 'success'
         ? 'text-brand-success'
         : tone === 'danger'
@@ -11,12 +11,17 @@ function MetricTile({ label, value, tone = 'default' }) {
             : 'text-brand-text';
 
     return (
-        <div className="flex min-h-[112px] flex-col justify-between rounded-[20px] border border-brand-border-subtle bg-brand-surface-alt p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+        <div className="rounded-[16px] border border-brand-border-subtle bg-brand-surface-alt px-3 py-3">
+            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-brand-text-secondary">
                 {label}
             </p>
-            <p className={`mt-3 font-display text-3xl font-extrabold tracking-[-0.04em] ${toneClassName}`}>
+            <p className={`mt-1 font-display text-xl font-extrabold tracking-[-0.04em] ${toneClassName}`}>
                 {value}
+                {suffix && (
+                    <span className="ml-1 font-sans text-[10px] font-semibold tracking-normal text-brand-text-secondary">
+                        {suffix}
+                    </span>
+                )}
             </p>
         </div>
     );
@@ -26,8 +31,6 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
     const { flash } = usePage().props;
     const atLimit = planLimit.max !== null && planLimit.current >= planLimit.max;
     const [showCerradas, setShowCerradas] = useState(false);
-    const cuposDisponibles = planLimit.max === null ? 'Sin limite' : Math.max(planLimit.max - planLimit.current, 0);
-    const progresoPlan = planLimit.max !== null ? Math.min(100, (planLimit.current / planLimit.max) * 100) : 0;
 
     return (
         <AuthenticatedLayout
@@ -68,9 +71,9 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                         </div>
                     )}
 
-                    <section className="space-y-4">
+                    <section className="grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {barberias.length === 0 ? (
-                            <div className="rounded-[28px] border border-dashed border-brand-border bg-brand-surface-alt p-10 text-center shadow-brand-card">
+                            <div className="rounded-[28px] border border-dashed border-brand-border bg-brand-surface-alt p-10 text-center shadow-brand-card md:col-span-2 lg:col-span-3">
                                 <h4 className="font-display text-xl font-bold text-brand-text">
                                     Todavia no tienes barberias activas
                                 </h4>
@@ -87,7 +90,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                                 )}
                             </div>
                         ) : (
-                            <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
+                            <div className="contents">
                                 {barberias.map((barberia) => (
                                     <article
                                         key={barberia.id}
@@ -135,76 +138,33 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                                 ))}
                             </div>
                         )}
-                    </section>
 
-                    <section className="rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-8 lg:p-10">
-                        <div className="mx-auto max-w-4xl">
-                            <div className="flex flex-col items-center text-center">
-                                <span className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-brand-primary/12 text-brand-primary shadow-sm">
-                                    <IconScissors size={24} stroke={1.8} />
-                                </span>
-                                <p className="mt-4 text-sm font-semibold text-brand-text-secondary">
-                                    Resumen de tu red
-                                </p>
-                                <div className="mt-4 flex flex-wrap items-end justify-center gap-x-3 gap-y-1">
-                                    <p className="font-display text-5xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-6xl">
-                                        {barberias.length}
-                                    </p>
-                                    <p className="pb-1.5 text-base font-medium text-brand-text-secondary sm:pb-2 sm:text-lg">
-                                        {barberias.length === 1 ? 'barberia operativa' : 'barberias operativas'}
-                                    </p>
-                                </div>
-                            </div>
+                        <article className="self-stretch rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
+                            <h4 className="truncate font-display text-2xl font-bold tracking-[-0.04em] text-brand-text">
+                                Resumen de tu plan
+                            </h4>
 
-                            <div className="mt-8 rounded-[24px] border border-brand-border-subtle bg-brand-surface-alt p-5 sm:p-6">
-                                <div className="flex items-center justify-between gap-3">
-                                    <div className="flex items-center gap-2">
-                                        <IconLock size={16} stroke={1.8} className="shrink-0 text-brand-link" />
-                                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                                            Capacidad del plan
-                                        </p>
-                                    </div>
-                                    <p className={`text-base font-bold ${atLimit ? 'text-brand-danger' : 'text-brand-text'}`}>
-                                        {planLimit.current}
-                                        {planLimit.max !== null ? `/${planLimit.max}` : ''}
-                                    </p>
-                                </div>
-
-                                {planLimit.max !== null ? (
-                                    <>
-                                        <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-brand-primary-soft">
-                                            <div
-                                                className={`h-2.5 rounded-full transition-all ${atLimit ? 'bg-brand-danger' : 'bg-brand-primary'}`}
-                                                style={{ width: `${progresoPlan}%` }}
-                                            />
-                                        </div>
-                                        <p className={`mt-4 border-t border-brand-border-subtle pt-4 text-sm leading-6 ${atLimit ? 'text-brand-danger' : 'text-brand-text-secondary'}`}>
-                                            {atLimit
-                                                ? 'Alcanzaste el limite de tu plan para sumar mas barberias.'
-                                                : `Tienes ${cuposDisponibles} cupo${cuposDisponibles === 1 ? '' : 's'} disponible${cuposDisponibles === 1 ? '' : 's'} para nuevas barberias.`}
-                                        </p>
-                                    </>
-                                ) : (
-                                    <p className="mt-3 text-sm text-brand-text-secondary">
-                                        Tu plan actual no tiene limite de barberias activas.
-                                    </p>
-                                )}
-                            </div>
-
-                            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                            <div className="mt-5 grid grid-cols-3 gap-2">
+                                <MetricTile
+                                    label="Capacidad del plan"
+                                    value={planLimit.max !== null ? `${planLimit.current}/${planLimit.max}` : 'Sin limite'}
+                                    suffix={planLimit.max !== null ? 'barberias' : undefined}
+                                    tone={atLimit ? 'danger' : 'default'}
+                                />
                                 <MetricTile label="Activas" value={barberias.length} tone="success" />
                                 <MetricTile
                                     label="Cerradas"
                                     value={barberiasCerradas.length}
                                     tone={barberiasCerradas.length > 0 ? 'danger' : 'default'}
                                 />
-                                <MetricTile
-                                    label="Cupos"
-                                    value={cuposDisponibles}
-                                    tone={atLimit ? 'danger' : 'default'}
-                                />
                             </div>
-                        </div>
+
+                            {atLimit && (
+                                <p className="mt-4 border-t border-brand-border-subtle pt-4 text-xs leading-5 text-brand-danger">
+                                    Alcanzaste el limite de tu plan para sumar mas barberias.
+                                </p>
+                            )}
+                        </article>
                     </section>
 
                     {barberiasCerradas.length > 0 && (
