@@ -7,7 +7,7 @@ import { IconCheck } from '@tabler/icons-react';
 
 function InfoBlock({ children }) {
     return (
-        <div className="rounded-[24px] bg-brand-surface-alt p-5">
+        <div className="rounded-[22px] bg-brand-surface-alt p-5">
             {children}
         </div>
     );
@@ -67,7 +67,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status }) {
                 </InfoBlock>
 
                 {mustVerifyEmail && user.email_verified_at === null && (
-                    <div className="rounded-[24px] border border-dashed border-brand-border bg-brand-surface-alt p-5">
+                    <div className="rounded-[22px] border border-dashed border-brand-border bg-brand-surface-alt p-5">
                         <p className="text-sm text-brand-text">
                             Tu direccion de email todavia no esta verificada.{' '}
                             <Link

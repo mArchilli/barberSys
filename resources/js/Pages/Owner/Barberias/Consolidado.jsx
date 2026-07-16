@@ -73,7 +73,7 @@ export default function Consolidado({ period, totalFacturado, totalCortes, total
                                     </span>
                                     <div className="min-w-0">
                                         <p className="text-sm font-medium text-brand-text-secondary">Neto total del negocio</p>
-                                        <p className={`mt-3 truncate font-display text-4xl font-extrabold tracking-[-0.04em] sm:text-[3.25rem] ${totalNeto < 0 ? 'text-brand-danger' : 'text-brand-success'}`}>
+                                        <p className={`mt-2 break-words py-1 font-display text-4xl font-extrabold leading-[1.15] tracking-[-0.04em] sm:text-[3.25rem] ${totalNeto < 0 ? 'text-brand-danger' : 'text-brand-primary'}`}>
                                             {`${totalNeto < 0 ? '-' : ''}${formatMoney(Math.abs(totalNeto))}`}
                                         </p>
                                         <p className="mt-2 text-sm text-brand-text-secondary">
@@ -180,7 +180,7 @@ export default function Consolidado({ period, totalFacturado, totalCortes, total
                                                 <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
                                                     item.neto < 0
                                                         ? 'bg-brand-danger/10 text-brand-danger'
-                                                        : 'bg-brand-success-soft text-brand-success-soft-text'
+                                                        : 'bg-brand-primary text-brand-on-primary'
                                                 }`}>
                                                     {item.neto < 0 ? 'Neto negativo' : 'Neto positivo'}
                                                 </span>
@@ -190,7 +190,7 @@ export default function Consolidado({ period, totalFacturado, totalCortes, total
                                                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
                                                     Neto del periodo
                                                 </p>
-                                                <p className={`mt-2 font-display text-3xl font-extrabold tracking-[-0.04em] ${item.neto < 0 ? 'text-brand-danger' : 'text-brand-success'}`}>
+                                                <p className={`mt-2 font-display text-3xl font-extrabold tracking-[-0.04em] ${item.neto < 0 ? 'text-brand-danger' : 'text-brand-primary'}`}>
                                                     {`${item.neto < 0 ? '-' : ''}${formatMoney(Math.abs(item.neto))}`}
                                                 </p>
                                             </div>

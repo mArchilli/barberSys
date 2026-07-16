@@ -4,8 +4,8 @@ import { IconChevronDown, IconEdit, IconLock, IconMapPin } from '@tabler/icons-r
 import { useState } from 'react';
 
 function MetricTile({ label, value, suffix, tone = 'default' }) {
-    const toneClassName = tone === 'success'
-        ? 'text-brand-success'
+    const toneClassName = tone === 'primary'
+        ? 'text-brand-primary'
         : tone === 'danger'
             ? 'text-brand-danger'
             : 'text-brand-text';
@@ -151,7 +151,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                                     suffix={planLimit.max !== null ? 'barberias' : undefined}
                                     tone={atLimit ? 'danger' : 'default'}
                                 />
-                                <MetricTile label="Activas" value={barberias.length} tone="success" />
+                                <MetricTile label="Activas" value={barberias.length} tone="primary" />
                                 <MetricTile
                                     label="Cerradas"
                                     value={barberiasCerradas.length}
@@ -160,9 +160,17 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                             </div>
 
                             {atLimit && (
-                                <p className="mt-4 border-t border-brand-border-subtle pt-4 text-xs leading-5 text-brand-danger">
-                                    Alcanzaste el limite de tu plan para sumar mas barberias.
-                                </p>
+                                <div className="mt-4 flex items-center justify-between gap-4 border-t border-brand-border-subtle pt-4">
+                                    <p className="max-w-[280px] flex-1 text-sm leading-5 text-brand-danger">
+                                        Alcanzaste el limite de tu plan para sumar mas barberias.
+                                    </p>
+                                    <Link
+                                        href={route('owner.suscripcion.index')}
+                                        className="inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-full bg-brand-primary px-5 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition hover:bg-brand-primary-hover"
+                                    >
+                                        Actualizar plan
+                                    </Link>
+                                </div>
                             )}
                         </article>
                     </section>

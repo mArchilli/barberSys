@@ -35,7 +35,7 @@ function SalaryBadge({ barbero }) {
     }
 
     return (
-        <span className="inline-flex items-center rounded-full bg-brand-success-soft px-3 py-1 text-xs font-semibold text-brand-success-soft-text">
+        <span className="inline-flex items-center rounded-full border border-brand-border bg-brand-surface-alt px-3 py-1 text-xs font-semibold text-brand-text">
             Comision {barbero.commission_pct}%
         </span>
     );
@@ -170,7 +170,7 @@ export default function Index({ barberos, planLimit }) {
 
                             <div className="mt-6 grid gap-3 sm:grid-cols-3">
                                 <MetricTile label="Sueldo fijo" value={conSueldoFijo} />
-                                <MetricTile label="A comision" value={aComision} tone="success" />
+                                <MetricTile label="A comision" value={aComision} />
                                 <MetricTile
                                     label="Cupos disponibles"
                                     value={cuposDisponibles}

@@ -299,8 +299,8 @@ function DashboardPeriodFilter({ period, url }) {
 }
 
 function KpiCard({ label, value, caption, icon: Icon, tone = 'default', action }) {
-    const toneClassName = tone === 'success'
-        ? 'text-brand-success'
+    const toneClassName = tone === 'primary'
+        ? 'text-brand-primary'
         : tone === 'danger'
             ? 'text-brand-danger'
             : 'text-brand-text';
@@ -496,7 +496,7 @@ export default function Dashboard({
                                 value={`${kpis.neto < 0 ? '-' : ''}${formatMoney(Math.abs(kpis.neto))}`}
                                 caption={`Estimado · ${monthLabel(gestion.month)}`}
                                 icon={IconWallet}
-                                tone={kpis.neto < 0 ? 'danger' : 'success'}
+                                tone={kpis.neto < 0 ? 'danger' : 'primary'}
                             />
                             <KpiCard
                                 label="Cortes"
@@ -636,7 +636,7 @@ export default function Dashboard({
                                     <CurrencyBadge />
                                 </div>
 
-                                <p className={`mt-6 break-words font-display text-3xl font-extrabold leading-tight tabular-nums tracking-[-0.04em] sm:text-4xl ${gestion.neto < 0 ? 'text-brand-danger' : 'text-brand-success'}`}>
+                                <p className={`mt-6 break-words font-display text-3xl font-extrabold leading-tight tabular-nums tracking-[-0.04em] sm:text-4xl ${gestion.neto < 0 ? 'text-brand-danger' : 'text-brand-primary'}`}>
                                     {`${gestion.neto < 0 ? '-' : ''}${formatMoney(Math.abs(gestion.neto))}`}
                                 </p>
                                 <p className="mt-2 text-xs text-brand-text-secondary">Facturación mensual menos sueldos y gastos registrados.</p>

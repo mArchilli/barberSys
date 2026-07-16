@@ -9,7 +9,7 @@ import { useRef } from 'react';
 
 function PasswordBlock({ children }) {
     return (
-        <div className="rounded-[24px] bg-brand-surface-alt p-5">
+        <div className="rounded-[22px] bg-brand-surface-alt p-5">
             {children}
         </div>
     );

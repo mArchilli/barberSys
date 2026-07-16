@@ -1,7 +1,11 @@
 import { Link, usePage } from '@inertiajs/react';
 import { IconHome, IconPlus, IconUserCircle } from '@tabler/icons-react';
 
-export default function BarberLayout({ header, children }) {
+export default function BarberLayout({
+    header,
+    children,
+    headerContainerClassName = 'mx-auto max-w-3xl px-4 pt-6 sm:px-6',
+}) {
     const inicioActive = route().current('barber.dashboard');
     const cortesActive = route().current('barber.cortes.*');
     const cuentaActive = route().current('profile.edit');
@@ -10,7 +14,7 @@ export default function BarberLayout({ header, children }) {
         <div className="panel-theme min-h-screen bg-brand-bg">
             {header && (
                 <header className="bg-transparent">
-                    <div className="mx-auto max-w-3xl px-4 pt-6 sm:px-6">{header}</div>
+                    <div className={headerContainerClassName}>{header}</div>
                 </header>
             )}
 

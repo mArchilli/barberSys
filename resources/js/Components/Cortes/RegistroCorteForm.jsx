@@ -379,7 +379,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
                             Total del dia
                         </p>
-                        <p className="mt-2 text-2xl font-bold text-brand-success">
+                        <p className="mt-2 text-2xl font-bold text-brand-primary">
                             {`$${formatPrice(totalHoy)}`}
                         </p>
                     </div>

@@ -8,8 +8,8 @@ function formatMoney(value) {
 }
 
 function MetricTile({ label, value, tone = 'default' }) {
-    const toneClassName = tone === 'success'
-        ? 'text-brand-success'
+    const toneClassName = tone === 'primary'
+        ? 'text-brand-primary'
         : tone === 'danger'
             ? 'text-brand-danger'
             : 'text-brand-text';
@@ -102,7 +102,7 @@ export default function Index({ servicios }) {
                             </div>
 
                             <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                                <MetricTile label="Activos" value={activos} tone="success" />
+                                <MetricTile label="Activos" value={activos} tone="primary" />
                                 <MetricTile label="Inactivos" value={inactivos} tone={inactivos > 0 ? 'danger' : 'default'} />
                                 <MetricTile label="Precio promedio" value={formatMoney(precioPromedio)} />
                             </div>
@@ -196,7 +196,7 @@ export default function Index({ servicios }) {
                                             </div>
 
                                             {servicio.active ? (
-                                                <span className="shrink-0 rounded-full bg-brand-success-soft px-3 py-1 text-xs font-semibold text-brand-success-soft-text">
+                                                <span className="shrink-0 rounded-full bg-brand-primary px-3 py-1 text-xs font-semibold text-brand-on-primary">
                                                     Activo
                                                 </span>
                                             ) : (

@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\Plan;
+use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
@@ -19,6 +22,25 @@ class ProfileTest extends TestCase
             ->get('/profile');
 
         $response->assertOk();
+    }
+
+    public function test_profile_page_displays_the_current_subscription_plan(): void
+    {
+        $owner = User::factory()->owner()->create();
+        $plan = Plan::factory()->create(['name' => 'Plan 2']);
+        Subscription::factory()->create([
+            'owner_id' => $owner->id,
+            'plan_id' => $plan->id,
+        ]);
+
+        $this
+            ->actingAs($owner)
+            ->get('/profile')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Profile/Edit')
+                ->where('currentPlan', 'Plan 2')
+            );
     }
 
     public function test_profile_information_can_be_updated(): void

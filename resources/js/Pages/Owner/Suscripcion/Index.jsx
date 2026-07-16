@@ -24,7 +24,7 @@ const formatDateLong = (isoDate) =>
 
 const STATUS_BADGES = {
     trial: { label: 'En prueba', className: 'bg-brand-warning-soft text-brand-warning' },
-    active: { label: 'Activa', className: 'bg-brand-success-soft text-brand-success' },
+    active: { label: 'Activa', className: 'bg-brand-primary text-brand-on-primary' },
     past_due: { label: 'Pago pendiente', className: 'bg-brand-danger-soft text-brand-danger' },
     cancelled: { label: 'Cancelada', className: 'bg-brand-surface-alt text-brand-text-secondary' },
 };
@@ -385,11 +385,15 @@ export default function Index({ subscription, billing, payments, availablePlans,
                                 </p>
                             </div>
 
-                            <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
+                            <div
+                                className="flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-2 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:pb-0 2xl:grid-cols-3"
+                                role="region"
+                                aria-label="Planes disponibles para cambiar"
+                            >
                                 {availablePlans.map((plan) => (
                                     <article
                                         key={plan.id}
-                                        className="flex flex-col rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7"
+                                        className="flex w-full shrink-0 snap-start snap-always flex-col rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7 md:w-auto md:snap-align-none"
                                     >
                                         <div className="flex items-start justify-between gap-3">
                                             <h4 className="font-display text-2xl font-bold tracking-[-0.04em] text-brand-text">

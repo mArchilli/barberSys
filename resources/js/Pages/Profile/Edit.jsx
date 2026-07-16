@@ -9,7 +9,7 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 
 function MetricTile({ label, value }) {
     return (
-        <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
+        <div className="rounded-[22px] bg-brand-surface-alt p-5">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
                 {label}
             </p>
@@ -28,25 +28,27 @@ function roleLabel(role) {
     return role;
 }
 
-export default function Edit({ mustVerifyEmail, status }) {
+export default function Edit({ mustVerifyEmail, status, currentPlan }) {
     const { auth } = usePage().props;
     const user = auth.user;
     const isBarber = user.role === 'barber';
     const isAdmin = user.role === 'admin';
     const Layout = isBarber ? BarberLayout : isAdmin ? AdminLayout : AuthenticatedLayout;
     const isVerified = !mustVerifyEmail || user.email_verified_at !== null;
+    const headerContainerClassName = isBarber
+        ? 'mx-auto max-w-3xl px-4 pb-2 pt-6 sm:px-6'
+        : isAdmin
+          ? 'mx-auto max-w-7xl px-4 pb-2 pt-6 sm:px-6 lg:px-8'
+          : 'mx-auto max-w-[1720px] px-2 pb-2 pt-4 sm:px-3 sm:pt-5 lg:px-4';
 
     return (
         <Layout
             headerClassName="bg-brand-bg"
-            headerContainerClassName="mx-auto max-w-[1720px] px-2 py-4 sm:px-3 sm:py-5 lg:px-4"
+            headerContainerClassName={headerContainerClassName}
             header={(
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                     <div>
-                        <p className="text-sm font-medium text-brand-text-secondary">
-                            Cuenta y seguridad
-                        </p>
-                        <h2 className="mt-2 font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl">
+                        <h2 className="font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl">
                             Mi perfil
                         </h2>
                         <p className="mt-2 max-w-2xl text-sm text-brand-text-secondary">
@@ -59,7 +61,7 @@ export default function Edit({ mustVerifyEmail, status }) {
             <Head title="Mi perfil" />
 
             <div className="pb-12">
-                <div className="mx-auto max-w-[1720px] space-y-8 px-2 pt-6 sm:px-3 sm:pt-8 lg:px-4">
+                <div className="mx-auto max-w-[1720px] space-y-8 px-2 sm:px-3 lg:px-4">
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
                         <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-start justify-between gap-4">
@@ -84,17 +86,17 @@ export default function Edit({ mustVerifyEmail, status }) {
                             <div className="mt-6 grid gap-3 sm:grid-cols-3">
                                 <MetricTile label="Rol" value={roleLabel(user.role)} />
                                 <MetricTile label="Email" value={user.email} />
-                                <MetricTile label="Estado" value={isVerified ? 'Verificado' : 'Pendiente'} />
+                                <MetricTile
+                                    label="Plan actual"
+                                    value={currentPlan ?? (isAdmin ? 'No aplica' : 'Sin plan asignado')}
+                                />
                             </div>
                         </section>
 
                         <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-start justify-between gap-4">
                                 <div>
-                                    <p className="text-sm font-medium text-brand-text-secondary">
-                                        Seguridad de acceso
-                                    </p>
-                                    <h3 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-brand-text">
+                                    <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">
                                         Estado de la cuenta
                                     </h3>
                                     <p className="mt-2 text-xs text-brand-text-secondary">
@@ -107,16 +109,16 @@ export default function Edit({ mustVerifyEmail, status }) {
                             </div>
 
                             <div className="mt-6 grid gap-3">
-                                <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                                <div className="rounded-[22px] bg-brand-surface-alt p-5">
                                     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
                                         Verificacion
                                     </p>
-                                    <p className={`mt-2 text-lg font-bold ${isVerified ? 'text-brand-success' : 'text-brand-danger'}`}>
+                                    <p className={`mt-2 text-lg font-bold ${isVerified ? 'text-brand-primary' : 'text-brand-danger'}`}>
                                         {isVerified ? 'Email confirmado' : 'Email pendiente'}
                                     </p>
                                 </div>
 
-                                <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                                <div className="rounded-[22px] bg-brand-surface-alt p-5">
                                     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
                                         Cuenta actual
                                     </p>

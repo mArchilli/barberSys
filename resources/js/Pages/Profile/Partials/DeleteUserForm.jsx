@@ -61,7 +61,7 @@ export default function DeleteUserForm() {
                 </div>
             </header>
 
-            <div className="rounded-[24px] border border-brand-danger/20 bg-brand-danger/5 px-5 py-5">
+            <div className="rounded-[22px] border border-brand-danger/20 bg-brand-danger/5 p-5">
                 <p className="text-sm text-brand-danger">
                     Una vez confirmada, la eliminacion no se puede deshacer.
                 </p>

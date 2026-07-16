@@ -19,7 +19,11 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
-export default function AdminLayout({ header, children }) {
+export default function AdminLayout({
+    header,
+    children,
+    headerContainerClassName = 'mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8',
+}) {
     const { auth } = usePage().props;
     const user = auth.user;
 
@@ -172,7 +176,7 @@ export default function AdminLayout({ header, children }) {
             <div className={`flex-1 pt-16 transition-[padding] duration-150 md:pt-0 ${collapsed ? 'md:pl-20' : 'md:pl-64'}`}>
                 {header && (
                     <header className="bg-transparent shadow-none md:bg-brand-surface md:shadow-sm">
-                        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                        <div className={headerContainerClassName}>
                             {header}
                         </div>
                     </header>

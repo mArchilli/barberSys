@@ -26,7 +26,7 @@ function SalaryBadge({ barbero }) {
         );
     }
     return (
-        <span className="inline-flex items-center rounded-full bg-brand-success-soft px-2 py-0.5 text-xs font-medium text-brand-success-soft-text">
+        <span className="inline-flex items-center rounded-full border border-brand-border bg-brand-surface-alt px-2 py-0.5 text-xs font-medium text-brand-text">
             Comisión {barbero.commission_pct}%
         </span>
     );

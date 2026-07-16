@@ -261,7 +261,7 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
                                     </span>
                                     <div className="min-w-0">
                                         <p className="text-sm font-medium text-brand-text-secondary">Neto del periodo</p>
-                                        <p className={`mt-3 truncate font-display text-4xl font-extrabold tracking-[-0.04em] sm:text-[3.25rem] ${neto < 0 ? 'text-brand-danger' : 'text-brand-success'}`}>
+                                        <p className={`mt-2 break-words py-1 font-display text-4xl font-extrabold leading-[1.15] tracking-[-0.04em] sm:text-[3.25rem] ${neto < 0 ? 'text-brand-danger' : 'text-brand-primary'}`}>
                                             {`${neto < 0 ? '-' : ''}${formatMoney(Math.abs(neto))}`}
                                         </p>
                                         <p className="mt-2 text-sm text-brand-text-secondary">
