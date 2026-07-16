@@ -185,7 +185,9 @@ class DashboardController extends Controller
                 'ticketPromedio' => $ticketPromedio,
                 'hoy' => $facturacionHoy,
             ],
-            'evolucionFacturacion' => $this->buildEvolution($barberia, $start, $end),
+            'evolucionFacturacion' => $range->mode === 'day'
+                ? $this->buildHourlyEvolution($barberia, $start)
+                : $this->buildEvolution($barberia, $start, $end),
             'porMedioPago' => $this->mapFilas($porMedioPago, $totalFacturado),
             'rankingBarberosEnabled' => $rankingBarberosEnabled,
             'porBarbero' => $this->mapFilas($porBarbero, $totalFacturado),
@@ -260,6 +262,46 @@ class DashboardController extends Controller
         return [
             'granularity' => $granularity,
             'items' => $buckets,
+        ];
+    }
+
+    private function buildHourlyEvolution(Barberia $barberia, Carbon $day): array
+    {
+        $date = $day->toDateString();
+        $cortes = Corte::where('barberia_id', $barberia->id)
+            ->whereDate('performed_at', $date)
+            ->whereDate('created_at', $date)
+            ->orderBy('created_at')
+            ->get(['price', 'created_at']);
+
+        if ($cortes->isEmpty()) {
+            return [
+                'granularity' => 'hour',
+                'items' => [],
+            ];
+        }
+
+        $cortesPorHora = $cortes->groupBy(fn (Corte $corte) => $corte->created_at->format('H'));
+        $primeraHora = (int) $cortes->first()->created_at->format('H');
+        $ultimaHora = (int) $cortes->last()->created_at->format('H');
+        $items = [];
+
+        for ($hour = $primeraHora; $hour <= $ultimaHora; $hour++) {
+            $hourLabel = str_pad((string) $hour, 2, '0', STR_PAD_LEFT);
+            $cortesDeLaHora = $cortesPorHora->get($hourLabel, collect());
+
+            $items[] = [
+                'start' => "{$date}T{$hourLabel}:00:00",
+                'end' => "{$date}T{$hourLabel}:59:59",
+                'label' => "{$hourLabel}:00",
+                'total' => (float) $cortesDeLaHora->sum(fn (Corte $corte) => (float) $corte->price),
+                'cantidad' => $cortesDeLaHora->count(),
+            ];
+        }
+
+        return [
+            'granularity' => 'hour',
+            'items' => $items,
         ];
     }
 

@@ -127,6 +127,77 @@ class DashboardTest extends TestCase
         );
     }
 
+    public function test_filtro_hoy_agrupa_la_facturacion_por_hora_de_registro(): void
+    {
+        $data = $this->createBarberiaData();
+
+        $this->createCorte($data, [
+            'price' => 1000,
+            'performed_at' => '2026-07-15',
+            'created_at' => '2026-07-15 17:10:00',
+        ]);
+        $this->createCorte($data, [
+            'price' => 500,
+            'performed_at' => '2026-07-15',
+            'created_at' => '2026-07-15 17:45:00',
+        ]);
+        $this->createCorte($data, [
+            'price' => 2000,
+            'performed_at' => '2026-07-15',
+            'created_at' => '2026-07-15 19:05:00',
+        ]);
+
+        $response = $this->actingAs($data['owner'])
+            ->get(route('owner.barberias.dashboard', [
+                'barberia' => $data['barberia'],
+                'day' => '2026-07-15',
+            ]));
+
+        $response->assertOk();
+        $response->assertInertia(fn (Assert $page) => $page
+            ->where('period.mode', 'day')
+            ->where('evolucionFacturacion.granularity', 'hour')
+            ->has('evolucionFacturacion.items', 3)
+            ->where('evolucionFacturacion.items.0.start', '2026-07-15T17:00:00')
+            ->where('evolucionFacturacion.items.0.label', '17:00')
+            ->where('evolucionFacturacion.items.0.total', 1500)
+            ->where('evolucionFacturacion.items.0.cantidad', 2)
+            ->where('evolucionFacturacion.items.1.label', '18:00')
+            ->where('evolucionFacturacion.items.1.total', 0)
+            ->where('evolucionFacturacion.items.1.cantidad', 0)
+            ->where('evolucionFacturacion.items.2.label', '19:00')
+            ->where('evolucionFacturacion.items.2.total', 2000)
+            ->where('evolucionFacturacion.items.2.cantidad', 1)
+        );
+    }
+
+    public function test_rango_personalizado_de_un_dia_conserva_la_agrupacion_diaria(): void
+    {
+        $data = $this->createBarberiaData();
+
+        $this->createCorte($data, [
+            'price' => 1200,
+            'performed_at' => '2026-07-15',
+            'created_at' => '2026-07-15 17:10:00',
+        ]);
+
+        $response = $this->actingAs($data['owner'])
+            ->get(route('owner.barberias.dashboard', [
+                'barberia' => $data['barberia'],
+                'from' => '2026-07-15',
+                'to' => '2026-07-15',
+            ]));
+
+        $response->assertOk();
+        $response->assertInertia(fn (Assert $page) => $page
+            ->where('period.mode', 'range')
+            ->where('evolucionFacturacion.granularity', 'day')
+            ->has('evolucionFacturacion.items', 1)
+            ->where('evolucionFacturacion.items.0.start', '2026-07-15')
+            ->where('evolucionFacturacion.items.0.total', 1200)
+        );
+    }
+
     public function test_rango_personalizado_normaliza_fechas_y_completa_dias_sin_actividad(): void
     {
         $data = $this->createBarberiaData();
@@ -178,8 +249,8 @@ class DashboardTest extends TestCase
             ->has('porMedioPago', 0)
             ->has('porServicio', 0)
             ->has('actividadReciente', 0)
-            ->has('evolucionFacturacion.items', 1)
-            ->where('evolucionFacturacion.items.0.total', 0)
+            ->where('evolucionFacturacion.granularity', 'hour')
+            ->has('evolucionFacturacion.items', 0)
             ->has('alertas', 3)
         );
     }

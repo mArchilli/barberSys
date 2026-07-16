@@ -26,8 +26,8 @@ class UsersTestSeeder extends Seeder
 
         // --- Owner con 2 barberías ---
         $owner = User::firstOrCreate(
-            ['email' => 'owner@barbersys.test'],
             [
+                ['email' => 'owner@barbersys.test'],
                 'name'     => 'Carlos Owner',
                 'password' => Hash::make('password'),
                 'role'     => 'owner',

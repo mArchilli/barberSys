@@ -62,6 +62,10 @@ function periodLabel(period) {
 }
 
 function bucketLabel(item, granularity) {
+    if (granularity === 'hour') {
+        return item.label;
+    }
+
     if (granularity === 'month') {
         return dateFromIso(item.start).toLocaleDateString('es-AR', { month: 'short', year: '2-digit' }).replace('.', '');
     }
@@ -337,32 +341,42 @@ function MetricTile({ label, value, tone = 'default' }) {
 
 function EvolutionChart({ evolution, today }) {
     const { granularity, items } = evolution;
+    const isHourly = granularity === 'hour';
+    const isScrollable = items.length > (isHourly ? 5 : 10);
     const maxTotal = Math.max(...items.map((item) => Number(item.total)), 1);
-    const minWidth = items.length > 10 ? `${items.length * 62}px` : '100%';
+    const minWidth = isScrollable ? `${items.length * (isHourly ? 72 : 62)}px` : '100%';
+
+    if (items.length === 0) {
+        return (
+            <div className="flex h-64 items-center justify-center rounded-[22px] bg-brand-surface-alt/80 px-6 text-center text-sm text-brand-text-secondary">
+                Todavía no hay facturación registrada hoy.
+            </div>
+        );
+    }
 
     return (
         <div
             className="w-full min-w-0 max-w-full snap-x snap-proximity overflow-x-auto overscroll-x-contain pb-2 focus-visible:rounded-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
             role="region"
             aria-label="Gráfico desplazable de evolución de facturación"
-            tabIndex={items.length > 10 ? 0 : undefined}
+            tabIndex={isScrollable ? 0 : undefined}
         >
             <div className="flex h-64 items-end gap-3 sm:gap-4" style={{ minWidth }} role="list" aria-label="Evolución de facturación">
                 {items.map((item) => {
                     const height = item.total > 0 ? Math.max((Number(item.total) / maxTotal) * 100, 9) : 5;
-                    const includesToday = item.start <= today && item.end >= today;
+                    const includesToday = granularity === 'hour' || (item.start <= today && item.end >= today);
 
                     return (
                         <div
                             key={`${item.start}-${item.end}`}
-                            className="flex min-w-[42px] flex-1 snap-start flex-col items-center justify-end gap-2"
+                            className={`flex flex-1 snap-start flex-col items-center justify-end gap-2 ${isHourly ? 'min-w-[52px]' : 'min-w-[42px]'}`}
                             role="listitem"
                             aria-label={`${bucketLabel(item, granularity)}: ${formatMoney(item.total)}, ${item.cantidad} cortes`}
                         >
                             <p className={`max-w-full truncate text-[11px] font-semibold ${includesToday ? 'text-brand-primary' : 'text-brand-text-secondary'}`} title={formatMoney(item.total)}>
                                 {formatCompactMoney(item.total)}
                             </p>
-                            <div className="flex h-36 w-full items-end rounded-full bg-brand-surface-alt/80 px-1.5 py-1.5" aria-hidden="true">
+                            <div className={`flex h-36 w-full items-end rounded-full bg-brand-surface-alt/80 px-1.5 py-1.5 ${isHourly ? 'max-w-20' : ''}`} aria-hidden="true">
                                 <div
                                     className={`w-full rounded-full transition-all ${
                                         includesToday
@@ -517,8 +531,10 @@ export default function Dashboard({
                                 </div>
 
                                 <div className="mt-6 min-w-0">
-                                    {evolucionFacturacion.items.length > 10 && (
-                                        <p className="mb-3 text-xs text-brand-text-secondary sm:hidden">Deslizá horizontalmente para recorrer todos los días.</p>
+                                    {evolucionFacturacion.items.length > (evolucionFacturacion.granularity === 'hour' ? 5 : 10) && (
+                                        <p className="mb-3 text-xs text-brand-text-secondary sm:hidden">
+                                            Deslizá horizontalmente para recorrer todas las {evolucionFacturacion.granularity === 'hour' ? 'horas' : 'fechas'}.
+                                        </p>
                                     )}
                                     <EvolutionChart evolution={evolucionFacturacion} today={period.today} />
                                 </div>
