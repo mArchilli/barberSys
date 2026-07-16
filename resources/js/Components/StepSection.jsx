@@ -433,8 +433,6 @@ export default function StepSection({
             ref={sectionRef}
             className="relative overflow-hidden px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
         >
-            <div className="pointer-events-none absolute inset-x-0 top-24 h-64 bg-[radial-gradient(circle_at_top,rgba(72,213,252,0.12),transparent_60%)]" />
-
             <div className="mx-auto w-full max-w-[1180px]">
                 <div className="mx-auto max-w-3xl text-center">
                     <span className="inline-flex rounded-brand-pill bg-brand-primary-tint px-4 py-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-brand-primary-soft-text">

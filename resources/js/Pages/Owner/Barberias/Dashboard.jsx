@@ -348,7 +348,7 @@ function EvolutionChart({ evolution, today }) {
 
     if (items.length === 0) {
         return (
-            <div className="flex h-64 items-center justify-center rounded-[22px] bg-brand-surface-alt/80 px-6 text-center text-sm text-brand-text-secondary">
+            <div className="flex min-h-64 flex-1 items-center justify-center rounded-[22px] bg-brand-surface-alt/80 px-6 text-center text-sm text-brand-text-secondary">
                 Todavía no hay facturación registrada hoy.
             </div>
         );
@@ -356,12 +356,12 @@ function EvolutionChart({ evolution, today }) {
 
     return (
         <div
-            className="w-full min-w-0 max-w-full snap-x snap-proximity overflow-x-auto overscroll-x-contain pb-2 focus-visible:rounded-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            className="flex min-h-64 w-full min-w-0 max-w-full flex-1 snap-x snap-proximity overflow-x-auto overscroll-x-contain pb-2 focus-visible:rounded-brand-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
             role="region"
             aria-label="Gráfico desplazable de evolución de facturación"
             tabIndex={isScrollable ? 0 : undefined}
         >
-            <div className="flex h-64 items-end gap-3 sm:gap-4" style={{ minWidth }} role="list" aria-label="Evolución de facturación">
+            <div className="flex min-h-64 flex-1 items-stretch gap-3 sm:gap-4" style={{ minWidth }} role="list" aria-label="Evolución de facturación">
                 {items.map((item) => {
                     const height = item.total > 0 ? Math.max((Number(item.total) / maxTotal) * 100, 9) : 5;
                     const includesToday = granularity === 'hour' || (item.start <= today && item.end >= today);
@@ -369,14 +369,14 @@ function EvolutionChart({ evolution, today }) {
                     return (
                         <div
                             key={`${item.start}-${item.end}`}
-                            className={`flex flex-1 snap-start flex-col items-center justify-end gap-2 ${isHourly ? 'min-w-[52px]' : 'min-w-[42px]'}`}
+                            className={`flex min-h-0 flex-1 snap-start flex-col items-center gap-2 ${isHourly ? 'min-w-[52px]' : 'min-w-[42px]'}`}
                             role="listitem"
                             aria-label={`${bucketLabel(item, granularity)}: ${formatMoney(item.total)}, ${item.cantidad} cortes`}
                         >
                             <p className={`max-w-full truncate text-[11px] font-semibold ${includesToday ? 'text-brand-primary' : 'text-brand-text-secondary'}`} title={formatMoney(item.total)}>
                                 {formatCompactMoney(item.total)}
                             </p>
-                            <div className={`flex h-36 w-full items-end rounded-full bg-brand-surface-alt/80 px-1.5 py-1.5 ${isHourly ? 'max-w-20' : ''}`} aria-hidden="true">
+                            <div className={`flex min-h-20 w-full flex-1 items-end rounded-full bg-brand-surface-alt/80 px-1.5 py-1.5 ${isHourly ? 'max-w-20' : ''}`} aria-hidden="true">
                                 <div
                                     className={`w-full rounded-full transition-all ${
                                         includesToday
@@ -519,7 +519,7 @@ export default function Dashboard({
 
                     <section className="min-w-0" aria-label="Facturación y pagos">
                         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
-                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
+                            <article className="flex min-w-0 flex-col rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="min-w-0">
                                         <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">Evolución de facturación</h3>
@@ -530,7 +530,7 @@ export default function Dashboard({
                                     </span>
                                 </div>
 
-                                <div className="mt-6 min-w-0">
+                                <div className="mt-6 flex min-h-0 min-w-0 flex-1 flex-col">
                                     {evolucionFacturacion.items.length > (evolucionFacturacion.granularity === 'hour' ? 5 : 10) && (
                                         <p className="mb-3 text-xs text-brand-text-secondary sm:hidden">
                                             Deslizá horizontalmente para recorrer todas las {evolucionFacturacion.granularity === 'hour' ? 'horas' : 'fechas'}.
