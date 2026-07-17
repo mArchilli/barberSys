@@ -19,7 +19,7 @@ import {
 import { useState } from 'react';
 
 const topActionClassName =
-    'inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-medium transition';
+    'inline-flex min-h-[52px] shrink-0 items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition';
 const flyoutPanelClassName =
     'rounded-[24px] border border-brand-border bg-brand-surface-alt/70 p-2 shadow-brand-card backdrop-blur-sm';
 
@@ -155,7 +155,7 @@ export default function DashNavbar() {
     );
 
     return (
-        <div className="rounded-[28px] border border-brand-border bg-brand-surface p-4 shadow-brand-card sm:p-5">
+        <div>
             <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between gap-3 md:hidden">
                     <button
@@ -184,10 +184,10 @@ export default function DashNavbar() {
                             aria-expanded={profileMenuOpen}
                             className={`${topActionClassName} border border-brand-border bg-brand-surface-alt text-brand-text-secondary hover:border-brand-primary/20 hover:bg-brand-primary/5 hover:text-brand-text`}
                         >
-                            <IconUserCog size={17} stroke={1.9} />
+                            <IconUserCog size={19} stroke={1.9} />
                             <span>Mi perfil</span>
                             <IconChevronDown
-                                size={15}
+                                size={17}
                                 stroke={2}
                                 className={`transition-transform ${profileMenuOpen ? 'rotate-180' : ''}`}
                             />
@@ -245,7 +245,7 @@ export default function DashNavbar() {
                                         : 'border border-brand-border bg-brand-surface-alt text-brand-text-secondary hover:border-brand-primary/20 hover:bg-brand-primary/5 hover:text-brand-text')
                                 }
                             >
-                                <Icon size={17} stroke={1.9} />
+                                <Icon size={19} stroke={1.9} />
                                 <span>{label}</span>
                             </Link>
                         ))}
@@ -259,10 +259,10 @@ export default function DashNavbar() {
                             aria-expanded={profileMenuOpen}
                             className={`${topActionClassName} border border-brand-border bg-brand-surface-alt text-brand-text-secondary hover:border-brand-primary/20 hover:bg-brand-primary/5 hover:text-brand-text`}
                         >
-                            <IconUserCog size={17} stroke={1.9} />
+                            <IconUserCog size={19} stroke={1.9} />
                             <span>Mi perfil</span>
                             <IconChevronDown
-                                size={15}
+                                size={17}
                                 stroke={2}
                                 className={`transition-transform ${profileMenuOpen ? 'rotate-180' : ''}`}
                             />
