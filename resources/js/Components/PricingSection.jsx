@@ -1,73 +1,78 @@
 import { Link } from '@inertiajs/react';
 import { IconArrowRight, IconCheck } from '@tabler/icons-react';
+import { useState } from 'react';
 
-const plans = [
-    {
+/**
+ * Copy puramente presentacional (no vive en la tabla `plans`): tier, bajada
+ * y flags visuales. name/price/annual_price/included_items SIEMPRE vienen
+ * de props (BD) — nunca hardcodear esos cuatro acá. Clave por `slug` porque
+ * el slug interno de un plan nunca cambia (ver CLAUDE.md), a diferencia del
+ * `name` que sí puede rebrandearse desde Admin → Planes.
+ */
+const PLAN_PRESENTATION = {
+    'plan-1': {
         tier: 'Esencial',
-        name: 'Base',
-        price: '$15k',
-        cadence: '/mes',
         description:
             'Para una barbería chica que quiere ordenar sus números sin sumar complejidad al día a día.',
-        details: ['1 barbería', 'Hasta 3 barberos', 'Incluye al dueño si corta'],
-        features: [
-            'Registro de servicios',
-            'Catálogo de servicios',
-            'Medios de pago',
-            'Sueldos y gastos',
-            'Métricas básicas de facturación',
-        ],
+        tagline: 'Incluye al dueño si corta',
     },
-    {
+    'plan-2': {
         tier: 'Más elegido',
-        name: 'Profesional',
-        price: '$35k',
-        cadence: '/mes',
         description:
             'Pensado para barberías en expansión que necesitan ver el negocio completo y comparar rendimiento.',
-        details: ['Hasta 2 barberías', 'Hasta 6 barberos', 'Panel consolidado incluido'],
-        features: [
-            'Todo lo del plan Base',
-            'Ranking de productividad por barbero',
-            'Comparación entre sucursales',
-            'Métricas más completas',
-            'Visión consolidada por local',
-        ],
+        tagline: 'Panel consolidado incluido',
         featured: true,
     },
-    {
+    'plan-3': {
         tier: 'Escalable',
-        name: 'Expansión',
-        price: '$65k',
-        cadence: '/mes',
         description:
             'Hecho para operaciones que ya manejan varias sucursales y necesitan control financiero más fino.',
-        details: ['Hasta 5 barberías', 'Barberos ilimitados', 'Control ampliado por sucursal'],
-        features: [
-            'Todo lo del plan Profesional',
-            'Neto por sucursal',
-            'Neto total del negocio',
-            'Sin límite de barberos por sucursal',
-            'Seguimiento financiero ampliado',
-        ],
+        tagline: 'Control ampliado por sucursal',
     },
-    {
+    'plan-4': {
         tier: 'Operación grande',
-        name: 'Cadena',
-        price: 'A medida',
         description:
             'Para redes con alto volumen que necesitan una configuración adaptada a su operación y soporte cercano.',
-        details: ['Más de 5 barberías', 'Mayor volumen de barberos', 'Configuración personalizada'],
-        features: [
-            'Todo lo del plan Expansión',
-            'Roles y permisos por sucursal',
-            'Reportes exportables',
-            'Soporte prioritario',
-            'Implementación adaptada a la operación',
-        ],
-        dark: true,
+        tagline: 'Configuración personalizada',
     },
-];
+};
+
+const formatMoney = (value) => `$${Number(value).toLocaleString('es-AR')}`;
+
+const formatBarberias = (plan) =>
+    plan.max_barberias === null
+        ? 'Barberías ilimitadas'
+        : `${plan.max_barberias} barbería${plan.max_barberias === 1 ? '' : 's'}`;
+
+const formatBarberos = (plan) =>
+    plan.max_barberos === null
+        ? 'Barberos ilimitados'
+        : `Hasta ${plan.max_barberos} barbero${plan.max_barberos === 1 ? '' : 's'}`;
+
+function BillingCycleToggle({ cycle, onChange }) {
+    return (
+        <div className="inline-flex items-center gap-1 rounded-brand-pill border border-brand-border bg-brand-surface p-1 shadow-brand-card">
+            {[
+                { value: 'monthly', label: 'Mensual' },
+                { value: 'annual', label: 'Anual' },
+            ].map((option) => (
+                <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => onChange(option.value)}
+                    className={[
+                        'rounded-brand-pill px-5 py-2 text-sm font-bold transition-colors duration-150',
+                        cycle === option.value
+                            ? 'bg-brand-primary text-brand-on-primary shadow-brand-cta'
+                            : 'text-brand-text-secondary hover:text-brand-text',
+                    ].join(' ')}
+                >
+                    {option.label}
+                </button>
+            ))}
+        </div>
+    );
+}
 
 function PricingAction({ href, inertia = false, className, children }) {
     if (inertia) {
@@ -86,12 +91,15 @@ function PricingAction({ href, inertia = false, className, children }) {
 }
 
 export default function PricingSection({
+    plans = [],
     cta = {
         label: 'Probar gratis',
         href: '#',
         inertia: false,
     },
 }) {
+    const [cycle, setCycle] = useState('monthly');
+
     return (
         <section
             id="precios"
@@ -112,20 +120,23 @@ export default function PricingSection({
                     </p>
                 </div>
 
-                <div className="mt-14 grid gap-6 xl:grid-cols-4">
-                    {plans.map(
-                        ({
-                            name,
-                            price,
-                            cadence,
-                            description,
-                            details,
-                            features,
-                            featured,
-                            dark,
-                        }) => (
+                <div className="mt-10 flex justify-center">
+                    <BillingCycleToggle cycle={cycle} onChange={setCycle} />
+                </div>
+
+                <div className="mt-10 grid gap-6 xl:grid-cols-4">
+                    {plans.map((plan) => {
+                        const presentation = PLAN_PRESENTATION[plan.slug] ?? {};
+                        const { featured, dark: darkOverride } = presentation;
+                        const dark = darkOverride ?? plan.is_custom;
+
+                        const hasAnnual = plan.annual_price !== null;
+                        const showAnnual = cycle === 'annual' && !plan.is_custom && hasAnnual;
+                        const displayPrice = showAnnual ? plan.annual_price : plan.price;
+
+                        return (
                             <article
-                                key={name}
+                                key={plan.id}
                                 className={[
                                     'relative flex h-full min-h-[760px] flex-col overflow-hidden rounded-brand-xl border p-7 shadow-brand-card transition-all duration-200 hover:-translate-y-1 hover:shadow-brand-card-hover motion-reduce:transition-none motion-reduce:hover:transform-none',
                                     dark
@@ -148,7 +159,7 @@ export default function PricingSection({
                                                 : 'text-brand-text',
                                         ].join(' ')}
                                     >
-                                        {name}
+                                        {plan.name}
                                     </h3>
 
                                     {featured && (
@@ -161,9 +172,9 @@ export default function PricingSection({
                                 <div className="mt-7">
                                     <div className="flex items-end gap-2">
                                         <span className="font-display text-[2.4rem] font-extrabold tracking-[-0.06em]">
-                                            {price}
+                                            {plan.is_custom ? 'A medida' : formatMoney(displayPrice)}
                                         </span>
-                                        {cadence && (
+                                        {!plan.is_custom && (
                                             <span
                                                 className={[
                                                     'pb-2 text-sm font-medium',
@@ -174,10 +185,26 @@ export default function PricingSection({
                                                           : 'text-brand-text-secondary',
                                                 ].join(' ')}
                                             >
-                                                {cadence}
+                                                /mes
                                             </span>
                                         )}
                                     </div>
+
+                                    {showAnnual && (
+                                        <p
+                                            className={[
+                                                'mt-1 text-xs font-medium',
+                                                dark
+                                                    ? 'text-brand-text-on-dark'
+                                                    : featured
+                                                      ? 'text-brand-text/70'
+                                                      : 'text-brand-text-secondary',
+                                            ].join(' ')}
+                                        >
+                                            {formatMoney(plan.annual_price * 12)} total por año
+                                        </p>
+                                    )}
+
                                     <p
                                         className={[
                                             'mt-4 text-sm leading-6',
@@ -188,7 +215,7 @@ export default function PricingSection({
                                                   : 'text-brand-text-secondary',
                                         ].join(' ')}
                                     >
-                                        {description}
+                                        {presentation.description}
                                     </p>
                                 </div>
 
@@ -205,7 +232,7 @@ export default function PricingSection({
                                                   : 'border border-brand-border bg-brand-surface text-brand-text hover:-translate-y-0.5 hover:border-brand-primary-muted hover:bg-brand-bg focus-visible:ring-brand-primary',
                                         ].join(' ')}
                                     >
-                                        <span>{dark ? 'Hablar con ventas' : cta.label}</span>
+                                        <span>{plan.is_custom ? 'Hablar con ventas' : cta.label}</span>
                                         <IconArrowRight
                                             className="ml-2 h-4 w-4"
                                             stroke={2.3}
@@ -236,58 +263,62 @@ export default function PricingSection({
                                         Ideal para
                                     </p>
                                     <div className="mt-3 flex flex-wrap gap-2">
-                                        {details.map((detail) => (
-                                            <span
-                                                key={detail}
-                                                className={[
-                                                    'inline-flex rounded-brand-pill px-3 py-1.5 text-xs font-semibold',
-                                                    dark
-                                                        ? 'bg-brand-surface/10 text-brand-surface'
-                                                        : featured
-                                                          ? 'bg-brand-surface/40 text-brand-text'
-                                                          : 'bg-brand-surface text-brand-text-secondary',
-                                                ].join(' ')}
-                                            >
-                                                {detail}
-                                            </span>
-                                        ))}
+                                        {[formatBarberias(plan), formatBarberos(plan), presentation.tagline]
+                                            .filter(Boolean)
+                                            .map((detail) => (
+                                                <span
+                                                    key={detail}
+                                                    className={[
+                                                        'inline-flex rounded-brand-pill px-3 py-1.5 text-xs font-semibold',
+                                                        dark
+                                                            ? 'bg-brand-surface/10 text-brand-surface'
+                                                            : featured
+                                                              ? 'bg-brand-surface/40 text-brand-text'
+                                                              : 'bg-brand-surface text-brand-text-secondary',
+                                                    ].join(' ')}
+                                                >
+                                                    {detail}
+                                                </span>
+                                            ))}
                                     </div>
                                 </div>
 
-                                <ul className="mt-6 space-y-3 text-sm">
-                                    {features.map((feature) => (
-                                        <li
-                                            key={feature}
-                                            className="flex items-start gap-3"
-                                        >
-                                            <span
-                                                className={[
-                                                    'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full',
-                                                    'bg-brand-secondary text-brand-primary-soft',
-                                                ].join(' ')}
+                                {plan.included_items?.length > 0 && (
+                                    <ul className="mt-6 space-y-3 text-sm">
+                                        {plan.included_items.map((item) => (
+                                            <li
+                                                key={item}
+                                                className="flex items-start gap-3"
                                             >
-                                                <IconCheck
-                                                    className="h-3.5 w-3.5"
-                                                    stroke={2.6}
-                                                />
-                                            </span>
-                                            <span
-                                                className={
-                                                    dark
-                                                        ? 'text-brand-surface'
-                                                        : featured
-                                                          ? 'text-brand-text/85'
-                                                          : 'text-brand-text-secondary'
-                                                }
-                                            >
-                                                {feature}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
+                                                <span
+                                                    className={[
+                                                        'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full',
+                                                        'bg-brand-secondary text-brand-primary-soft',
+                                                    ].join(' ')}
+                                                >
+                                                    <IconCheck
+                                                        className="h-3.5 w-3.5"
+                                                        stroke={2.6}
+                                                    />
+                                                </span>
+                                                <span
+                                                    className={
+                                                        dark
+                                                            ? 'text-brand-surface'
+                                                            : featured
+                                                              ? 'text-brand-text/85'
+                                                              : 'text-brand-text-secondary'
+                                                    }
+                                                >
+                                                    {item}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </article>
-                        ),
-                    )}
+                        );
+                    })}
                 </div>
 
                 <div className="mt-10 flex justify-center">

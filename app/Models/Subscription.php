@@ -15,10 +15,12 @@ class Subscription extends Model
     protected $fillable = [
         'owner_id',
         'plan_id',
+        'billing_cycle',
         'custom_max_barberias',
         'custom_max_barberos',
         'custom_features',
         'custom_price',
+        'custom_annual_price',
         'status',
         'starts_at',
         'trial_ends_at',
@@ -39,6 +41,7 @@ class Subscription extends Model
             'ends_at' => 'date',
             'custom_features' => 'array',
             'custom_price' => 'decimal:2',
+            'custom_annual_price' => 'decimal:2',
             'coupon_discount_snapshot' => 'array',
             'mp_next_payment_date' => 'datetime',
         ];
@@ -124,14 +127,39 @@ class Subscription extends Model
         return $this->custom_max_barberos ?? $this->plan->max_barberos;
     }
 
+    public function isAnnual(): bool
+    {
+        return $this->billing_cycle === 'annual';
+    }
+
     /**
-     * Precio real de la suscripción: prioriza el precio negociado (custom_price,
-     * usado por el Plan 4 "a medida" que tiene price=0 en el catálogo) y cae al
-     * precio de catálogo del plan si no hay override.
+     * Precio MENSUAL-EQUIVALENTE de la suscripción, sin importar el ciclo de
+     * cobro: es el número a mostrar en UI (comparable entre mensual y anual)
+     * y el que se usa para calcular MRR (BusinessMetricsService::mrr()).
+     * Prioriza el precio negociado (custom_price/custom_annual_price, usado
+     * por el Plan 4 "a medida") y cae al precio de catálogo del plan si no
+     * hay override. NUNCA usar este método para armar el preapproval de un
+     * ciclo anual — para eso está amountToCharge().
      */
     public function effectivePrice(): float
     {
+        if ($this->isAnnual()) {
+            return (float) ($this->custom_annual_price ?? $this->plan->annual_price);
+        }
+
         return (float) ($this->custom_price ?? $this->plan->price);
+    }
+
+    /**
+     * Monto REAL que se cobra en cada ciclo (sin descuento de cupón, ver
+     * MercadoPagoSubscriptionService para eso): effectivePrice() tal cual si
+     * es mensual, o el equivalente mensual × 12 si es anual, porque el plan
+     * anual se cobra como un único cargo por año, no en 12 cuotas reducidas.
+     * Es el monto que se usa para armar el preapproval en MercadoPago.
+     */
+    public function amountToCharge(): float
+    {
+        return $this->isAnnual() ? $this->effectivePrice() * 12 : $this->effectivePrice();
     }
 
     /**

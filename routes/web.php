@@ -23,6 +23,7 @@ use App\Http\Controllers\Owner\SubscriptionController as OwnerSubscriptionContro
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Webhooks\MercadoPagoWebhookController;
+use App\Models\Plan;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,9 @@ Route::get('/', function () {
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'plans' => Plan::where('active', true)->orderBy('id')->get([
+            'id', 'name', 'slug', 'price', 'annual_price', 'is_custom', 'max_barberias', 'max_barberos', 'included_items',
+        ]),
     ]);
 });
 

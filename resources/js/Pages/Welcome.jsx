@@ -17,7 +17,7 @@ const links = [
     { label: 'FAQ', href: '#faq' },
 ];
 
-export default function Welcome({ auth, canLogin, canRegister }) {
+export default function Welcome({ auth, canLogin, canRegister, plans }) {
     const ctaHref = auth.user
         ? route('dashboard')
         : canRegister
@@ -84,6 +84,7 @@ export default function Welcome({ auth, canLogin, canRegister }) {
                     }}
                 />
                 <PricingSection
+                    plans={plans}
                     cta={{
                         label: 'Probar gratis',
                         href: ctaHref,

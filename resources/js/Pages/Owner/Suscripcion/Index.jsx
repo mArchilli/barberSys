@@ -116,10 +116,16 @@ export default function Index({ subscription, billing, payments, availablePlans,
     const { data, setData, post, processing, errors } = useForm({
         razon_social: billing.razon_social ?? '',
         cuit: billing.cuit ?? '',
+        billing_cycle: 'monthly',
     });
 
     const statusBadge = STATUS_BADGES[subscription.status] ?? STATUS_BADGES.trial;
-    const hasDiscount = subscription.coupon && subscription.monthly_amount < subscription.list_price;
+    const hasDiscount = subscription.coupon && subscription.charge_amount < subscription.list_price;
+    const hasAnnualOption = subscription.pricing.annual !== null;
+    const annualSavingsPerYear = hasAnnualOption
+        ? Math.max(0, (subscription.pricing.monthly - subscription.pricing.annual) * 12)
+        : 0;
+    const isAnnual = subscription.billing_cycle === 'annual';
 
     const submitActivation = (event) => {
         event.preventDefault();
@@ -197,25 +203,31 @@ export default function Index({ subscription, billing, payments, availablePlans,
                                 {subscription.status === 'active' && subscription.next_payment_date && (
                                     <p className="mt-3 text-sm text-brand-text-secondary">
                                         Vigente hasta el {formatDateLong(subscription.next_payment_date)} — ese día se
-                                        cobra automáticamente el próximo mes, sin que tengas que hacer nada.
+                                        cobra automáticamente {isAnnual ? 'el próximo año' : 'el próximo mes'}, sin que
+                                        tengas que hacer nada.
                                     </p>
                                 )}
                             </div>
 
                             <div className="rounded-[22px] bg-brand-surface-alt px-5 py-4 lg:text-right">
                                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                                    Costo mensual
+                                    {isAnnual ? 'Costo anual' : 'Costo mensual'}
                                 </p>
                                 <div className="mt-2 flex items-baseline gap-2 lg:justify-end">
                                     <p className="font-display text-3xl font-extrabold tracking-[-0.04em] text-brand-text">
-                                        {formatARS(subscription.monthly_amount)}
+                                        {formatARS(subscription.charge_amount)}
                                     </p>
                                     {hasDiscount && (
                                         <p className="text-sm font-medium text-brand-text-secondary line-through">
-                                            {formatARS(subscription.list_price)}
+                                            {formatARS(isAnnual ? subscription.list_price * 12 : subscription.list_price)}
                                         </p>
                                     )}
                                 </div>
+                                {isAnnual && (
+                                    <p className="mt-1 text-xs text-brand-text-secondary">
+                                        Equivale a {formatARS(subscription.list_price)}/mes — se cobra una vez al año.
+                                    </p>
+                                )}
                                 {hasDiscount && (
                                     <p className="mt-2 inline-flex items-center gap-1.5 rounded-brand-pill bg-brand-primary-soft px-3 py-1 text-xs font-semibold text-brand-primary-soft-text">
                                         <IconTicket size={14} stroke={2} />
@@ -260,6 +272,69 @@ export default function Index({ subscription, billing, payments, availablePlans,
                                 </div>
                             ) : (
                                 <form onSubmit={submitActivation} className="mt-6 space-y-5">
+                                    <div>
+                                        <p className="text-sm font-semibold text-brand-text">Ciclo de cobro</p>
+                                        <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                                            <label
+                                                className={`flex cursor-pointer flex-col rounded-[18px] border px-4 py-3 transition ${
+                                                    data.billing_cycle === 'monthly'
+                                                        ? 'border-brand-primary bg-brand-primary/5'
+                                                        : 'border-brand-border bg-brand-surface-alt'
+                                                }`}
+                                            >
+                                                <span className="flex items-center gap-2">
+                                                    <input
+                                                        type="radio"
+                                                        name="billing_cycle"
+                                                        value="monthly"
+                                                        checked={data.billing_cycle === 'monthly'}
+                                                        onChange={() => setData('billing_cycle', 'monthly')}
+                                                    />
+                                                    <span className="text-sm font-semibold text-brand-text">Mensual</span>
+                                                </span>
+                                                <span className="mt-1 text-sm text-brand-text-secondary">
+                                                    {formatARS(subscription.pricing.monthly)}/mes
+                                                </span>
+                                            </label>
+
+                                            <label
+                                                className={`flex flex-col rounded-[18px] border px-4 py-3 transition ${
+                                                    !hasAnnualOption
+                                                        ? 'cursor-not-allowed border-brand-border bg-brand-surface-alt opacity-50'
+                                                        : data.billing_cycle === 'annual'
+                                                          ? 'cursor-pointer border-brand-primary bg-brand-primary/5'
+                                                          : 'cursor-pointer border-brand-border bg-brand-surface-alt'
+                                                }`}
+                                            >
+                                                <span className="flex items-center gap-2">
+                                                    <input
+                                                        type="radio"
+                                                        name="billing_cycle"
+                                                        value="annual"
+                                                        checked={data.billing_cycle === 'annual'}
+                                                        disabled={!hasAnnualOption}
+                                                        onChange={() => setData('billing_cycle', 'annual')}
+                                                    />
+                                                    <span className="text-sm font-semibold text-brand-text">Anual</span>
+                                                </span>
+                                                {hasAnnualOption ? (
+                                                    <>
+                                                        <span className="mt-1 text-sm text-brand-text-secondary">
+                                                            {formatARS(subscription.pricing.annual)}/mes — un único cargo de{' '}
+                                                            {formatARS(subscription.pricing.annual * 12)} por año
+                                                        </span>
+                                                        <span className="mt-1 inline-flex w-fit items-center rounded-brand-pill bg-brand-success-soft px-2.5 py-0.5 text-xs font-semibold text-brand-success">
+                                                            Ahorrás {formatARS(annualSavingsPerYear)} al año
+                                                        </span>
+                                                    </>
+                                                ) : (
+                                                    <span className="mt-1 text-sm text-brand-text-secondary">No disponible para este plan</span>
+                                                )}
+                                            </label>
+                                        </div>
+                                        <InputError message={errors.billing_cycle} className="mt-2" />
+                                    </div>
+
                                     <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
                                         <p className="text-sm font-semibold text-brand-text">
                                             Datos para tu factura <span className="font-normal text-brand-text-secondary">(opcional)</span>
@@ -447,9 +522,11 @@ export default function Index({ subscription, billing, payments, availablePlans,
                         </h3>
                         <p className="mt-3 text-sm text-brand-text-secondary">
                             Tu suscripción pasa a costar {formatARS(planToConfirm.price)} por mes
-                            {subscription.has_preapproval
-                                ? ' y actualizamos el débito automático en MercadoPago desde el próximo cobro.'
-                                : '.'}
+                            {!subscription.has_preapproval
+                                ? '.'
+                                : isAnnual
+                                  ? ' — como facturás anual, el nuevo precio se cobra recién en tu próxima renovación (el año en curso no se prorratea).'
+                                  : ' y actualizamos el débito automático en MercadoPago desde el próximo cobro.'}
                         </p>
                         <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                             <SecondaryButton onClick={() => setPlanToConfirm(null)}>Cancelar</SecondaryButton>

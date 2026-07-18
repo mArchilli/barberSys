@@ -142,6 +142,7 @@ class OwnerController extends Controller
             'subscription' => $subscription ? [
                 'id'                    => $subscription->id,
                 'plan_id'               => $subscription->plan_id,
+                'billing_cycle'         => $subscription->billing_cycle,
                 'status'                => $subscription->status,
                 'starts_at'             => optional($subscription->starts_at)->toDateString(),
                 'trial_ends_at'         => optional($subscription->trial_ends_at)->toDateString(),
@@ -149,6 +150,7 @@ class OwnerController extends Controller
                 'custom_max_barberias'  => $subscription->custom_max_barberias,
                 'custom_max_barberos'   => $subscription->custom_max_barberos,
                 'custom_price'          => $subscription->custom_price,
+                'custom_annual_price'   => $subscription->custom_annual_price,
                 'coupon_discount_snapshot' => $subscription->coupon_discount_snapshot,
             ] : null,
             'plans' => $plans,

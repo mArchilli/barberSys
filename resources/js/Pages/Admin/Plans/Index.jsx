@@ -71,10 +71,17 @@ export default function Index({ plans }) {
                                             </div>
                                         </div>
 
-                                        <p className="font-display text-2xl font-bold tracking-[-0.03em] text-brand-text">
-                                            {formatMoney(p.price)}
-                                            <span className="text-sm font-normal text-brand-text-secondary"> /mes</span>
-                                        </p>
+                                        <div>
+                                            <p className="font-display text-2xl font-bold tracking-[-0.03em] text-brand-text">
+                                                {formatMoney(p.price)}
+                                                <span className="text-sm font-normal text-brand-text-secondary"> /mes</span>
+                                            </p>
+                                            {p.annual_price !== null && (
+                                                <p className="mt-0.5 text-sm text-brand-text-secondary">
+                                                    {formatMoney(p.annual_price)} /mes pagando anual
+                                                </p>
+                                            )}
+                                        </div>
 
                                         <div className="text-sm text-brand-text-secondary">
                                             {formatLimit(p.max_barberias)} barbería(s) · {formatLimit(p.max_barberos)} barbero(s)

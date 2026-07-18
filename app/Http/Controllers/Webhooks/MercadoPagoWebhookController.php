@@ -199,27 +199,37 @@ class MercadoPagoWebhookController extends Controller
     }
 
     /**
-     * Cupón con duration_months: cuando el cobro recién registrado completa
-     * la ventana de descuento, se actualiza el preapproval al precio pleno.
-     * Se hace solo en la transición exacta (count == duration) para no llamar
-     * a MP en cada pago.
+     * Cupón con ventana de descuento: cuando el cobro recién registrado
+     * completa la ventana, se actualiza el preapproval al precio pleno. Se
+     * hace solo en la transición exacta para no llamar a MP en cada pago.
+     *
+     * Mensual: la ventana son los primeros duration_months cobros.
+     * Anual: el descuento aplica una única vez sobre el primer cobro (regla
+     * de CLAUDE.md, ignora duration_months) — la ventana termina apenas se
+     * registra ese primer cobro aprobado.
      */
     private function syncAmountIfDiscountWindowEnded(
         Subscription $subscription,
         MercadoPagoSubscriptionService $mp
     ): void {
         $snapshot = $subscription->coupon_discount_snapshot;
-        $duration = $snapshot['duration_months'] ?? null;
 
-        if ($duration === null || ! $subscription->hasPreapproval()) {
+        if (! $snapshot || ! $subscription->hasPreapproval()) {
             return;
         }
 
-        if ($subscription->approvedPaymentsCount() === (int) $duration) {
-            $mp->updateAmount(
-                $subscription->mp_preapproval_id,
-                $mp->monthlyAmountFor($subscription)
-            );
+        if ($subscription->isAnnual()) {
+            if ($subscription->approvedPaymentsCount() === 1) {
+                $mp->updateAmount($subscription->mp_preapproval_id, $mp->chargeAmountFor($subscription));
+            }
+
+            return;
+        }
+
+        $duration = $snapshot['duration_months'] ?? null;
+
+        if ($duration !== null && $subscription->approvedPaymentsCount() === (int) $duration) {
+            $mp->updateAmount($subscription->mp_preapproval_id, $mp->chargeAmountFor($subscription));
         }
     }
 }

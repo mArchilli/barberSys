@@ -11,11 +11,12 @@ class PlanSeeder extends Seeder
     {
         $plans = [
             [
-                'name'          => 'Plan 1',
+                'name'          => 'Base',
                 'slug'          => 'plan-1',
                 'max_barberias' => 1,
                 'max_barberos'  => 3,
-                'price'         => 15000.00,
+                'price'         => 18000.00,
+                'annual_price'  => 15000.00,
                 'is_custom'     => false,
                 'active'        => true,
                 'features'      => null,
@@ -27,11 +28,12 @@ class PlanSeeder extends Seeder
                 ],
             ],
             [
-                'name'          => 'Plan 2',
+                'name'          => 'Profesional',
                 'slug'          => 'plan-2',
                 'max_barberias' => 2,
                 'max_barberos'  => 6,
-                'price'         => 33000.00,
+                'price'         => 25000.00,
+                'annual_price'  => 22000.00,
                 'is_custom'     => false,
                 'active'        => true,
                 'features'      => ['ranking_barberos' => true],
@@ -45,11 +47,12 @@ class PlanSeeder extends Seeder
                 ],
             ],
             [
-                'name'          => 'Plan 3',
+                'name'          => 'Expansión',
                 'slug'          => 'plan-3',
                 'max_barberias' => 5,
                 'max_barberos'  => null,
-                'price'         => 65000.00,
+                'price'         => 55000.00,
+                'annual_price'  => 45000.00,
                 'is_custom'     => false,
                 'active'        => true,
                 'features'      => ['ranking_barberos' => true],
@@ -64,11 +67,15 @@ class PlanSeeder extends Seeder
                 ],
             ],
             [
-                'name'          => 'Plan 4',
+                'name'          => 'Cadena',
                 'slug'          => 'plan-4',
                 'max_barberias' => null,
                 'max_barberos'  => null,
+                // price no es nullable en el schema (decimal 10,2 NOT NULL); 0.00
+                // es un placeholder que nunca se lee — is_custom=true gatea "A
+                // medida" antes de que el front consulte price/annual_price.
                 'price'         => 0.00,
+                'annual_price'  => null,
                 'is_custom'     => true,
                 'active'        => true,
                 'features'      => ['ranking_barberos' => true],

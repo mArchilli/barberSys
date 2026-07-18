@@ -73,6 +73,7 @@ class SubscriptionActivationTest extends TestCase
         $response = $this->actingAs($this->owner)->post(route('owner.suscripcion.activate'), [
             'razon_social' => 'Barbería El Corte SRL',
             'cuit' => '30-71234567-8',
+            'billing_cycle' => 'monthly',
         ]);
 
         $response->assertRedirect('https://mercadopago.test/checkout');
@@ -108,7 +109,7 @@ class SubscriptionActivationTest extends TestCase
         });
 
         $this->actingAs($this->owner)
-            ->post(route('owner.suscripcion.activate'), [])
+            ->post(route('owner.suscripcion.activate'), ['billing_cycle' => 'monthly'])
             ->assertRedirect('https://mercadopago.test/checkout');
     }
 
@@ -124,7 +125,7 @@ class SubscriptionActivationTest extends TestCase
         });
 
         $this->actingAs($this->owner)
-            ->post(route('owner.suscripcion.activate'), [])
+            ->post(route('owner.suscripcion.activate'), ['billing_cycle' => 'monthly'])
             ->assertRedirect(route('owner.suscripcion.index'));
     }
 
@@ -237,7 +238,7 @@ class SubscriptionActivationTest extends TestCase
         ]);
 
         $this->mock(MercadoPagoSubscriptionService::class, function ($mock) {
-            $mock->shouldReceive('monthlyAmountFor')->andReturn(25000.0);
+            $mock->shouldReceive('chargeAmountFor')->andReturn(25000.0);
             $mock->shouldReceive('updateAmount')
                 ->once()
                 ->with('preapproval-abc', 25000.0);

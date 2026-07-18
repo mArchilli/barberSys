@@ -7,6 +7,7 @@ export default function Create({ knownFeatures }) {
         name: '',
         slug: '',
         price: '',
+        annual_price: '',
         max_barberias: '',
         max_barberos: '',
         is_custom: false,
@@ -22,6 +23,7 @@ export default function Create({ knownFeatures }) {
             ...formData,
             max_barberias: formData.max_barberias === '' ? null : formData.max_barberias,
             max_barberos: formData.max_barberos === '' ? null : formData.max_barberos,
+            annual_price: formData.annual_price === '' ? null : formData.annual_price,
         }));
 
         post(route('admin.plans.store'));

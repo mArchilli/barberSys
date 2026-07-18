@@ -30,13 +30,11 @@ class Plan extends Model
      */
 
     /**
-     * Grandfathering de precio: cambiar `price` acá NUNCA debe recalcular ni
-     * afectar suscripciones ya existentes — solo aplica a suscripciones
-     * nuevas a partir de este momento. Hoy no hay billing real integrado,
-     * así que esto no requiere código adicional; pero cuando se integre
-     * MercadoPago, el precio de catálogo NO debe usarse para modificar
-     * preapprovals ya autorizados de owners existentes, solo para altas
-     * nuevas. Ver regla completa en CLAUDE.md.
+     * Grandfathering de precio: cambiar `price` o `annual_price` acá NUNCA
+     * debe recalcular ni afectar suscripciones ya existentes — solo aplica a
+     * suscripciones nuevas a partir de este momento. El precio de catálogo
+     * NO debe usarse para modificar preapprovals ya autorizados de owners
+     * existentes, solo para altas nuevas. Ver regla completa en CLAUDE.md.
      */
     protected $fillable = [
         'name',
@@ -44,6 +42,7 @@ class Plan extends Model
         'max_barberias',
         'max_barberos',
         'price',
+        'annual_price',
         'is_custom',
         'active',
         'features',
@@ -56,6 +55,7 @@ class Plan extends Model
             'max_barberias'   => 'integer',
             'max_barberos'    => 'integer',
             'price'           => 'decimal:2',
+            'annual_price'    => 'decimal:2',
             'is_custom'       => 'boolean',
             'active'          => 'boolean',
             'features'        => 'array',

@@ -28,6 +28,7 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
 
     const { data, setData, patch, processing, errors } = useForm({
         plan_id: subscription?.plan_id ?? (plans[0]?.id ?? ''),
+        billing_cycle: subscription?.billing_cycle ?? 'monthly',
         status: subscription?.status ?? 'trial',
         starts_at: subscription?.starts_at ?? new Date().toISOString().slice(0, 10),
         trial_ends_at: subscription?.trial_ends_at ?? '',
@@ -35,6 +36,7 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
         custom_max_barberias: subscription?.custom_max_barberias ?? '',
         custom_max_barberos: subscription?.custom_max_barberos ?? '',
         custom_price: subscription?.custom_price ?? '',
+        custom_annual_price: subscription?.custom_annual_price ?? '',
     });
 
     const couponForm = useForm({ code: '' });
@@ -242,6 +244,7 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
                                                     ...data,
                                                     plan_id: e.target.value,
                                                     custom_price: nextPlan?.is_custom ? data.custom_price : '',
+                                                    custom_annual_price: nextPlan?.is_custom ? data.custom_annual_price : '',
                                                 });
                                             }}
                                             className="mt-1 block w-full rounded-brand-sm border-brand-border text-sm focus:border-brand-primary focus:ring-brand-primary"
@@ -251,6 +254,20 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
                                             ))}
                                         </select>
                                         <InputError message={errors.plan_id} className="mt-1" />
+                                    </div>
+
+                                    <div>
+                                        <InputLabel htmlFor="billing_cycle" value="Ciclo de cobro" />
+                                        <select
+                                            id="billing_cycle"
+                                            value={data.billing_cycle}
+                                            onChange={(e) => setData('billing_cycle', e.target.value)}
+                                            className="mt-1 block w-full rounded-brand-sm border-brand-border text-sm focus:border-brand-primary focus:ring-brand-primary"
+                                        >
+                                            <option value="monthly">Mensual</option>
+                                            <option value="annual">Anual</option>
+                                        </select>
+                                        <InputError message={errors.billing_cycle} className="mt-1" />
                                     </div>
 
                                     <div>
@@ -310,18 +327,35 @@ export default function Show({ owner, barberias, subscription, plans, recentCort
                                         </p>
 
                                         {isCustomPlan && (
-                                            <div className="mt-3">
-                                                <InputLabel htmlFor="custom_price" value="Precio mensual (custom)" />
-                                                <TextInput
-                                                    id="custom_price"
-                                                    type="number"
-                                                    min="0"
-                                                    step="0.01"
-                                                    value={data.custom_price}
-                                                    onChange={(e) => setData('custom_price', e.target.value)}
-                                                    className="mt-1 block w-full"
-                                                />
-                                                <InputError message={errors.custom_price} className="mt-1" />
+                                            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                                                <div>
+                                                    <InputLabel htmlFor="custom_price" value="Precio mensual (custom)" />
+                                                    <TextInput
+                                                        id="custom_price"
+                                                        type="number"
+                                                        min="0"
+                                                        step="0.01"
+                                                        value={data.custom_price}
+                                                        onChange={(e) => setData('custom_price', e.target.value)}
+                                                        className="mt-1 block w-full"
+                                                    />
+                                                    <InputError message={errors.custom_price} className="mt-1" />
+                                                </div>
+
+                                                <div>
+                                                    <InputLabel htmlFor="custom_annual_price" value="Precio anual (custom, equiv. mensual)" />
+                                                    <TextInput
+                                                        id="custom_annual_price"
+                                                        type="number"
+                                                        min="0"
+                                                        step="0.01"
+                                                        value={data.custom_annual_price}
+                                                        onChange={(e) => setData('custom_annual_price', e.target.value)}
+                                                        className="mt-1 block w-full"
+                                                        placeholder="Sin opción anual"
+                                                    />
+                                                    <InputError message={errors.custom_annual_price} className="mt-1" />
+                                                </div>
                                             </div>
                                         )}
 

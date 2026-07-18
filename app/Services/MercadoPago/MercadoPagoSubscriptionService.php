@@ -83,28 +83,45 @@ class MercadoPagoSubscriptionService
     }
 
     /**
-     * Monto mensual real a cobrar: precio efectivo de la suscripción
-     * (custom_price u override de catálogo) menos el descuento del cupón.
+     * Monto real a cobrar en este ciclo (mensual o anual, según
+     * Subscription::amountToCharge()) con el descuento del cupón aplicado si
+     * corresponde. Reemplaza al antiguo monthlyAmountFor(): con planes
+     * anuales el monto ya no es necesariamente "mensual", así que ahora
+     * parte de amountToCharge() en vez de effectivePrice() — para
+     * billing_cycle=monthly ambos valen lo mismo, así que el comportamiento
+     * mensual no cambia.
      *
      * REGLA (CLAUDE.md): el descuento se lee SIEMPRE de coupon_discount_snapshot
      * (congelado al momento del canje), nunca del Coupon vigente vía coupon_id.
-     * duration_months limita el descuento a los primeros N cobros aprobados:
-     * como el snapshot no guarda fecha de canje, la ventana se mide contando
-     * pagos aprobados ya registrados, no meses calendario.
+     *
+     * Ventana de descuento:
+     *  - Mensual: los primeros duration_months COBROS aprobados (como el
+     *    snapshot no guarda fecha de canje, se mide contando pagos aprobados
+     *    ya registrados, no meses calendario).
+     *  - Anual: el descuento aplica UNA ÚNICA VEZ, sobre el primer cobro
+     *    anual completo — duration_months no aplica a un cobro que ocurre
+     *    una vez al año. Desde el segundo cobro aprobado en adelante, precio
+     *    pleno.
      */
-    public function monthlyAmountFor(Subscription $subscription): float
+    public function chargeAmountFor(Subscription $subscription): float
     {
-        $base = $subscription->effectivePrice();
+        $base = $subscription->amountToCharge();
         $snapshot = $subscription->coupon_discount_snapshot;
 
         if (! $snapshot) {
             return round($base, 2);
         }
 
-        $duration = $snapshot['duration_months'] ?? null;
+        if ($subscription->isAnnual()) {
+            if ($subscription->approvedPaymentsCount() >= 1) {
+                return round($base, 2);
+            }
+        } else {
+            $duration = $snapshot['duration_months'] ?? null;
 
-        if ($duration !== null && $subscription->approvedPaymentsCount() >= (int) $duration) {
-            return round($base, 2);
+            if ($duration !== null && $subscription->approvedPaymentsCount() >= (int) $duration) {
+                return round($base, 2);
+            }
         }
 
         $discounted = match ($snapshot['type'] ?? null) {
@@ -136,18 +153,24 @@ class MercadoPagoSubscriptionService
      * preapproval resultante, así que preapproval_plan_id es la única clave
      * de correlación disponible para saber, al recibir el webhook, a qué
      * Subscription le corresponde el preapproval recién autorizado.
+     *
+     * billing_cycle=annual se modela con frequency=12/frequency_type=months
+     * (MercadoPago no tiene un frequency_type "years") y transaction_amount
+     * en base a amountToCharge() (el equivalente mensual × 12): un único
+     * cargo anual, no 12 cuotas mensuales reducidas.
      */
     public function createPreapprovalPlan(Subscription $subscription, string $backUrl): PreApprovalPlan
     {
         $client = new PreApprovalPlanClient;
+        $isAnnual = $subscription->isAnnual();
 
         return $client->create([
-            'reason' => 'Suscripción Pelito — Plan '.$subscription->plan->name,
+            'reason' => 'Suscripción Pelito — Plan '.$subscription->plan->name.($isAnnual ? ' (anual)' : ''),
             'back_url' => $backUrl,
             'auto_recurring' => [
-                'frequency' => 1,
+                'frequency' => $isAnnual ? 12 : 1,
                 'frequency_type' => 'months',
-                'transaction_amount' => $this->monthlyAmountFor($subscription),
+                'transaction_amount' => $this->chargeAmountFor($subscription),
                 'currency_id' => 'ARS',
             ],
         ]);
@@ -206,8 +229,13 @@ class MercadoPagoSubscriptionService
     /**
      * Actualiza el monto de un preapproval ya autorizado (upgrade de plan o
      * fin de la ventana de descuento del cupón). NUNCA usar el precio de
-     * catálogo directamente acá: siempre monthlyAmountFor() de la suscripción
+     * catálogo directamente acá: siempre chargeAmountFor() de la suscripción
      * concreta (regla de grandfathering, ver CLAUDE.md).
+     *
+     * No usar para una suscripción billing_cycle=annual con motivo de
+     * upgrade de plan: ver SubscriptionController::upgrade() — el nuevo
+     * monto anual se aplica recién en la próxima renovación, no de forma
+     * inmediata con prorrateo (regla documentada en CLAUDE.md).
      */
     public function updateAmount(string $preapprovalId, float $amount): PreApproval
     {

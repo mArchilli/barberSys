@@ -17,6 +17,7 @@ class UpdateSubscriptionRequest extends FormRequest
     {
         return [
             'plan_id'               => ['required', 'exists:plans,id'],
+            'billing_cycle'         => ['required', Rule::in(['monthly', 'annual'])],
             'status'                => ['required', Rule::in(['trial', 'active', 'past_due', 'cancelled'])],
             'starts_at'             => ['required', 'date'],
             'trial_ends_at'         => ['nullable', 'date'],
@@ -24,6 +25,7 @@ class UpdateSubscriptionRequest extends FormRequest
             'custom_max_barberias'  => ['nullable', 'integer', 'min:0'],
             'custom_max_barberos'   => ['nullable', 'integer', 'min:0'],
             'custom_price'          => ['nullable', 'numeric', 'min:0'],
+            'custom_annual_price'   => ['nullable', 'numeric', 'min:0'],
         ];
     }
 }

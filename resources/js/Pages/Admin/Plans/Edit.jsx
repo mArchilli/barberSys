@@ -7,6 +7,7 @@ export default function Edit({ plan, knownFeatures, subscriberUsage }) {
         name: plan.name,
         slug: plan.slug,
         price: String(plan.price),
+        annual_price: plan.annual_price === null ? '' : String(plan.annual_price),
         max_barberias: plan.max_barberias === null ? '' : String(plan.max_barberias),
         max_barberos: plan.max_barberos === null ? '' : String(plan.max_barberos),
         is_custom: plan.is_custom,
@@ -22,6 +23,7 @@ export default function Edit({ plan, knownFeatures, subscriberUsage }) {
             ...formData,
             max_barberias: formData.max_barberias === '' ? null : formData.max_barberias,
             max_barberos: formData.max_barberos === '' ? null : formData.max_barberos,
+            annual_price: formData.annual_price === '' ? null : formData.annual_price,
         }));
 
         patch(route('admin.plans.update', plan.id));

@@ -46,19 +46,32 @@ class SubscriptionController extends Controller
             ->where('is_custom', false)
             ->where('id', '!=', $subscription->plan_id)
             ->orderBy('price')
-            ->get(['id', 'name', 'price', 'max_barberias', 'max_barberos', 'included_items']);
+            ->get(['id', 'name', 'price', 'annual_price', 'max_barberias', 'max_barberos', 'included_items']);
 
         return Inertia::render('Owner/Suscripcion/Index', [
             'subscription' => [
                 'plan_name' => $subscription->plan->name,
                 'status' => $subscription->status,
+                'billing_cycle' => $subscription->billing_cycle,
                 'trial_ends_at' => optional($subscription->trial_ends_at)->toDateString(),
                 'trial_days_left' => $subscription->trialDaysLeft(),
-                'monthly_amount' => $mp->monthlyAmountFor($subscription),
+                // Monto real del PRÓXIMO cobro (mensual o el cargo anual completo).
+                'charge_amount' => $mp->chargeAmountFor($subscription),
                 'list_price' => $subscription->effectivePrice(),
                 'coupon' => $subscription->coupon_discount_snapshot,
                 'has_preapproval' => $subscription->hasPreapproval(),
                 'next_payment_date' => optional($subscription->mp_next_payment_date)->toDateString(),
+                // Precios mensual-equivalente de AMBOS ciclos del plan propio
+                // (sin descuento de cupón), para el selector de activación
+                // (punto 6): mostrar el ahorro antes de que el owner elija.
+                // 'annual' viene null si el plan no tiene precio anual cargado
+                // (ej. Plan 4 a medida sin custom_annual_price todavía).
+                'pricing' => [
+                    'monthly' => (float) ($subscription->custom_price ?? $subscription->plan->price),
+                    'annual' => ($subscription->custom_annual_price ?? $subscription->plan->annual_price) !== null
+                        ? (float) ($subscription->custom_annual_price ?? $subscription->plan->annual_price)
+                        : null,
+                ],
             ],
             'billing' => [
                 'cuit' => $owner->cuit,
@@ -106,6 +119,9 @@ class SubscriptionController extends Controller
             'cuit' => $request->cuit,
             'razon_social' => $request->razon_social,
         ]);
+
+        $subscription->update(['billing_cycle' => $request->billing_cycle]);
+        $subscription->refresh();
 
         try {
             $plan = $mp->createPreapprovalPlan(
@@ -176,6 +192,11 @@ class SubscriptionController extends Controller
      * Cambio de plan por autoservicio. Server-side se valida que el uso
      * actual (barberías/barberos activos) entre en los límites del plan
      * nuevo — nunca es una restricción solo visual (regla de CLAUDE.md).
+     *
+     * El ciclo de cobro (billing_cycle) NO cambia acá — un upgrade cambia el
+     * plan, no el ciclo. Para billing_cycle=annual el nuevo monto se aplica
+     * recién en la próxima renovación (ver CLAUDE.md); para monthly se
+     * actualiza el preapproval de inmediato, como siempre.
      */
     public function upgrade(UpgradePlanRequest $request, MercadoPagoSubscriptionService $mp)
     {
@@ -190,18 +211,27 @@ class SubscriptionController extends Controller
 
         try {
             DB::transaction(function () use ($subscription, $newPlan, $mp) {
-                // custom_price era un precio negociado para el plan anterior:
-                // al cambiar de plan rige el precio de catálogo del plan nuevo.
-                // Los overrides de límites (custom_max_*) se conservan.
+                // custom_price/custom_annual_price eran un precio negociado
+                // para el plan anterior: al cambiar de plan rige el precio de
+                // catálogo del plan nuevo. Los overrides de límites
+                // (custom_max_*) se conservan.
                 $subscription->update([
                     'plan_id' => $newPlan->id,
                     'custom_price' => null,
+                    'custom_annual_price' => null,
                 ]);
 
-                if ($subscription->hasPreapproval()) {
+                // Suscripción anual: NO se actualiza el monto del preapproval
+                // de inmediato con prorrateo — el owner ya pagó el cargo
+                // anual completo del plan viejo. El nuevo monto se aplica
+                // recién en la próxima renovación anual (limitación
+                // deliberada, ver CLAUDE.md). plan_id ya quedó actualizado
+                // arriba, así que el resto de la app (límites, features) ve
+                // el plan nuevo desde ya.
+                if ($subscription->hasPreapproval() && ! $subscription->isAnnual()) {
                     $mp->updateAmount(
                         $subscription->mp_preapproval_id,
-                        $mp->monthlyAmountFor($subscription->fresh(['plan', 'payments']))
+                        $mp->chargeAmountFor($subscription->fresh(['plan', 'payments']))
                     );
                 }
             });

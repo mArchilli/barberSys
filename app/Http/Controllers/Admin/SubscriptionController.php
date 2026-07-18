@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Auth;
 class SubscriptionController extends Controller
 {
     private const LOGGED_FIELDS = [
-        'plan_id', 'status', 'starts_at', 'trial_ends_at', 'ends_at',
-        'custom_max_barberias', 'custom_max_barberos', 'custom_price',
+        'plan_id', 'billing_cycle', 'status', 'starts_at', 'trial_ends_at', 'ends_at',
+        'custom_max_barberias', 'custom_max_barberos', 'custom_price', 'custom_annual_price',
         'coupon_id', 'coupon_discount_snapshot',
     ];
 

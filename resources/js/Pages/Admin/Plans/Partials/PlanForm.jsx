@@ -95,22 +95,43 @@ export default function PlanForm({ data, setData, errors, processing, knownFeatu
                 </div>
             </div>
 
-            <div>
-                <InputLabel htmlFor="price" value="Precio mensual ($) *" />
-                <TextInput
-                    id="price"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={data.price}
-                    onChange={(e) => setData('price', e.target.value)}
-                    className="mt-1 block w-full sm:w-64"
-                />
-                <InputError message={errors.price} className="mt-1" />
-                <p className="mt-1 text-xs text-brand-text-secondary">
-                    Cambiar este precio no afecta a los owners ya suscriptos — solo aplica a suscripciones nuevas de acá en adelante.
-                </p>
+            <div className="grid gap-6 sm:grid-cols-2">
+                <div>
+                    <InputLabel htmlFor="price" value="Precio mensual ($) *" />
+                    <TextInput
+                        id="price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={data.price}
+                        onChange={(e) => setData('price', e.target.value)}
+                        className="mt-1 block w-full"
+                    />
+                    <InputError message={errors.price} className="mt-1" />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="annual_price" value="Precio anual — equivalente mensual ($)" />
+                    <TextInput
+                        id="annual_price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={data.annual_price}
+                        onChange={(e) => setData('annual_price', e.target.value)}
+                        className="mt-1 block w-full"
+                        placeholder="Sin plan anual"
+                    />
+                    <InputError message={errors.annual_price} className="mt-1" />
+                    <p className="mt-1 text-xs text-brand-text-secondary">
+                        Monto mensual-equivalente del cobro anual (ej. $15.000 = $180.000/año en un único cargo). Vacío = sin opción anual.
+                    </p>
+                </div>
             </div>
+
+            <p className="-mt-4 text-xs text-brand-text-secondary">
+                Cambiar precio o precio anual no afecta a los owners ya suscriptos — solo aplica a suscripciones nuevas de acá en adelante.
+            </p>
 
             <div className="grid gap-6 sm:grid-cols-2">
                 <div>

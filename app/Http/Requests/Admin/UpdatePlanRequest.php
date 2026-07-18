@@ -22,6 +22,7 @@ class UpdatePlanRequest extends FormRequest
             'max_barberias'  => ['nullable', 'integer', 'min:1'],
             'max_barberos'   => ['nullable', 'integer', 'min:1'],
             'price'          => ['required', 'numeric', 'min:0'],
+            'annual_price'   => ['nullable', 'numeric', 'min:0'],
             'is_custom'      => ['boolean'],
             'active'         => ['boolean'],
             'features'       => ['nullable', 'array'],
