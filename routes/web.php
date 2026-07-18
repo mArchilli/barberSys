@@ -22,6 +22,7 @@ use App\Http\Controllers\Owner\ServicioController;
 use App\Http\Controllers\Owner\SubscriptionController as OwnerSubscriptionController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TourController;
 use App\Http\Controllers\Webhooks\MercadoPagoWebhookController;
 use App\Models\Plan;
 use Illuminate\Foundation\Application;
@@ -182,6 +183,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::patch('/tours/{tourKey}/seen', [TourController::class, 'markSeen'])->name('tours.mark-seen');
 });
 
 require __DIR__.'/auth.php';

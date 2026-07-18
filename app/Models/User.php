@@ -30,6 +30,7 @@ class User extends Authenticatable
         'active',
         'deactivated_at',
         'must_change_password',
+        'tours_seen',
     ];
 
     protected $hidden = [
@@ -47,6 +48,7 @@ class User extends Authenticatable
             'active' => 'boolean',
             'deactivated_at' => 'datetime',
             'must_change_password' => 'boolean',
+            'tours_seen' => 'array',
         ];
     }
 

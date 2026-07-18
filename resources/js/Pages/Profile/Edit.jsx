@@ -1,3 +1,5 @@
+import TourRestartButton from '@/Components/TourRestartButton';
+import usePageTour from '@/Hooks/usePageTour';
 import AdminLayout from '@/Layouts/AdminLayout';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import BarberLayout from '@/Layouts/BarberLayout';
@@ -6,6 +8,37 @@ import { IconLock, IconMail, IconUserCircle } from '@tabler/icons-react';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
+
+const PERFIL_TOUR_STEPS = [
+    {
+        element: '[data-tour="perfil-datos"]',
+        popover: {
+            title: 'Tus datos',
+            description: 'Tu nombre, rol, email y el plan de la barbería en la que trabajás.',
+        },
+    },
+    {
+        element: '[data-tour="perfil-editar-datos"]',
+        popover: {
+            title: 'Editar datos personales',
+            description: 'Acá podés actualizar tu nombre y tu email.',
+        },
+    },
+    {
+        element: '[data-tour="perfil-password"]',
+        popover: {
+            title: 'Cambiar contraseña',
+            description: 'Elegí una contraseña nueva cuando quieras.',
+        },
+    },
+    {
+        element: '[data-tour="perfil-cerrar-sesion"]',
+        popover: {
+            title: 'Cerrar sesión',
+            description: 'Salís de tu cuenta en este dispositivo desde acá.',
+        },
+    },
+];
 
 function MetricTile({ label, value }) {
     return (
@@ -35,6 +68,7 @@ export default function Edit({ mustVerifyEmail, status, currentPlan }) {
     const isAdmin = user.role === 'admin';
     const Layout = isBarber ? BarberLayout : isAdmin ? AdminLayout : AuthenticatedLayout;
     const isVerified = !mustVerifyEmail || user.email_verified_at !== null;
+    const { startTour } = usePageTour('barber_perfil', PERFIL_TOUR_STEPS, { autoStart: isBarber });
     const headerContainerClassName = isBarber
         ? 'mx-auto max-w-3xl px-4 pb-2 pt-6 sm:px-6'
         : isAdmin
@@ -48,9 +82,12 @@ export default function Edit({ mustVerifyEmail, status, currentPlan }) {
             header={(
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                     <div>
-                        <h2 className="font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl">
-                            Mi perfil
-                        </h2>
+                        <div className="flex items-start justify-between gap-3">
+                            <h2 className="font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl">
+                                Mi perfil
+                            </h2>
+                            {isBarber && <TourRestartButton onClick={startTour} />}
+                        </div>
                         <p className="mt-2 max-w-2xl text-sm text-brand-text-secondary">
                             Actualiza tus datos, refuerza la seguridad de tu cuenta y administra el acceso desde un solo lugar.
                         </p>
@@ -62,8 +99,8 @@ export default function Edit({ mustVerifyEmail, status, currentPlan }) {
 
             <div className="pb-12">
                 <div className="mx-auto max-w-[1720px] space-y-8 px-2 sm:px-3 lg:px-4">
-                    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                    <div className={isBarber ? '' : 'grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]'}>
+                        <section data-tour="perfil-datos" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex min-w-0 items-start gap-4">
                                     <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px] bg-brand-primary/12 text-brand-primary shadow-sm">
@@ -93,50 +130,52 @@ export default function Edit({ mustVerifyEmail, status, currentPlan }) {
                             </div>
                         </section>
 
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
-                            <div className="flex items-start justify-between gap-4">
-                                <div>
-                                    <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">
-                                        Estado de la cuenta
-                                    </h3>
-                                    <p className="mt-2 text-xs text-brand-text-secondary">
-                                        Usa esta seccion para confirmar el email, cambiar la contrasena o cerrar sesion desde este dispositivo.
-                                    </p>
-                                </div>
-                                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-link shadow-sm">
-                                    <IconLock size={22} stroke={1.8} />
-                                </span>
-                            </div>
-
-                            <div className="mt-6 grid gap-3">
-                                <div className="rounded-[22px] bg-brand-surface-alt p-5">
-                                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                                        Verificacion
-                                    </p>
-                                    <p className={`mt-2 text-lg font-bold ${isVerified ? 'text-brand-primary' : 'text-brand-danger'}`}>
-                                        {isVerified ? 'Email confirmado' : 'Email pendiente'}
-                                    </p>
+                        {!isBarber && (
+                            <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div>
+                                        <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">
+                                            Estado de la cuenta
+                                        </h3>
+                                        <p className="mt-2 text-xs text-brand-text-secondary">
+                                            Usa esta seccion para confirmar el email, cambiar la contrasena o cerrar sesion desde este dispositivo.
+                                        </p>
+                                    </div>
+                                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-link shadow-sm">
+                                        <IconLock size={22} stroke={1.8} />
+                                    </span>
                                 </div>
 
-                                <div className="rounded-[22px] bg-brand-surface-alt p-5">
-                                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                                        Cuenta actual
-                                    </p>
-                                    <div className="mt-2 flex items-center gap-2 text-sm font-semibold text-brand-text">
-                                        <IconMail size={16} stroke={1.8} />
-                                        {user.email}
+                                <div className="mt-6 grid gap-3">
+                                    <div className="rounded-[22px] bg-brand-surface-alt p-5">
+                                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                                            Verificacion
+                                        </p>
+                                        <p className={`mt-2 text-lg font-bold ${isVerified ? 'text-brand-primary' : 'text-brand-danger'}`}>
+                                            {isVerified ? 'Email confirmado' : 'Email pendiente'}
+                                        </p>
+                                    </div>
+
+                                    <div className="rounded-[22px] bg-brand-surface-alt p-5">
+                                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
+                                            Cuenta actual
+                                        </p>
+                                        <div className="mt-2 flex items-center gap-2 text-sm font-semibold text-brand-text">
+                                            <IconMail size={16} stroke={1.8} />
+                                            {user.email}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </section>
+                            </section>
+                        )}
                     </div>
 
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                        <section data-tour="perfil-editar-datos" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <UpdateProfileInformationForm mustVerifyEmail={mustVerifyEmail} status={status} />
                         </section>
 
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                        <section data-tour="perfil-password" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <UpdatePasswordForm />
                         </section>
                     </div>
@@ -148,7 +187,7 @@ export default function Edit({ mustVerifyEmail, status, currentPlan }) {
                     )}
 
                     {isBarber && (
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                        <section data-tour="perfil-cerrar-sesion" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <h2 className="font-display text-xl font-bold text-brand-text">
                                 Cerrar sesion
                             </h2>

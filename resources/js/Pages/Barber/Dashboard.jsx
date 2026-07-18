@@ -1,6 +1,8 @@
 import DaySelector, { dayLabel } from '@/Components/DaySelector';
 import MonthSelector from '@/Components/MonthSelector';
 import RankingList from '@/Components/RankingList';
+import TourRestartButton from '@/Components/TourRestartButton';
+import usePageTour from '@/Hooks/usePageTour';
 import BarberLayout from '@/Layouts/BarberLayout';
 import { Head, usePage } from '@inertiajs/react';
 
@@ -8,22 +10,85 @@ function formatMoney(value) {
     return `$${Number(value).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
+const DASHBOARD_TOUR_STEPS = [
+    {
+        element: '[data-tour="barber-dashboard-saludo"]',
+        popover: {
+            title: 'Tu panel',
+            description: 'Acá arriba siempre ves tu nombre y la barbería en la que estás cargando cortes.',
+        },
+    },
+    {
+        element: '[data-tour="barber-dashboard-hoy"]',
+        popover: {
+            title: 'Card "Hoy"',
+            description: 'Facturación y cantidad de cortes del día. Con las flechitas podés mirar otro día.',
+        },
+    },
+    {
+        element: '[data-tour="barber-dashboard-mes"]',
+        popover: {
+            title: 'Card "Este mes"',
+            description: 'Facturación total del mes y tu liquidación estimada (sueldo fijo o comisión, según tengas configurado).',
+        },
+    },
+    {
+        element: '[data-tour="barber-dashboard-servicios"]',
+        popover: {
+            title: 'Servicios más pedidos',
+            description: 'El ranking de tus servicios en el período que estás mirando.',
+        },
+    },
+    {
+        element: '[data-tour="barber-dashboard-cortes"]',
+        popover: {
+            title: 'Cortes del día',
+            description: 'El detalle de cada corte que cargaste ese día, con cliente y servicio.',
+        },
+    },
+    {
+        element: '[data-tour="barber-nav-inicio"]',
+        popover: {
+            title: 'Inicio',
+            description: 'Volvés a este panel desde acá en cualquier momento.',
+        },
+    },
+    {
+        element: '[data-tour="barber-nav-cortes"]',
+        popover: {
+            title: 'Cargar un corte',
+            description: 'El botón central te lleva directo a la carga de un corte nuevo.',
+        },
+    },
+    {
+        element: '[data-tour="barber-nav-cuenta"]',
+        popover: {
+            title: 'Tu cuenta',
+            description: 'Tus datos personales, cambio de contraseña y cerrar sesión.',
+        },
+    },
+];
+
 export default function Dashboard({ period, barberia, totalFacturado, totalCortes, dia, porServicio, liquidacion }) {
     const { auth } = usePage().props;
     const primerNombre = auth.user.name.split(' ')[0];
     const etiquetaDia = dayLabel(dia.date, dia.esHoy);
+    const { startTour } = usePageTour('barber_dashboard', DASHBOARD_TOUR_STEPS);
 
     return (
         <BarberLayout>
             <Head title="Mi panel" />
 
             <div className="mx-auto max-w-3xl space-y-6 px-4 pt-8 sm:px-6">
-                <div>
-                    <h1 className="font-display text-2xl font-bold text-brand-text">Hola, {primerNombre}</h1>
-                    <p className="text-sm text-brand-text-secondary">{barberia.name}</p>
+                <div data-tour="barber-dashboard-saludo" className="flex items-start justify-between gap-3">
+                    <div>
+                        <h1 className="font-display text-2xl font-bold text-brand-text">Hola, {primerNombre}</h1>
+                        <p className="text-sm text-brand-text-secondary">{barberia.name}</p>
+                    </div>
+                    <TourRestartButton onClick={startTour} />
                 </div>
 
-                <div className="rounded-brand-xl bg-brand-nav-bg p-6 shadow-brand-floating">
+                <div data-tour="barber-dashboard-hoy" className="rounded-brand-xl bg-brand-nav-bg p-6 shadow-brand-floating">
                     <div className="flex items-center justify-between gap-3">
                         <p className="text-sm font-medium text-brand-nav-text">{etiquetaDia}</p>
                         <DaySelector date={dia.date} esHoy={dia.esHoy} url={route('barber.dashboard')} />
@@ -36,7 +101,7 @@ export default function Dashboard({ period, barberia, totalFacturado, totalCorte
                     </p>
                 </div>
 
-                <div className="rounded-brand-xl border border-brand-border bg-brand-surface p-6 shadow-brand-card">
+                <div data-tour="barber-dashboard-mes" className="rounded-brand-xl border border-brand-border bg-brand-surface p-6 shadow-brand-card">
                     <div className="flex items-center justify-between gap-3">
                         <p className="font-display text-lg font-bold text-brand-text">Este mes</p>
                         <MonthSelector month={period.month} url={route('barber.dashboard')} />
@@ -64,12 +129,12 @@ export default function Dashboard({ period, barberia, totalFacturado, totalCorte
                     </div>
                 </div>
 
-                <section className="space-y-3">
+                <section data-tour="barber-dashboard-servicios" className="space-y-3">
                     <h2 className="font-display text-lg font-bold text-brand-text">Tus servicios más pedidos</h2>
                     <RankingList items={porServicio} emptyLabel="Todavía no cargaste ningún corte en este período." />
                 </section>
 
-                <section className="space-y-3">
+                <section data-tour="barber-dashboard-cortes" className="space-y-3">
                     <h2 className="font-display text-lg font-bold text-brand-text">
                         {dia.esHoy ? 'Cortes de hoy' : `Cortes · ${etiquetaDia}`}
                     </h2>

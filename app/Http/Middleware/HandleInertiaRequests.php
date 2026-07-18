@@ -75,6 +75,13 @@ class HandleInertiaRequests extends Middleware
                     'has_preapproval' => $subscription->hasPreapproval(),
                 ];
             },
+            // Tours de onboarding ya vistos por el usuario (clave por tour), para
+            // que usePageTour() sepa si debe disparar el tour automáticamente.
+            'tours_seen' => function () use ($request) {
+                $user = $request->user();
+
+                return $user ? ($user->tours_seen ?? []) : null;
+            },
         ];
     }
 }

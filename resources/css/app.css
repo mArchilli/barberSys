@@ -43,3 +43,118 @@
         --brand-nav-text-rgb: 200 208 210;
     }
 }
+
+/* Tours guiados (driver.js) — el panel de barber siempre corre en tema oscuro
+   (.panel-theme), pero driver.js monta el popover como hijo directo de
+   <body>, fuera de ese árbol, así que las variables --brand-* no le llegan
+   por cascada: se repiten acá los mismos RGB oscuros en vez de depender de
+   las custom properties. El color del overlay no se toca por CSS: driver.js
+   lo pinta como fill de un <path> SVG (no admite background), así que ese
+   color se configura vía la opción overlayColor del driver() en usePageTour. */
+.pelito-tour-popover.driver-popover {
+    background-color: rgb(36 39 38);
+    color: rgb(237 241 242);
+    border: 1px solid rgb(105 116 117 / 0.4);
+    border-radius: 22px;
+    padding: 20px 20px 18px;
+    min-width: 260px;
+    max-width: min(320px, calc(100vw - 32px));
+    box-shadow: 0 28px 70px rgb(0 0 0 / 0.35);
+}
+
+.pelito-tour-popover .driver-popover-title {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-weight: 800;
+    font-size: 1.0625rem;
+    color: rgb(237 241 242);
+    padding-right: 92px;
+}
+
+.pelito-tour-popover .driver-popover-description {
+    margin-top: 6px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: rgb(200 208 210);
+}
+
+.pelito-tour-popover .driver-popover-close-btn {
+    all: unset;
+    position: absolute;
+    z-index: 2;
+    top: 16px;
+    right: 16px;
+    width: auto;
+    height: auto;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background-color: #48D5FC;
+    color: #242726;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 150ms;
+}
+
+.pelito-tour-popover .driver-popover-close-btn:hover,
+.pelito-tour-popover .driver-popover-close-btn:focus-visible {
+    background-color: #12ADD8;
+}
+
+.pelito-tour-popover .driver-popover-footer {
+    margin-top: 16px;
+}
+
+.pelito-tour-popover .driver-popover-progress-text {
+    color: rgb(200 208 210);
+    font-size: 0.75rem;
+}
+
+.pelito-tour-popover .driver-popover-footer-btn {
+    all: unset;
+    box-sizing: border-box;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid rgb(105 116 117 / 0.5);
+    color: rgb(237 241 242);
+    transition: background-color 150ms;
+}
+
+.pelito-tour-popover .driver-popover-footer-btn:hover,
+.pelito-tour-popover .driver-popover-footer-btn:focus-visible {
+    background-color: rgb(105 116 117 / 0.2);
+}
+
+.pelito-tour-popover .driver-popover-next-btn {
+    border-color: transparent;
+    background-color: #48D5FC;
+    color: #242726;
+}
+
+.pelito-tour-popover .driver-popover-next-btn:hover,
+.pelito-tour-popover .driver-popover-next-btn:focus-visible {
+    background-color: #12ADD8;
+}
+
+/* Solo se recolorea el lado visible de la flecha (los otros 3 quedan
+   transparentes por las reglas propias de driver.js) — sobreescribir el
+   shorthand border-color pisaría esa transparencia. */
+.pelito-tour-popover .driver-popover-arrow-side-left {
+    border-left-color: rgb(36 39 38);
+}
+
+.pelito-tour-popover .driver-popover-arrow-side-right {
+    border-right-color: rgb(36 39 38);
+}
+
+.pelito-tour-popover .driver-popover-arrow-side-top {
+    border-top-color: rgb(36 39 38);
+}
+
+.pelito-tour-popover .driver-popover-arrow-side-bottom {
+    border-bottom-color: rgb(36 39 38);
+}

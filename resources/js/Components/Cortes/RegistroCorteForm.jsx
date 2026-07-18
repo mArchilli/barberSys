@@ -14,9 +14,9 @@ function formatPrice(price) {
     return Number(price).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-function SectionBlock({ title, description, children }) {
+function SectionBlock({ title, description, children, dataTour }) {
     return (
-        <div className="rounded-[24px] bg-brand-surface-alt p-5">
+        <div data-tour={dataTour} className="rounded-[24px] bg-brand-surface-alt p-5">
             <div className="mb-4">
                 <p className="text-sm font-semibold text-brand-text">{title}</p>
                 {description && (
@@ -173,6 +173,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                             <SectionBlock
                                 title="Cliente"
                                 description="Busca un cliente existente o escribe un nombre nuevo para crearlo al guardar."
+                                dataTour="barber-cortes-cliente"
                             >
                                 <div className="relative">
                                     <InputLabel htmlFor="cliente_query" value="Nombre y apellido *" />
@@ -222,6 +223,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
 
                             <SectionBlock
                                 title="Servicio"
+                                dataTour="barber-cortes-servicio"
                             >
                                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
                                     {servicios.map((servicio) => {
@@ -252,6 +254,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
 
                             <SectionBlock
                                 title="Medio de pago"
+                                dataTour="barber-cortes-medio"
                             >
                                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
                                     {mediosPago.map((medio) => {
@@ -365,7 +368,7 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                     </span>
                 </div>
 
-                <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                <div data-tour="barber-cortes-progreso" className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
                     <div className="rounded-[22px] bg-brand-surface-alt px-4 py-4">
                         <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
                             Cantidad
@@ -385,37 +388,39 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                     </div>
                 </div>
 
-                {cortesHoy.length === 0 ? (
-                    <div className="mt-5 rounded-[24px] border border-dashed border-brand-border bg-brand-surface-alt p-6 text-center">
-                        <p className="text-sm font-medium text-brand-text">
-                            Todavia no cargaste cortes hoy
-                        </p>
-                        <p className="mt-2 text-sm text-brand-text-secondary">
-                            Cuando registres el primero, lo veras aqui junto con el total acumulado del dia.
-                        </p>
-                    </div>
-                ) : (
-                    <div className="mt-5 space-y-3">
-                        {cortesHoy.map((corte) => (
-                            <article
-                                key={corte.id}
-                                className="rounded-[22px] bg-brand-surface-alt px-4 py-4"
-                            >
-                                <div className="flex items-center justify-between gap-3">
-                                    <p className="truncate text-sm font-semibold text-brand-text">
-                                        {corte.cliente.name}
+                <div data-tour="barber-cortes-lista">
+                    {cortesHoy.length === 0 ? (
+                        <div className="mt-5 rounded-[24px] border border-dashed border-brand-border bg-brand-surface-alt p-6 text-center">
+                            <p className="text-sm font-medium text-brand-text">
+                                Todavia no cargaste cortes hoy
+                            </p>
+                            <p className="mt-2 text-sm text-brand-text-secondary">
+                                Cuando registres el primero, lo veras aqui junto con el total acumulado del dia.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="mt-5 space-y-3">
+                            {cortesHoy.map((corte) => (
+                                <article
+                                    key={corte.id}
+                                    className="rounded-[22px] bg-brand-surface-alt px-4 py-4"
+                                >
+                                    <div className="flex items-center justify-between gap-3">
+                                        <p className="truncate text-sm font-semibold text-brand-text">
+                                            {corte.cliente.name}
+                                        </p>
+                                        <p className="shrink-0 text-sm font-bold text-brand-text">
+                                            {`$${formatPrice(corte.price)}`}
+                                        </p>
+                                    </div>
+                                    <p className="mt-2 text-sm text-brand-text-secondary">
+                                        {corte.servicio.name} - {corte.medio_pago.name}
                                     </p>
-                                    <p className="shrink-0 text-sm font-bold text-brand-text">
-                                        {`$${formatPrice(corte.price)}`}
-                                    </p>
-                                </div>
-                                <p className="mt-2 text-sm text-brand-text-secondary">
-                                    {corte.servicio.name} - {corte.medio_pago.name}
-                                </p>
-                            </article>
-                        ))}
-                    </div>
-                )}
+                                </article>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </aside>
         </div>
     );
