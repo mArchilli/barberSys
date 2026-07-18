@@ -1,4 +1,6 @@
 import RankingList from '@/Components/RankingList';
+import TourRestartButton from '@/Components/TourRestartButton';
+import usePageTour from '@/Hooks/usePageTour';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
@@ -298,7 +300,7 @@ function DashboardPeriodFilter({ period, url }) {
     );
 }
 
-function KpiCard({ label, value, caption, icon: Icon, tone = 'default', action }) {
+function KpiCard({ label, value, caption, icon: Icon, tone = 'default', action, dataTour }) {
     const toneClassName = tone === 'primary'
         ? 'text-brand-primary'
         : tone === 'danger'
@@ -306,7 +308,7 @@ function KpiCard({ label, value, caption, icon: Icon, tone = 'default', action }
             : 'text-brand-text';
 
     return (
-        <div className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
+        <div data-tour={dataTour} className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
             <div className="flex items-start justify-between gap-3">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-primary shadow-sm">
                     <Icon size={21} stroke={1.8} aria-hidden="true" />
@@ -420,6 +422,59 @@ const alertStyles = {
     },
 };
 
+const DASHBOARD_TOUR_STEPS = [
+    {
+        element: '[data-tour="owner-dashboard-facturacion"]',
+        popover: {
+            title: 'Facturación',
+            description: 'La facturación total del período que estás mirando. Podés ocultarla con el ícono del ojo antes de compartir la pantalla.',
+        },
+    },
+    {
+        element: '[data-tour="owner-dashboard-periodo"]',
+        popover: {
+            title: 'Cambiar de período',
+            description: 'Mirá Hoy, la Semana, el Mes o armá un rango de fechas personalizado. Todo el dashboard se recalcula según lo que elijas acá.',
+        },
+    },
+    {
+        element: '[data-tour="owner-dashboard-medios-pago"]',
+        popover: {
+            title: 'Medios de pago',
+            description: 'Cómo se distribuyen los cobros del período entre tus medios de pago.',
+        },
+    },
+    {
+        element: '[data-tour="owner-dashboard-servicios"]',
+        popover: {
+            title: 'Servicios más vendidos',
+            description: 'El ranking de tus servicios en el período seleccionado.',
+        },
+    },
+    {
+        element: '[data-tour="owner-dashboard-neto"]',
+        popover: {
+            title: 'Neto estimado',
+            description: 'Facturación menos sueldos y gastos del mes. Desde acá entrás directo al módulo de Finanzas para ver el detalle.',
+        },
+    },
+    {
+        // El link "Cargar corte" del DashNavbar se renderiza dos veces (versión
+        // mobile en el acordeón y versión desktop), ambas con el mismo
+        // data-tour. querySelector siempre devolvería la primera del DOM
+        // (la mobile), que en desktop está oculta por breakpoint — por eso
+        // se resuelve dinámicamente cuál copia está realmente visible.
+        element: () => {
+            const candidates = document.querySelectorAll('[data-tour="owner-nav-cargar-corte"]');
+            return Array.from(candidates).find((el) => el.offsetParent !== null) ?? candidates[0];
+        },
+        popover: {
+            title: 'Cargar un corte',
+            description: 'Desde acá cargás un corte nuevo en cualquier momento, sin salir del panel.',
+        },
+    },
+];
+
 export default function Dashboard({
     period,
     kpis,
@@ -437,6 +492,7 @@ export default function Dashboard({
     const dashboardUrl = route('owner.barberias.dashboard', currentBarberia.id);
     const [showFacturacion, setShowFacturacion] = useState(true);
     const selectedPeriodLabel = periodLabel(period);
+    const { startTour } = usePageTour('owner_barberias_dashboard', DASHBOARD_TOUR_STEPS);
 
     return (
         <AuthenticatedLayout
@@ -448,13 +504,16 @@ export default function Dashboard({
                         {selectedPeriodLabel}
                     </h1>
 
-                    <div className="min-w-0 xl:justify-self-center">
+                    <div data-tour="owner-dashboard-periodo" className="min-w-0 xl:justify-self-center">
                         <DashboardPeriodFilter period={period} url={dashboardUrl} />
                     </div>
 
-                    <p className="min-w-0 break-words font-display text-2xl font-semibold tracking-[-0.04em] text-brand-text sm:text-3xl xl:justify-self-end xl:pt-1 xl:text-right">
-                        {currentBarberia?.name}
-                    </p>
+                    <div className="flex min-w-0 items-center justify-between gap-3 xl:justify-self-end xl:justify-end">
+                        <p className="min-w-0 break-words font-display text-2xl font-semibold tracking-[-0.04em] text-brand-text sm:text-3xl xl:pt-1 xl:text-right">
+                            {currentBarberia?.name}
+                        </p>
+                        <TourRestartButton onClick={startTour} />
+                    </div>
                 </div>
             )}
         >
@@ -480,6 +539,7 @@ export default function Dashboard({
                                 label="Facturación"
                                 value={showFacturacion ? formatMoney(kpis.facturacion) : '$***'}
                                 icon={IconReportMoney}
+                                dataTour="owner-dashboard-facturacion"
                                 action={(
                                     <button
                                         type="button"
@@ -540,7 +600,7 @@ export default function Dashboard({
                                 </div>
                             </article>
 
-                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
+                            <article data-tour="owner-dashboard-medios-pago" className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="min-w-0">
                                         <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">Medios de pago</h3>
@@ -579,7 +639,7 @@ export default function Dashboard({
                                 )}
                             </article>
 
-                            <article className="min-w-0 space-y-3">
+                            <article data-tour="owner-dashboard-servicios" className="min-w-0 space-y-3">
                                 <h3 className="font-display text-lg font-bold text-brand-text">Servicios más vendidos</h3>
                                 <RankingList items={porServicio} emptyLabel="Todavía no hay servicios cargados en este período." />
                             </article>
@@ -627,7 +687,7 @@ export default function Dashboard({
                                 )}
                             </article>
 
-                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
+                            <article data-tour="owner-dashboard-neto" className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="min-w-0">
                                         <p className="text-sm font-medium text-brand-text-secondary">{monthLabel(gestion.month)}</p>

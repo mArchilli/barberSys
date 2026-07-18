@@ -1,7 +1,26 @@
+import TourRestartButton from '@/Components/TourRestartButton';
+import usePageTour from '@/Hooks/usePageTour';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { IconChevronDown, IconEdit, IconLock, IconMapPin } from '@tabler/icons-react';
 import { useState } from 'react';
+
+const BARBERIAS_INDEX_TOUR_STEPS = [
+    {
+        element: '[data-tour="owner-barberias-lista"]',
+        popover: {
+            title: 'Elegí tu barbería',
+            description: 'Acá elegís sobre qué barbería querés trabajar. Tocá "Gestionar" en la que quieras administrar para entrar a su dashboard.',
+        },
+    },
+    {
+        element: '[data-tour="owner-barberias-crear"]',
+        popover: {
+            title: 'Crear una barbería nueva',
+            description: 'Desde acá sumás una barbería nueva, siempre que tu plan todavía tenga lugar disponible.',
+        },
+    },
+];
 
 function MetricTile({ label, value, suffix, tone = 'default' }) {
     const toneClassName = tone === 'primary'
@@ -31,6 +50,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
     const { flash } = usePage().props;
     const atLimit = planLimit.max !== null && planLimit.current >= planLimit.max;
     const [showCerradas, setShowCerradas] = useState(false);
+    const { startTour } = usePageTour('owner_barberias_index', BARBERIAS_INDEX_TOUR_STEPS);
 
     return (
         <AuthenticatedLayout
@@ -47,17 +67,21 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                         </p>
                     </div>
 
-                    <Link
-                        href={route('owner.barberias.create')}
-                        className={`inline-flex min-h-[46px] items-center justify-center rounded-full px-5 text-sm font-semibold shadow-brand-cta transition ${
-                            atLimit
-                                ? 'cursor-not-allowed bg-brand-primary-hover text-brand-on-primary'
-                                : 'bg-brand-primary text-brand-on-primary hover:bg-brand-primary-hover'
-                        }`}
-                        onClick={atLimit ? (event) => event.preventDefault() : undefined}
-                    >
-                        + Nueva barberia
-                    </Link>
+                    <div className="flex shrink-0 items-center gap-3">
+                        <TourRestartButton onClick={startTour} />
+                        <Link
+                            href={route('owner.barberias.create')}
+                            data-tour="owner-barberias-crear"
+                            className={`inline-flex min-h-[46px] items-center justify-center rounded-full px-5 text-sm font-semibold shadow-brand-cta transition ${
+                                atLimit
+                                    ? 'cursor-not-allowed bg-brand-primary-hover text-brand-on-primary'
+                                    : 'bg-brand-primary text-brand-on-primary hover:bg-brand-primary-hover'
+                            }`}
+                            onClick={atLimit ? (event) => event.preventDefault() : undefined}
+                        >
+                            + Nueva barberia
+                        </Link>
+                    </div>
                 </div>
             )}
         >
@@ -71,7 +95,7 @@ export default function Index({ barberias, barberiasCerradas, planLimit }) {
                         </div>
                     )}
 
-                    <section className="grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <section data-tour="owner-barberias-lista" className="grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {barberias.length === 0 ? (
                             <div className="rounded-[28px] border border-dashed border-brand-border bg-brand-surface-alt p-10 text-center shadow-brand-card md:col-span-2 lg:col-span-3">
                                 <h4 className="font-display text-xl font-bold text-brand-text">

@@ -218,6 +218,7 @@ export default function DashNavbar() {
                                 key={label}
                                 href={href}
                                 onClick={() => setMobileMenuOpen(false)}
+                                data-tour={label === 'Cargar corte' ? 'owner-nav-cargar-corte' : undefined}
                                 className={`flex min-h-[50px] items-center gap-3 rounded-[18px] px-4 py-3 text-sm font-semibold transition ${
                                     active
                                         ? 'bg-brand-primary text-brand-on-primary shadow-brand-cta'
@@ -237,6 +238,7 @@ export default function DashNavbar() {
                             <Link
                                 key={label}
                                 href={href}
+                                data-tour={label === 'Cargar corte' ? 'owner-nav-cargar-corte' : undefined}
                                 className={
                                     topActionClassName +
                                     ' ' +
