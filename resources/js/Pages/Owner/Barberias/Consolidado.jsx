@@ -1,7 +1,33 @@
 import MonthSelector from '@/Components/MonthSelector';
+import TourRestartButton from '@/Components/TourRestartButton';
+import usePageTour from '@/Hooks/usePageTour';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { IconBuildingStore, IconCash, IconChartBar, IconWallet } from '@tabler/icons-react';
+
+const CONSOLIDADO_TOUR_STEPS = [
+    {
+        element: '[data-tour="owner-consolidado-neto"]',
+        popover: {
+            title: 'Neto total del negocio',
+            description: 'La suma del resultado de todas tus barberias activas en el periodo seleccionado. Esta pantalla aparece solo cuando tenes 2 o mas barberias activas cargadas.',
+        },
+    },
+    {
+        element: '[data-tour="owner-consolidado-comparativa"]',
+        popover: {
+            title: 'Desglose por sucursal',
+            description: 'Facturacion, sueldos, gastos y neto de cada barberia por separado, para comparar rendimiento entre sucursales.',
+        },
+    },
+    {
+        element: '[data-tour="owner-consolidado-detalle"]',
+        popover: {
+            title: 'Ver el detalle',
+            description: 'Desde cada card entras directo al Dashboard de esa barberia puntual.',
+        },
+    },
+];
 
 function monthLabel(month) {
     const [year, m] = month.split('-').map(Number);
@@ -38,6 +64,7 @@ function MetricTile({ label, value, tone = 'default' }) {
 
 export default function Consolidado({ period, totalFacturado, totalCortes, totalSueldos, totalGastos, totalNeto, comparativa }) {
     const maxFacturacion = Math.max(...comparativa.map((item) => item.total), 1);
+    const { startTour } = usePageTour('owner_consolidado', CONSOLIDADO_TOUR_STEPS);
 
     return (
         <AuthenticatedLayout
@@ -54,8 +81,11 @@ export default function Consolidado({ period, totalFacturado, totalCortes, total
                         </p>
                     </div>
 
-                    <div className="w-full lg:w-auto lg:min-w-[260px]">
-                        <MonthSelector month={period.month} url={route('owner.consolidado')} fullWidth />
+                    <div className="flex items-center gap-3">
+                        <div className="w-full lg:w-auto lg:min-w-[260px]">
+                            <MonthSelector month={period.month} url={route('owner.consolidado')} fullWidth />
+                        </div>
+                        <TourRestartButton onClick={startTour} />
                     </div>
                 </div>
             )}
@@ -65,7 +95,7 @@ export default function Consolidado({ period, totalFacturado, totalCortes, total
             <div className="pb-12">
                 <div className="mx-auto max-w-[1720px] space-y-8 px-2 sm:px-3 lg:px-4">
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)_minmax(320px,0.8fr)]">
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                        <section data-tour="owner-consolidado-neto" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-end justify-between gap-4">
                                 <div className="flex min-w-0 items-start gap-4">
                                     <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px] bg-brand-primary/12 text-brand-primary shadow-sm">
@@ -141,7 +171,7 @@ export default function Consolidado({ period, totalFacturado, totalCortes, total
                         </section>
                     </div>
 
-                    <section className="space-y-4">
+                    <section data-tour="owner-consolidado-comparativa" className="space-y-4">
                         <div>
                             <h3 className="font-display text-lg font-bold text-brand-text">
                                 Comparativa por barberia
@@ -244,6 +274,7 @@ export default function Consolidado({ period, totalFacturado, totalCortes, total
 
                                             <div className="mt-5 border-t border-brand-border-subtle pt-5">
                                                 <Link
+                                                    data-tour="owner-consolidado-detalle"
                                                     href={route('owner.barberias.dashboard', item.id)}
                                                     className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-brand-border bg-brand-surface-alt px-4 text-sm font-semibold text-brand-text transition hover:border-brand-primary/20 hover:bg-brand-primary/5 hover:text-brand-link"
                                                 >
