@@ -17,7 +17,7 @@ const links = [
     { label: 'FAQ', href: '#faq' },
 ];
 
-export default function Welcome({ auth, canLogin, canRegister, plans }) {
+export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSalesNumber }) {
     const ctaHref = auth.user
         ? route('dashboard')
         : canRegister
@@ -26,7 +26,9 @@ export default function Welcome({ auth, canLogin, canRegister, plans }) {
             ? route('login')
             : '#';
     const whatsappHref =
-        'https://wa.me/?text=Hola%20Pelito%2C%20quiero%20conocer%20el%20sistema%20para%20mi%20barber%C3%ADa.';
+        'https://wa.me/' +
+        (whatsappSalesNumber ?? '') +
+        '?text=Hola%20Pelito%2C%20quiero%20conocer%20el%20sistema%20para%20mi%20barber%C3%ADa.';
 
     return (
         <>
@@ -90,6 +92,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans }) {
                         href: ctaHref,
                         inertia: ctaHref !== '#',
                     }}
+                    whatsappSalesNumber={whatsappSalesNumber}
                 />
                 <CTASection
                     cta={{

@@ -74,7 +74,7 @@ function BillingCycleToggle({ cycle, onChange }) {
     );
 }
 
-function PricingAction({ href, inertia = false, className, children }) {
+function PricingAction({ href, inertia = false, className, children, ...rest }) {
     if (inertia) {
         return (
             <Link href={href} className={className}>
@@ -84,10 +84,18 @@ function PricingAction({ href, inertia = false, className, children }) {
     }
 
     return (
-        <a href={href} className={className}>
+        <a href={href} className={className} {...rest}>
             {children}
         </a>
     );
+}
+
+function buildSalesWhatsappHref(whatsappSalesNumber, planName) {
+    const text = encodeURIComponent(
+        `Hola Pelito, quiero hablar con ventas sobre el plan ${planName}.`,
+    );
+
+    return `https://wa.me/${whatsappSalesNumber ?? ''}?text=${text}`;
 }
 
 export default function PricingSection({
@@ -97,6 +105,7 @@ export default function PricingSection({
         href: '#',
         inertia: false,
     },
+    whatsappSalesNumber,
 }) {
     const [cycle, setCycle] = useState('monthly');
 
@@ -221,8 +230,13 @@ export default function PricingSection({
 
                                 <div className="mt-8">
                                     <PricingAction
-                                        href={cta.href}
-                                        inertia={cta.inertia}
+                                        href={
+                                            plan.is_custom
+                                                ? buildSalesWhatsappHref(whatsappSalesNumber, plan.name)
+                                                : cta.href
+                                        }
+                                        inertia={plan.is_custom ? false : cta.inertia}
+                                        {...(plan.is_custom ? { target: '_blank', rel: 'noreferrer' } : {})}
                                         className={[
                                             'inline-flex min-h-[48px] w-full items-center justify-center rounded-brand-pill px-6 text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none',
                                             dark

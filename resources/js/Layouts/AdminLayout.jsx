@@ -6,6 +6,7 @@ import useSidebarCollapsed from '@/Hooks/useSidebarCollapsed';
 import { Link, usePage } from '@inertiajs/react';
 import {
     IconActivityHeartbeat,
+    IconHeadset,
     IconLayoutDashboard,
     IconLayoutSidebarLeftCollapse,
     IconLayoutSidebarLeftExpand,
@@ -37,6 +38,7 @@ export default function AdminLayout({
     const couponsActive = route().current('admin.coupons.*');
     const saludActive = route().current('admin.salud.*');
     const onboardingActive = route().current('admin.onboarding.*');
+    const soporteActive = route().current('admin.soporte.*');
 
     return (
         <div className="panel-theme min-h-screen bg-brand-bg md:flex">
@@ -100,6 +102,9 @@ export default function AdminLayout({
                     <SidebarLink href={route('admin.salud.index')} active={saludActive} icon={IconActivityHeartbeat} collapsed={collapsed}>
                         Salud técnica
                     </SidebarLink>
+                    <SidebarLink href={route('admin.soporte.index')} active={soporteActive} icon={IconHeadset} collapsed={collapsed}>
+                        Soporte
+                    </SidebarLink>
                 </nav>
 
                 <div className="border-t border-brand-nav-text/10 px-3 py-4">
@@ -157,6 +162,9 @@ export default function AdminLayout({
                 </MobileMenuLink>
                 <MobileMenuLink href={route('admin.salud.index')} active={saludActive} onClick={closeMobileMenu}>
                     Salud técnica
+                </MobileMenuLink>
+                <MobileMenuLink href={route('admin.soporte.index')} active={soporteActive} onClick={closeMobileMenu}>
+                    Soporte
                 </MobileMenuLink>
 
                 <div className="mt-6 w-full max-w-xs border-t border-brand-nav-text/20 pt-6 text-center">

@@ -59,4 +59,14 @@ return [
         'base_url' => env('FACTURANTE_BASE_URL', 'https://api.facturante.com'),
     ],
 
+    // Números de WhatsApp para el patrón wa.me (link con mensaje precargado,
+    // sin envío automático vía WhatsApp Business API). Soporte y ventas son
+    // casos de uso distintos (owner ya activo vs. prospecto en la landing) y
+    // pueden terminar en números/personas distintas — cada uno se lee de su
+    // propia env var, aunque hoy compartan el mismo valor.
+    'whatsapp' => [
+        'support_number' => env('WHATSAPP_SUPPORT_NUMBER'),
+        'sales_number' => env('WHATSAPP_SALES_NUMBER'),
+    ],
+
 ];

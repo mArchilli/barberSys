@@ -4,6 +4,7 @@ import {
     IconChartPie,
     IconChevronDown,
     IconCreditCard,
+    IconHeadset,
     IconLayoutDashboard,
     IconList,
     IconLogout,
@@ -115,6 +116,11 @@ export default function DashNavbar() {
             href: route('owner.suscripcion.index'),
             label: 'Mi suscripción',
             icon: IconRosetteDiscountCheck,
+        },
+        {
+            href: route('owner.soporte.index'),
+            label: 'Soporte',
+            icon: IconHeadset,
         },
         {
             href: route('profile.edit'),

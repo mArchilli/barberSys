@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\OwnerController as AdminOwnerController;
 use App\Http\Controllers\Admin\PlanController as AdminPlanController;
 use App\Http\Controllers\Admin\SaludController as AdminSaludController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
+use App\Http\Controllers\Admin\SupportController as AdminSupportController;
 use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
 use App\Http\Controllers\CorteController;
 use App\Http\Controllers\Owner\BarberiaController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Owner\GastoRegistroController;
 use App\Http\Controllers\Owner\MedioPagoController;
 use App\Http\Controllers\Owner\ServicioController;
 use App\Http\Controllers\Owner\SubscriptionController as OwnerSubscriptionController;
+use App\Http\Controllers\Owner\SupportController as OwnerSupportController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TourController;
@@ -39,6 +41,7 @@ Route::get('/', function () {
         'plans' => Plan::where('active', true)->orderBy('id')->get([
             'id', 'name', 'slug', 'price', 'annual_price', 'is_custom', 'max_barberias', 'max_barberos', 'included_items',
         ]),
+        'whatsappSalesNumber' => config('services.whatsapp.sales_number'),
     ]);
 });
 
@@ -75,6 +78,12 @@ Route::prefix('owner')
         Route::post('/suscripcion/activar', [OwnerSubscriptionController::class, 'activate'])->name('suscripcion.activate');
         Route::get('/suscripcion/retorno', [OwnerSubscriptionController::class, 'retorno'])->name('suscripcion.retorno');
         Route::post('/suscripcion/upgrade', [OwnerSubscriptionController::class, 'upgrade'])->name('suscripcion.upgrade');
+
+        // Soporte: arma un link de wa.me con el mensaje precargado (patrón
+        // wa.me, no envío automático) — vive a nivel owner, fuera del grupo
+        // anidado por barbería, igual que Suscripción.
+        Route::get('/soporte', [OwnerSupportController::class, 'index'])->name('soporte.index');
+        Route::post('/soporte', [OwnerSupportController::class, 'store'])->name('soporte.store');
 
         // Gestión anidada por barbería (activa o cerrada: el middleware
         // blockIfBarberiaInactive deja pasar las lecturas siempre, y bloquea
@@ -162,6 +171,8 @@ Route::prefix('admin')
         Route::get('/salud', [AdminSaludController::class, 'index'])->name('salud.index');
 
         Route::get('/onboarding', [AdminOnboardingController::class, 'index'])->name('onboarding.index');
+
+        Route::get('/soporte', [AdminSupportController::class, 'index'])->name('soporte.index');
     });
 
 // --- Webhooks (públicos, sin auth ni CSRF — ver bootstrap/app.php) ---
