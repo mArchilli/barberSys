@@ -3,6 +3,8 @@ import InputLabel from '@/Components/InputLabel';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
+import TourRestartButton from '@/Components/TourRestartButton';
+import usePageTour from '@/Hooks/usePageTour';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import {
@@ -108,10 +110,63 @@ function InvoiceCell({ payment }) {
     return <span className="text-brand-text-secondary">—</span>;
 }
 
+const SUSCRIPCION_TOUR_STEPS = [
+    {
+        element: '[data-tour="owner-suscripcion-plan"]',
+        popover: {
+            title: 'Tu plan actual',
+            description: 'El plan contratado y el estado de tu suscripción: en prueba, activa, con pago pendiente o cancelada.',
+        },
+    },
+    {
+        element: '[data-tour="owner-suscripcion-activar"]',
+        popover: {
+            title: 'Activar tu suscripción',
+            description: 'Este botón está siempre disponible mientras estés en período de prueba, sin importar cuántos días te queden — a diferencia del aviso del resto del panel, acá podés activar cuando quieras.',
+        },
+    },
+    {
+        element: '[data-tour="owner-suscripcion-ciclo"]',
+        popover: {
+            title: 'Mensual o anual',
+            description: 'El anual no son 12 cuotas reducidas: es un único cobro por el total del año, con un ahorro respecto de pagar mes a mes.',
+        },
+    },
+    {
+        element: '[data-tour="owner-suscripcion-pagos"]',
+        popover: {
+            title: 'Historial de pagos',
+            description: 'Los últimos cobros de tu suscripción, con su estado y su factura correspondiente.',
+        },
+    },
+    {
+        // La columna "Factura" solo se muestra desde md (md:table-cell) — en
+        // mobile el <th> existe en el DOM pero con tamaño cero, así que se
+        // resuelve dinámicamente para dejar que skipMissingElement salte
+        // este paso ahí en vez de resaltar un elemento invisible.
+        element: () => {
+            const th = document.querySelector('[data-tour="owner-suscripcion-factura"]');
+            return th && th.offsetParent !== null ? th : null;
+        },
+        popover: {
+            title: '"Factura en proceso" vs. autorizada',
+            description: 'Emitir una factura es asincrónico contra AFIP: mientras dice "Factura en proceso" todavía no tiene CAE. No significa que algo falló — solo hay que esperar a que se autorice.',
+        },
+    },
+    {
+        element: '[data-tour="owner-suscripcion-upgrade"]',
+        popover: {
+            title: 'Cambiar de plan',
+            description: 'Si tu barbería crece, podés pasar a un plan con más límite desde acá, sin perder tu historial ni tus datos.',
+        },
+    },
+];
+
 export default function Index({ subscription, billing, payments, availablePlans, currentUsage, mpConfigured }) {
     const { flash, errors: pageErrors } = usePage().props;
     const [planToConfirm, setPlanToConfirm] = useState(null);
     const [changingPlan, setChangingPlan] = useState(false);
+    const { startTour } = usePageTour('owner_suscripcion', SUSCRIPCION_TOUR_STEPS);
 
     const { data, setData, post, processing, errors } = useForm({
         razon_social: billing.razon_social ?? '',
@@ -152,13 +207,17 @@ export default function Index({ subscription, billing, payments, availablePlans,
             headerClassName="bg-brand-bg"
             headerContainerClassName="mx-auto max-w-[1720px] px-2 py-4 sm:px-3 sm:py-5 lg:px-4"
             header={(
-                <div>
-                    <h2 className="mt-2 font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl">
-                        Mi suscripción
-                    </h2>
-                    <p className="mt-2 max-w-2xl text-sm text-brand-text-secondary">
-                        Tu plan, el débito automático y las facturas de Pelito, todo en un solo lugar.
-                    </p>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <h2 className="mt-2 font-display text-3xl font-bold tracking-[-0.04em] text-brand-text sm:text-4xl">
+                            Mi suscripción
+                        </h2>
+                        <p className="mt-2 max-w-2xl text-sm text-brand-text-secondary">
+                            Tu plan, el débito automático y las facturas de Pelito, todo en un solo lugar.
+                        </p>
+                    </div>
+
+                    <TourRestartButton onClick={startTour} className="self-start" />
                 </div>
             )}
         >
@@ -179,7 +238,7 @@ export default function Index({ subscription, billing, payments, availablePlans,
                     )}
 
                     {/* Hero: plan actual */}
-                    <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                    <section data-tour="owner-suscripcion-plan" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                             <div className="min-w-0">
                                 <p className="text-sm font-medium text-brand-text-secondary">Plan actual</p>
@@ -274,7 +333,7 @@ export default function Index({ subscription, billing, payments, availablePlans,
                                 <form onSubmit={submitActivation} className="mt-6 space-y-5">
                                     <div>
                                         <p className="text-sm font-semibold text-brand-text">Ciclo de cobro</p>
-                                        <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                                        <div data-tour="owner-suscripcion-ciclo" className="mt-2 grid gap-3 sm:grid-cols-2">
                                             <label
                                                 className={`flex cursor-pointer flex-col rounded-[18px] border px-4 py-3 transition ${
                                                     data.billing_cycle === 'monthly'
@@ -376,6 +435,7 @@ export default function Index({ subscription, billing, payments, availablePlans,
 
                                         <button
                                             type="submit"
+                                            data-tour="owner-suscripcion-activar"
                                             disabled={processing || !mpConfigured}
                                             className={`inline-flex min-h-[46px] w-full shrink-0 items-center justify-center rounded-brand-pill px-5 text-sm font-semibold transition sm:w-auto ${
                                                 !mpConfigured
@@ -397,7 +457,7 @@ export default function Index({ subscription, billing, payments, availablePlans,
                         </section>
 
                         {/* Historial de pagos */}
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                        <section data-tour="owner-suscripcion-pagos" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-start gap-3">
                                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-link shadow-sm">
                                     <IconFileInvoice size={22} stroke={1.8} />
@@ -421,7 +481,7 @@ export default function Index({ subscription, billing, payments, availablePlans,
                                                 <th className="pb-3 pr-4">Fecha</th>
                                                 <th className="pb-3 pr-4">Monto</th>
                                                 <th className="pb-3 pr-4">Estado</th>
-                                                <th className="hidden pb-3 md:table-cell">Factura</th>
+                                                <th data-tour="owner-suscripcion-factura" className="hidden pb-3 md:table-cell">Factura</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-brand-border-subtle">
@@ -450,7 +510,7 @@ export default function Index({ subscription, billing, payments, availablePlans,
 
                     {/* Cambio de plan */}
                     {availablePlans.length > 0 && (
-                        <section className="space-y-4">
+                        <section data-tour="owner-suscripcion-upgrade" className="space-y-4">
                             <div>
                                 <h3 className="text-xl font-semibold tracking-[-0.03em] text-brand-text">Cambiar de plan</h3>
                                 <p className="mt-1 text-sm text-brand-text-secondary">

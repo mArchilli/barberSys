@@ -5,6 +5,8 @@ import MonthSelector from '@/Components/MonthSelector';
 import RankingList from '@/Components/RankingList';
 import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
+import TourRestartButton from '@/Components/TourRestartButton';
+import usePageTour from '@/Hooks/usePageTour';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import {
@@ -210,10 +212,56 @@ function GastoRow({ gasto, barbId }) {
     );
 }
 
+const FINANZAS_TOUR_STEPS = [
+    {
+        element: '[data-tour="owner-finanzas-neto"]',
+        popover: {
+            title: 'Neto del período',
+            description: 'Facturación menos sueldos menos gastos: el número principal de esta pantalla, tu rentabilidad real del mes.',
+        },
+    },
+    {
+        element: '[data-tour="owner-finanzas-desglose"]',
+        popover: {
+            title: 'Facturación, sueldos y gastos',
+            description: 'El desglose que arma ese neto: cuánto facturaste, cuánto pagaste en sueldos y cuánto gastaste en el período.',
+        },
+    },
+    {
+        element: '[data-tour="owner-finanzas-sueldos"]',
+        popover: {
+            title: 'Sueldos por barbero',
+            description: 'Cuánto le corresponde a cada barbero en el período. Puede ser sueldo fijo o por comisión, según cómo lo configuraste.',
+        },
+    },
+    {
+        element: '[data-tour="owner-finanzas-gastos"]',
+        popover: {
+            title: '"Excluir este mes" vs. "Dar de baja"',
+            description: '"Excluir este mes" saca un gasto del cálculo solo para el mes actual, sin tocar la plantilla ni los meses futuros. "Dar de baja" corta la recurrencia hacia adelante (pide confirmación) — no vuelve a generarse en los próximos meses.',
+        },
+    },
+    {
+        element: '[data-tour="owner-finanzas-nuevo-gasto"]',
+        popover: {
+            title: 'Cargar un gasto nuevo',
+            description: 'Sumá un gasto fijo o variable a esta barbería desde acá.',
+        },
+    },
+    {
+        element: '[data-tour="owner-finanzas-facturacion-dia"]',
+        popover: {
+            title: 'Facturación por día',
+            description: 'Qué días del período tuvieron movimiento y cuánto facturaste en cada uno.',
+        },
+    },
+];
+
 export default function Finanzas({ period, totalFacturado, totalSueldos, totalGastos, neto, sueldosPorBarbero, gastos, porDia }) {
     const { currentBarberia, flash } = usePage().props;
     const barbId = currentBarberia?.id;
     const todayIso = new Date().toLocaleDateString('sv-SE');
+    const { startTour } = usePageTour('owner_barberias_finanzas', FINANZAS_TOUR_STEPS);
 
     const sueldosItems = sueldosPorBarbero.map((item) => ({ ...item, badge: sueldoBadge(item) }));
     const maxFacturacionDiaria = Math.max(...porDia.map((item) => item.total), 1);
@@ -236,8 +284,11 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
                         </p>
                     </div>
 
-                    <div className="w-full lg:w-auto lg:min-w-[260px]">
-                        <MonthSelector month={period.month} url={route('owner.barberias.finanzas', barbId)} fullWidth />
+                    <div className="flex w-full items-center gap-3 lg:w-auto">
+                        <div className="min-w-0 flex-1 lg:min-w-[260px]">
+                            <MonthSelector month={period.month} url={route('owner.barberias.finanzas', barbId)} fullWidth />
+                        </div>
+                        <TourRestartButton onClick={startTour} />
                     </div>
                 </div>
             )}
@@ -253,7 +304,7 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
                     )}
 
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)_minmax(320px,0.8fr)]">
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                        <section data-tour="owner-finanzas-neto" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-end justify-between gap-4">
                                 <div className="flex min-w-0 items-start gap-4">
                                     <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px] bg-brand-primary/12 text-brand-primary shadow-sm">
@@ -271,14 +322,14 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
                                 </div>
                             </div>
 
-                            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                            <div data-tour="owner-finanzas-desglose" className="mt-6 grid gap-3 sm:grid-cols-3">
                                 <MetricTile label="Facturacion" value={formatMoney(totalFacturado)} />
                                 <MetricTile label="Sueldos" value={formatMoney(totalSueldos)} />
                                 <MetricTile label="Gastos" value={formatMoney(totalGastos)} tone={totalGastos > 0 ? 'danger' : 'default'} />
                             </div>
                         </section>
 
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                        <section data-tour="owner-finanzas-facturacion-dia" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-start justify-between gap-4">
                                 <div>
                                     <p className="text-sm font-medium text-brand-text-secondary">Distribucion del periodo</p>
@@ -382,7 +433,7 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
                                 </p>
                             </div>
 
-                            <div className="rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
+                            <div data-tour="owner-finanzas-sueldos" className="rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
                                 <RankingList
                                     items={sueldosItems}
                                     emptyLabel="Todavia no hay barberos activos en esta barberia."
@@ -392,7 +443,7 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
 
                         <section className="space-y-4">
                             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                                <div>
+                                <div data-tour="owner-finanzas-gastos">
                                     <h3 className="font-display text-lg font-bold text-brand-text">
                                         Gastos del periodo
                                     </h3>
@@ -402,6 +453,7 @@ export default function Finanzas({ period, totalFacturado, totalSueldos, totalGa
                                 </div>
 
                                 <Link
+                                    data-tour="owner-finanzas-nuevo-gasto"
                                     href={route('owner.barberias.gastos.create', { barberia: barbId })}
                                     className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-brand-primary px-5 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition hover:bg-brand-primary-hover"
                                 >
