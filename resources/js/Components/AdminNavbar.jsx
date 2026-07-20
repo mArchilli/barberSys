@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import {
     IconActivityHeartbeat,
     IconChevronDown,
+    IconClipboardList,
     IconHeadset,
     IconLayoutDashboard,
     IconLicense,
@@ -59,6 +60,12 @@ export default function AdminNavbar() {
             label: 'Cupones',
             icon: IconTicket,
             active: route().current('admin.coupons.*'),
+        },
+        {
+            href: route('admin.surveys.index'),
+            label: 'Encuestas',
+            icon: IconClipboardList,
+            active: route().current('admin.surveys.*'),
         },
         {
             href: route('admin.salud.index'),

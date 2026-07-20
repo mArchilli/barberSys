@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Barberia;
+use App\Models\Survey;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -39,6 +40,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'newBarbero' => $request->session()->get('newBarbero'),
                 'resetPassword' => $request->session()->get('resetPassword'),
+                'surveyReward' => $request->session()->get('surveyReward'),
             ],
             'currentBarberia' => function () use ($request) {
                 $barberia = $request->route('barberia');
@@ -81,6 +83,34 @@ class HandleInertiaRequests extends Middleware
                 $user = $request->user();
 
                 return $user ? ($user->tours_seen ?? []) : null;
+            },
+            // Encuesta pendiente para el usuario actual (owner o barber): la más
+            // antigua sin responder, dentro de ventana y con audiencia compatible
+            // (ver Survey::pendingFor). Lazy: solo se evalúa cuando SurveyModal
+            // la consume.
+            'pendingSurvey' => function () use ($request) {
+                $user = $request->user();
+                if (! $user) {
+                    return null;
+                }
+
+                $survey = Survey::pendingFor($user);
+                if (! $survey) {
+                    return null;
+                }
+
+                return [
+                    'id' => $survey->id,
+                    'title' => $survey->title,
+                    'description' => $survey->description,
+                    'questions' => $survey->questions->map(fn ($question) => [
+                        'id' => $question->id,
+                        'type' => $question->type,
+                        'question_text' => $question->question_text,
+                        'scale_min' => $question->scale_min,
+                        'scale_max' => $question->scale_max,
+                    ]),
+                ];
             },
         ];
     }

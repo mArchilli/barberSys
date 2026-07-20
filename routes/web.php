@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\PlanController as AdminPlanController;
 use App\Http\Controllers\Admin\SaludController as AdminSaludController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Admin\SupportController as AdminSupportController;
+use App\Http\Controllers\Admin\SurveyController as AdminSurveyController;
 use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
 use App\Http\Controllers\CorteController;
 use App\Http\Controllers\Owner\BarberiaController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\Owner\SubscriptionController as OwnerSubscriptionContro
 use App\Http\Controllers\Owner\SupportController as OwnerSupportController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SurveyResponseController;
 use App\Http\Controllers\TourController;
 use App\Http\Controllers\Webhooks\MercadoPagoWebhookController;
 use App\Models\Plan;
@@ -144,6 +146,15 @@ Route::prefix('barber')
         Route::get('/clientes/search', [ClienteController::class, 'search'])->name('clientes.search');
     });
 
+// --- Encuestas (respuesta) — compartida entre owner y barber, ambos pueden
+// recibir y responder según target_audience de cada survey ---
+
+Route::middleware(['auth', 'verified', 'role:owner,barber'])
+    ->group(function () {
+        Route::post('/surveys/{survey}/respond', [SurveyResponseController::class, 'store'])->name('surveys.respond');
+        Route::post('/surveys/{survey}/skip', [SurveyResponseController::class, 'skip'])->name('surveys.skip');
+    });
+
 // --- Rutas admin ---
 
 Route::prefix('admin')
@@ -167,6 +178,10 @@ Route::prefix('admin')
         // El descuento no tiene efecto real hasta integrar el cobro de MercadoPago
         // (ver comentario en App\Models\Coupon y CLAUDE.md).
         Route::resource('coupons', AdminCouponController::class)->except(['destroy', 'show']);
+
+        // Encuestas — sin destroy físico: se desactivan (active=false).
+        Route::resource('surveys', AdminSurveyController::class)->except(['destroy', 'show']);
+        Route::get('/surveys/{survey}/resultados', [AdminSurveyController::class, 'resultados'])->name('surveys.resultados');
 
         Route::get('/salud', [AdminSaludController::class, 'index'])->name('salud.index');
 

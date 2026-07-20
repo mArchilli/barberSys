@@ -1,3 +1,4 @@
+import SurveyModal from '@/Components/SurveyModal';
 import { Link, usePage } from '@inertiajs/react';
 import { IconHome, IconPlus, IconUserCircle } from '@tabler/icons-react';
 
@@ -61,6 +62,8 @@ export default function BarberLayout({
                     </Link>
                 </div>
             </nav>
+
+            <SurveyModal />
         </div>
     );
 }

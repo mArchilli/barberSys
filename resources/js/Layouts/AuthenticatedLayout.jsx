@@ -1,4 +1,5 @@
 import DashNavbar from '@/Components/DashNavbar';
+import SurveyModal from '@/Components/SurveyModal';
 import TrialBanner from '@/Components/TrialBanner';
 import { usePage } from '@inertiajs/react';
 
@@ -33,6 +34,8 @@ export default function AuthenticatedLayout({
             )}
 
             <main>{children}</main>
+
+            <SurveyModal />
         </div>
     );
 }
