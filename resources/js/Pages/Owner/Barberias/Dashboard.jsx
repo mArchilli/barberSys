@@ -20,6 +20,7 @@ import {
     IconScissors,
     IconSparkles,
     IconTrendingUp,
+    IconUserCircle,
     IconWallet,
 } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
@@ -485,6 +486,7 @@ export default function Dashboard({
     porServicio,
     cierreCaja,
     gestion,
+    miRendimiento,
     actividadReciente,
     alertas,
 }) {
@@ -713,6 +715,33 @@ export default function Dashboard({
                             </article>
                         </div>
                     </section>
+
+                    {miRendimiento && (
+                        <section className="min-w-0" aria-label="Mi rendimiento">
+                            <article className="min-w-0 rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-medium text-brand-text-secondary">{selectedPeriodLabel}</p>
+                                        <h3 className="mt-2 break-words text-xl font-semibold tracking-[-0.03em] text-brand-text">Mi rendimiento</h3>
+                                        <p className="mt-2 break-words text-xs text-brand-text-secondary">Tu propia actividad cargada como barbero en esta barbería.</p>
+                                    </div>
+                                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-primary/12 text-brand-primary shadow-sm">
+                                        <IconUserCircle size={22} stroke={1.8} aria-hidden="true" />
+                                    </span>
+                                </div>
+
+                                <div className="mt-6 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-3">
+                                    <MetricTile label="Facturación" value={formatMoney(miRendimiento.totalFacturado)} />
+                                    <MetricTile label="Cortes" value={String(miRendimiento.totalCortes)} />
+                                    <MetricTile label="Ticket promedio" value={formatMoney(miRendimiento.ticketPromedio)} />
+                                </div>
+
+                                <Link href={route('owner.barberias.mi-rendimiento', currentBarberia.id)} className="mt-5 inline-flex min-h-[44px] items-center text-sm font-semibold text-brand-primary hover:text-brand-link-hover">
+                                    Ver historial completo {'->'}
+                                </Link>
+                            </article>
+                        </section>
+                    )}
 
                     <section className="min-w-0" aria-label="Actividad y alertas">
                         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2">

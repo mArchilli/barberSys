@@ -9,16 +9,20 @@ use App\Models\Barberia;
 use App\Models\Corte;
 use App\Models\GastoRegistro;
 use App\Models\User;
+use App\Services\BarberPerformanceService;
 use App\Services\ComisionCalculator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
     use ResolvesDay, ResolvesPeriod;
+
+    public function __construct(private BarberPerformanceService $barberPerformanceService) {}
 
     public function index(Request $request, Barberia $barberia, ComisionCalculator $comisionCalculator): Response
     {
@@ -169,7 +173,29 @@ class DashboardController extends Controller
 
         $totalPorMedioPagoHoy = (float) $porMedioPagoHoy->sum('total');
 
+        // Visible solo si el owner tiene al menos un corte histórico a su
+        // nombre en esta barbería (data-driven, sin importar el plan) — mismo
+        // criterio que la pantalla completa de Mi Rendimiento.
+        $miRendimientoVisible = Corte::where('barberia_id', $barberia->id)
+            ->where('barbero_id', Auth::id())
+            ->exists();
+
+        $miRendimiento = null;
+
+        if ($miRendimientoVisible) {
+            $propioStats = $this->barberPerformanceService->porPeriodo(Auth::id(), $barberia->id, $start, $end);
+
+            $miRendimiento = [
+                'totalFacturado' => $propioStats['totalFacturado'],
+                'totalCortes'    => $propioStats['totalCortes'],
+                'ticketPromedio' => $propioStats['totalCortes'] > 0
+                    ? round($propioStats['totalFacturado'] / $propioStats['totalCortes'], 2)
+                    : 0,
+            ];
+        }
+
         return Inertia::render('Owner/Barberias/Dashboard', [
+            'miRendimiento' => $miRendimiento,
             'period' => [
                 'mode' => $range->mode,
                 'start' => $start->toDateString(),

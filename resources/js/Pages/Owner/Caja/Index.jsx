@@ -174,12 +174,19 @@ function MovimientoRow({ corte, servicios, mediosPago, barbId, searchUrl, cerrad
                 <p className="mt-2 text-sm text-brand-text-secondary">
                     {corte.servicio.name} - {corte.medioPago.name}
                 </p>
+                <p className="mt-1 text-xs text-brand-text-secondary">
+                    Atendió: <span className="font-medium text-brand-text">{corte.barbero.name}</span>
+                </p>
             </article>
         );
     }
 
     return (
         <form onSubmit={submit} className="space-y-3 rounded-[22px] border border-brand-border bg-brand-surface-alt px-4 py-4">
+            <p className="text-xs text-brand-text-secondary">
+                Atendió: <span className="font-medium text-brand-text">{corte.barbero.name}</span>
+            </p>
+
             {cerrado && (
                 <div className="flex items-start gap-2 rounded-[16px] border border-brand-warning/30 bg-brand-warning-soft px-3 py-2 text-xs text-brand-text">
                     <IconAlertTriangle size={16} className="mt-0.5 shrink-0 text-brand-warning" />

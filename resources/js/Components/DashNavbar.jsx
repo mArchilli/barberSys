@@ -13,6 +13,7 @@ import {
     IconReceipt2,
     IconReportMoney,
     IconRosetteDiscountCheck,
+    IconScissors,
     IconUserCircle,
     IconUserCog,
     IconUsers,
@@ -26,7 +27,7 @@ const flyoutPanelClassName =
     'rounded-[24px] border border-brand-border bg-brand-surface-alt/70 p-2 shadow-brand-card backdrop-blur-sm';
 
 export default function DashNavbar() {
-    const { auth, currentBarberia, ownerBarberiaCount } = usePage().props;
+    const { auth, currentBarberia, ownerBarberiaCount, miRendimientoVisible } = usePage().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
@@ -84,6 +85,16 @@ export default function DashNavbar() {
                 icon: IconReportMoney,
                 active: route().current('owner.barberias.finanzas') || route().current('owner.barberias.gastos.*') || route().current('owner.barberias.gasto-registros.*'),
             },
+            ...(miRendimientoVisible
+                ? [
+                    {
+                        href: route('owner.barberias.mi-rendimiento', { barberia: currentBarberia.id }),
+                        label: 'Mi rendimiento',
+                        icon: IconScissors,
+                        active: route().current('owner.barberias.mi-rendimiento'),
+                    },
+                ]
+                : []),
         ]
         : [
             {

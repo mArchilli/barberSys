@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Barberia;
+use App\Models\Corte;
 use App\Models\Survey;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -57,6 +58,22 @@ class HandleInertiaRequests extends Middleware
                 }
 
                 return null;
+            },
+            // Visibilidad del link "Mi rendimiento" del menú: solo si el owner
+            // tiene al menos un corte histórico a su nombre en la barbería
+            // actual (data-driven, mismo criterio que la pantalla en sí).
+            // Lazy: solo se evalúa dentro del grupo anidado por barbería.
+            'miRendimientoVisible' => function () use ($request) {
+                $barberia = $request->route('barberia');
+                $user = $request->user();
+
+                if (! $barberia instanceof Barberia || ! $user || ! $user->isOwner()) {
+                    return false;
+                }
+
+                return Corte::where('barberia_id', $barberia->id)
+                    ->where('barbero_id', $user->id)
+                    ->exists();
             },
             // Estado mínimo de la suscripción para el TrialBanner y el menú.
             // Lazy: solo se evalúa cuando la página lo consume.

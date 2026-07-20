@@ -41,9 +41,9 @@ class CajaController extends Controller
 
         $movimientos = Corte::where('barberia_id', $barberia->id)
             ->whereDate('performed_at', $dayIso)
-            ->with(['servicio:id,name', 'cliente:id,name', 'medioPago:id,name'])
+            ->with(['servicio:id,name', 'cliente:id,name', 'medioPago:id,name', 'barbero:id,name'])
             ->orderByDesc('id')
-            ->get(['id', 'servicio_id', 'cliente_id', 'medio_pago_id', 'price', 'performed_at']);
+            ->get(['id', 'barbero_id', 'servicio_id', 'cliente_id', 'medio_pago_id', 'price', 'performed_at']);
 
         $expectedPorMedio = $this->expectedPorMedio($barberia, $dayIso);
 
@@ -66,6 +66,7 @@ class CajaController extends Controller
             ],
             'movimientos' => $movimientos->map(fn (Corte $corte) => [
                 'id' => $corte->id,
+                'barbero' => $corte->barbero,
                 'servicio' => $corte->servicio,
                 'cliente' => $corte->cliente,
                 'medioPago' => $corte->medioPago,

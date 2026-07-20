@@ -21,6 +21,7 @@ use App\Http\Controllers\Owner\FinanzasController;
 use App\Http\Controllers\Owner\GastoController;
 use App\Http\Controllers\Owner\GastoRegistroController;
 use App\Http\Controllers\Owner\MedioPagoController;
+use App\Http\Controllers\Owner\MiRendimientoController;
 use App\Http\Controllers\Owner\ServicioController;
 use App\Http\Controllers\Owner\SubscriptionController as OwnerSubscriptionController;
 use App\Http\Controllers\Owner\SupportController as OwnerSupportController;
@@ -130,6 +131,11 @@ Route::prefix('owner')
                 Route::patch('clientes/{cliente}/deactivate', [ClienteController::class, 'deactivate'])->name('clientes.deactivate');
 
                 Route::get('/finanzas', [FinanzasController::class, 'index'])->name('finanzas');
+
+                // Historial completo de la propia actividad del owner como
+                // barbero en esta barbería (ver comentario en el controller
+                // sobre por qué redirige en vez de abortar).
+                Route::get('/mi-rendimiento', [MiRendimientoController::class, 'index'])->name('mi-rendimiento');
 
                 Route::resource('gastos', GastoController::class)->except(['destroy', 'show']);
                 Route::patch('gastos/{gasto}/deactivate', [GastoController::class, 'deactivate'])->name('gastos.deactivate');
