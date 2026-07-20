@@ -9,11 +9,12 @@ export default function Index({ requests }) {
                     Soporte
                 </h2>
             }
+            headerContainerClassName="mx-auto max-w-[1720px] px-2 py-4 sm:px-3 sm:py-5 lg:px-4"
         >
             <Head title="Soporte" />
 
             <div className="py-6 sm:py-12">
-                <div className="mx-auto max-w-7xl space-y-4 px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-[1720px] space-y-4 px-2 sm:px-3 lg:px-4">
                     {requests.length === 0 ? (
                         <div className="rounded-brand-md border border-brand-border bg-brand-surface p-8 text-center text-brand-text-secondary shadow-brand-card">
                             Todavía no hay consultas de soporte registradas.

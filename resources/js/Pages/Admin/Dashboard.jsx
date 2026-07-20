@@ -55,11 +55,12 @@ export default function Dashboard({
                     Panel de administración
                 </h2>
             }
+            headerContainerClassName="mx-auto max-w-[1720px] px-2 py-4 sm:px-3 sm:py-5 lg:px-4"
         >
             <Head title="Administración" />
 
             <div className="py-6 sm:py-12">
-                <div className="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-[1720px] space-y-8 px-2 sm:px-3 lg:px-4">
                     {/* Salud del negocio */}
                     <section>
                         <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-brand-text-secondary">

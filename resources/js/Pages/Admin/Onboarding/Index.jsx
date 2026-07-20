@@ -80,11 +80,12 @@ export default function Index({ owners }) {
                     Onboarding de clientes nuevos
                 </h2>
             }
+            headerContainerClassName="mx-auto max-w-[1720px] px-2 py-4 sm:px-3 sm:py-5 lg:px-4"
         >
             <Head title="Onboarding" />
 
             <div className="py-6 sm:py-12">
-                <div className="mx-auto max-w-5xl space-y-8 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+                <div className="mx-auto max-w-[1720px] space-y-8 px-2 sm:px-3 lg:px-4">
                     <div className="grid gap-4 sm:grid-cols-2">
                         <MetricCard
                             label="Sin activar (últimos 30 días)"

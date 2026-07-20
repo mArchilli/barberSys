@@ -29,11 +29,12 @@ export default function Index({ plans }) {
                     </Link>
                 </div>
             }
+            headerContainerClassName="mx-auto max-w-[1720px] px-2 py-4 sm:px-3 sm:py-5 lg:px-4"
         >
             <Head title="Planes" />
 
             <div className="py-6 sm:py-12">
-                <div className="mx-auto max-w-7xl space-y-4 px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-[1720px] space-y-4 px-2 sm:px-3 lg:px-4">
                     {flash?.success && (
                         <div className="rounded-brand-md border border-brand-success/30 bg-brand-success-soft p-4 text-sm text-brand-success">
                             {flash.success}
