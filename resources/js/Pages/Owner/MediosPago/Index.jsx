@@ -1,3 +1,5 @@
+import TourRestartButton from '@/Components/TourRestartButton';
+import usePageTour from '@/Hooks/usePageTour';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { IconCreditCard, IconEdit, IconSearch, IconToggleLeft } from '@tabler/icons-react';
@@ -22,10 +24,42 @@ function MetricTile({ label, value, tone = 'default' }) {
     );
 }
 
+const MEDIOS_PAGO_TOUR_STEPS = [
+    {
+        element: '[data-tour="owner-medios-pago-nuevo"]',
+        popover: {
+            title: 'Cargar un medio de pago',
+            description: 'Sumá una forma de cobro nueva (efectivo, transferencia, tarjeta, etc.) desde acá.',
+        },
+    },
+    {
+        element: '[data-tour="owner-medios-pago-estado"]',
+        popover: {
+            title: 'Estado de cobro',
+            description: 'Cuántos medios de pago tenés activos e inactivos en esta barbería.',
+        },
+    },
+    {
+        element: '[data-tour="owner-medios-pago-buscar"]',
+        popover: {
+            title: 'Buscar un medio de pago',
+            description: 'Filtrá por nombre para encontrar rápido el que necesitás editar.',
+        },
+    },
+    {
+        element: '[data-tour="owner-medios-pago-baja"]',
+        popover: {
+            title: 'Desactivar, no borrar',
+            description: 'Desactivar es una baja no destructiva: el medio de pago deja de estar disponible para nuevos cobros, pero el historial de cortes que ya lo usaron no se toca.',
+        },
+    },
+];
+
 export default function Index({ mediosPago }) {
     const { flash, currentBarberia } = usePage().props;
     const barbId = currentBarberia?.id;
     const [busqueda, setBusqueda] = useState('');
+    const { startTour } = usePageTour('owner_medios_pago', MEDIOS_PAGO_TOUR_STEPS);
 
     const mediosFiltrados = mediosPago.filter((medio) =>
         medio.name.toLowerCase().includes(busqueda.toLowerCase()),
@@ -54,12 +88,16 @@ export default function Index({ mediosPago }) {
                         </p>
                     </div>
 
-                    <Link
-                        href={route('owner.barberias.medios-pago.create', { barberia: barbId })}
-                        className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-brand-primary px-5 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition hover:bg-brand-primary-hover"
-                    >
-                        + Nuevo medio de pago
-                    </Link>
+                    <div className="flex items-center gap-3">
+                        <Link
+                            data-tour="owner-medios-pago-nuevo"
+                            href={route('owner.barberias.medios-pago.create', { barberia: barbId })}
+                            className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-brand-primary px-5 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition hover:bg-brand-primary-hover"
+                        >
+                            + Nuevo medio de pago
+                        </Link>
+                        <TourRestartButton onClick={startTour} />
+                    </div>
                 </div>
             )}
         >
@@ -74,7 +112,7 @@ export default function Index({ mediosPago }) {
                     )}
 
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.08fr)_minmax(320px,0.92fr)]">
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                        <section data-tour="owner-medios-pago-estado" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex min-w-0 items-start gap-4">
                                     <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px] bg-brand-primary/12 text-brand-primary shadow-sm">
@@ -117,7 +155,7 @@ export default function Index({ mediosPago }) {
                                     </span>
                                 </div>
 
-                                <div className="mt-6 rounded-[22px] bg-brand-surface-alt p-3">
+                                <div data-tour="owner-medios-pago-buscar" className="mt-6 rounded-[22px] bg-brand-surface-alt p-3">
                                     <div className="relative">
                                         <IconSearch
                                             size={18}
@@ -232,6 +270,7 @@ export default function Index({ mediosPago }) {
                                             {medio.active && (
                                                 <button
                                                     type="button"
+                                                    data-tour="owner-medios-pago-baja"
                                                     onClick={() => handleDeactivate(medio)}
                                                     aria-label={`Desactivar ${medio.name}`}
                                                     title="Desactivar"

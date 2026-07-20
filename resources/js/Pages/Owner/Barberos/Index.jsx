@@ -1,3 +1,5 @@
+import TourRestartButton from '@/Components/TourRestartButton';
+import usePageTour from '@/Hooks/usePageTour';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
@@ -60,11 +62,50 @@ function MetricTile({ label, value, tone = 'default' }) {
     );
 }
 
+const BARBEROS_TOUR_STEPS = [
+    {
+        element: '[data-tour="owner-barberos-nuevo"]',
+        popover: {
+            title: 'Sumar un barbero',
+            description: 'Creá la cuenta de un barbero nuevo desde acá. Se genera una contraseña temporal para compartirle.',
+        },
+    },
+    {
+        element: '[data-tour="owner-barberos-equipo"]',
+        popover: {
+            title: 'Equipo activo',
+            description: 'Cuántos barberos activos tenés cargados en esta barbería.',
+        },
+    },
+    {
+        element: '[data-tour="owner-barberos-buscar"]',
+        popover: {
+            title: 'Buscar en el equipo',
+            description: 'Filtrá por nombre, mail o teléfono para encontrar un barbero rápido.',
+        },
+    },
+    {
+        element: '[data-tour="owner-barberos-plan"]',
+        popover: {
+            title: 'Uso del plan',
+            description: 'Este contador es del plan completo, no de esta barbería sola: suma los barberos de TODAS tus barberías. Si tenés cupos ocupados en otra sucursal, acá también se descuentan.',
+        },
+    },
+    {
+        element: '[data-tour="owner-barberos-acciones"]',
+        popover: {
+            title: 'Editar o dar de baja',
+            description: 'Desde la card de cada barbero podés editar sus datos o darlo de baja. No hace falta entrar a su perfil para eso.',
+        },
+    },
+];
+
 export default function Index({ barberos, planLimit }) {
     const { flash, currentBarberia } = usePage().props;
     const credentialFlash = flash.newBarbero || flash.resetPassword;
     const [showCredential, setShowCredential] = useState(Boolean(credentialFlash));
     const [busqueda, setBusqueda] = useState('');
+    const { startTour } = usePageTour('owner_barberos', BARBEROS_TOUR_STEPS);
 
     const barbId = currentBarberia?.id;
     const atLimit = planLimit.max !== null && planLimit.totalOwner >= planLimit.max;
@@ -103,17 +144,21 @@ export default function Index({ barberos, planLimit }) {
                         </p>
                     </div>
 
-                    <Link
-                        href={route('owner.barberias.barberos.create', { barberia: barbId })}
-                        className={`inline-flex min-h-[46px] items-center justify-center rounded-full px-5 text-sm font-semibold shadow-brand-cta transition ${
-                            atLimit
-                                ? 'cursor-not-allowed bg-brand-text-secondary text-brand-on-primary'
-                                : 'bg-brand-primary text-brand-on-primary hover:bg-brand-primary-hover'
-                        }`}
-                        onClick={atLimit ? (event) => event.preventDefault() : undefined}
-                    >
-                        + Nuevo barbero
-                    </Link>
+                    <div className="flex items-center gap-3">
+                        <Link
+                            data-tour="owner-barberos-nuevo"
+                            href={route('owner.barberias.barberos.create', { barberia: barbId })}
+                            className={`inline-flex min-h-[46px] items-center justify-center rounded-full px-5 text-sm font-semibold shadow-brand-cta transition ${
+                                atLimit
+                                    ? 'cursor-not-allowed bg-brand-text-secondary text-brand-on-primary'
+                                    : 'bg-brand-primary text-brand-on-primary hover:bg-brand-primary-hover'
+                            }`}
+                            onClick={atLimit ? (event) => event.preventDefault() : undefined}
+                        >
+                            + Nuevo barbero
+                        </Link>
+                        <TourRestartButton onClick={startTour} />
+                    </div>
                 </div>
             )}
         >
@@ -148,7 +193,7 @@ export default function Index({ barberos, planLimit }) {
                     )}
 
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(360px,0.9fr)]">
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                        <section data-tour="owner-barberos-equipo" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex min-w-0 items-start gap-4">
                                     <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px] bg-brand-primary/12 text-brand-primary shadow-sm">
@@ -194,7 +239,7 @@ export default function Index({ barberos, planLimit }) {
                                 </span>
                             </div>
 
-                            <div className="mt-6 rounded-[22px] bg-brand-surface-alt p-3">
+                            <div data-tour="owner-barberos-buscar" className="mt-6 rounded-[22px] bg-brand-surface-alt p-3">
                                 <div className="relative">
                                     <IconSearch
                                         size={18}
@@ -210,7 +255,7 @@ export default function Index({ barberos, planLimit }) {
                                 </div>
                             </div>
 
-                            <div className="mt-5 rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                            <div data-tour="owner-barberos-plan" className="mt-5 rounded-[22px] bg-brand-surface-alt px-4 py-4">
                                 <div className="flex items-center justify-between gap-3">
                                     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
                                         Uso del plan
@@ -350,7 +395,7 @@ export default function Index({ barberos, planLimit }) {
                                                 Ver perfil
                                             </Link>
 
-                                            <div className="flex shrink-0 items-center gap-2">
+                                            <div data-tour="owner-barberos-acciones" className="flex shrink-0 items-center gap-2">
                                                 <Link
                                                     href={route('owner.barberias.barberos.edit', { barberia: barbId, barbero: barbero.id })}
                                                     aria-label={`Editar ${barbero.name}`}

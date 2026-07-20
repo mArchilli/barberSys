@@ -1,3 +1,5 @@
+import TourRestartButton from '@/Components/TourRestartButton';
+import usePageTour from '@/Hooks/usePageTour';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { IconEdit, IconList, IconSearch, IconToggleLeft } from '@tabler/icons-react';
@@ -26,10 +28,49 @@ function MetricTile({ label, value, tone = 'default' }) {
     );
 }
 
+const SERVICIOS_TOUR_STEPS = [
+    {
+        element: '[data-tour="owner-servicios-nuevo"]',
+        popover: {
+            title: 'Cargar un servicio',
+            description: 'Sumá un servicio nuevo al catálogo, con su precio, desde acá.',
+        },
+    },
+    {
+        element: '[data-tour="owner-servicios-estado"]',
+        popover: {
+            title: 'Estado del catálogo',
+            description: 'Cuántos servicios tenés activos e inactivos, y el precio promedio del catálogo.',
+        },
+    },
+    {
+        element: '[data-tour="owner-servicios-buscar"]',
+        popover: {
+            title: 'Buscar un servicio',
+            description: 'Filtrá por nombre para encontrar rápido el que necesitás editar.',
+        },
+    },
+    {
+        element: '[data-tour="owner-servicios-precio"]',
+        popover: {
+            title: 'Precio del servicio',
+            description: 'Este precio se autocompleta cuando un barbero carga un corte con este servicio, aunque después se puede editar en ese momento puntual.',
+        },
+    },
+    {
+        element: '[data-tour="owner-servicios-baja"]',
+        popover: {
+            title: 'Desactivar, no borrar',
+            description: 'Desactivar es una baja no destructiva: el servicio deja de estar disponible para nuevos cortes, pero el historial de cortes que ya lo usaron no se toca.',
+        },
+    },
+];
+
 export default function Index({ servicios }) {
     const { flash, currentBarberia } = usePage().props;
     const barbId = currentBarberia?.id;
     const [busqueda, setBusqueda] = useState('');
+    const { startTour } = usePageTour('owner_servicios', SERVICIOS_TOUR_STEPS);
 
     const serviciosFiltrados = servicios.filter((servicio) =>
         servicio.name.toLowerCase().includes(busqueda.toLowerCase()),
@@ -61,12 +102,16 @@ export default function Index({ servicios }) {
                         </p>
                     </div>
 
-                    <Link
-                        href={route('owner.barberias.servicios.create', { barberia: barbId })}
-                        className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-brand-primary px-5 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition hover:bg-brand-primary-hover"
-                    >
-                        + Nuevo servicio
-                    </Link>
+                    <div className="flex items-center gap-3">
+                        <Link
+                            data-tour="owner-servicios-nuevo"
+                            href={route('owner.barberias.servicios.create', { barberia: barbId })}
+                            className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-brand-primary px-5 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition hover:bg-brand-primary-hover"
+                        >
+                            + Nuevo servicio
+                        </Link>
+                        <TourRestartButton onClick={startTour} />
+                    </div>
                 </div>
             )}
         >
@@ -81,7 +126,7 @@ export default function Index({ servicios }) {
                     )}
 
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                        <section data-tour="owner-servicios-estado" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex min-w-0 items-start gap-4">
                                     <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px] bg-brand-primary/12 text-brand-primary shadow-sm">
@@ -123,7 +168,7 @@ export default function Index({ servicios }) {
                                 </span>
                             </div>
 
-                            <div className="mt-6 rounded-[22px] bg-brand-surface-alt p-3">
+                            <div data-tour="owner-servicios-buscar" className="mt-6 rounded-[22px] bg-brand-surface-alt p-3">
                                 <div className="relative">
                                     <IconSearch
                                         size={18}
@@ -206,7 +251,7 @@ export default function Index({ servicios }) {
                                             )}
                                         </div>
 
-                                        <div className="mt-6 rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                                        <div data-tour="owner-servicios-precio" className="mt-6 rounded-[22px] bg-brand-surface-alt px-4 py-4">
                                             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
                                                 Precio actual
                                             </p>
@@ -233,6 +278,7 @@ export default function Index({ servicios }) {
                                                 {servicio.active && (
                                                     <button
                                                         type="button"
+                                                        data-tour="owner-servicios-baja"
                                                         onClick={() => handleDeactivate(servicio)}
                                                         aria-label={`Desactivar ${servicio.name}`}
                                                         title="Desactivar"

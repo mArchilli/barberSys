@@ -1,3 +1,5 @@
+import TourRestartButton from '@/Components/TourRestartButton';
+import usePageTour from '@/Hooks/usePageTour';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { IconEdit, IconSearch, IconToggleLeft, IconUsers } from '@tabler/icons-react';
@@ -39,10 +41,49 @@ function Avatar({ name }) {
     );
 }
 
+const CLIENTES_TOUR_STEPS = [
+    {
+        element: '[data-tour="owner-clientes-cartera"]',
+        popover: {
+            title: 'Cartera activa',
+            description: 'Cuántos clientes activos tenés registrados en esta barbería.',
+        },
+    },
+    {
+        element: '[data-tour="owner-clientes-buscar"]',
+        popover: {
+            title: 'Buscar un cliente',
+            description: 'Filtrá por nombre, teléfono o email para encontrar el registro que necesitás.',
+        },
+    },
+    {
+        element: '[data-tour="owner-clientes-como-se-crean"]',
+        popover: {
+            title: 'Acá no se cargan clientes a mano',
+            description: 'No hay un botón de "alta" a propósito: un cliente se crea solo la primera vez que un barbero carga un corte con ese nombre. Esta pantalla es para corregir datos o dar de baja, no para el alta.',
+        },
+    },
+    {
+        element: '[data-tour="owner-clientes-editar"]',
+        popover: {
+            title: 'Editar datos',
+            description: 'Corregí el nombre, teléfono o email de un cliente si quedó mal cargado.',
+        },
+    },
+    {
+        element: '[data-tour="owner-clientes-baja"]',
+        popover: {
+            title: 'Dar de baja',
+            description: 'Útil para casos de duplicados: el cliente deja de aparecer disponible para nuevos cortes, sin borrar su historial.',
+        },
+    },
+];
+
 export default function Index({ clientes }) {
     const { flash, currentBarberia } = usePage().props;
     const barbId = currentBarberia?.id;
     const [busqueda, setBusqueda] = useState('');
+    const { startTour } = usePageTour('owner_clientes', CLIENTES_TOUR_STEPS);
 
     const terminoBusqueda = busqueda.trim().toLowerCase();
     const clientesFiltrados = clientes.filter((cliente) => (
@@ -74,6 +115,8 @@ export default function Index({ clientes }) {
                             Revisa tu cartera, encuentra clientes rapido y mantene actualizada la informacion que usas para registrar cortes.
                         </p>
                     </div>
+
+                    <TourRestartButton onClick={startTour} />
                 </div>
             )}
         >
@@ -88,7 +131,7 @@ export default function Index({ clientes }) {
                     )}
 
                     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.08fr)_minmax(320px,0.92fr)]">
-                        <section className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
+                        <section data-tour="owner-clientes-cartera" className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card sm:p-7">
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex min-w-0 items-start gap-4">
                                     <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px] bg-brand-primary/12 text-brand-primary shadow-sm">
@@ -130,7 +173,7 @@ export default function Index({ clientes }) {
                                 </span>
                             </div>
 
-                            <div className="mt-6 rounded-[22px] bg-brand-surface-alt p-3">
+                            <div data-tour="owner-clientes-buscar" className="mt-6 rounded-[22px] bg-brand-surface-alt p-3">
                                 <div className="relative">
                                     <IconSearch
                                         size={18}
@@ -147,7 +190,7 @@ export default function Index({ clientes }) {
                                 </div>
                             </div>
 
-                            <div className="mt-5 rounded-[22px] bg-brand-surface-alt px-4 py-4">
+                            <div data-tour="owner-clientes-como-se-crean" className="mt-5 rounded-[22px] bg-brand-surface-alt px-4 py-4">
                                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
                                     Como se crean
                                 </p>
@@ -249,6 +292,7 @@ export default function Index({ clientes }) {
 
                                         <div className="mt-5 flex items-center justify-end gap-2 border-t border-brand-border-subtle pt-5">
                                             <Link
+                                                data-tour="owner-clientes-editar"
                                                 href={route('owner.barberias.clientes.edit', { barberia: barbId, cliente: cliente.id })}
                                                 aria-label={`Editar ${cliente.name}`}
                                                 title="Editar"
@@ -260,6 +304,7 @@ export default function Index({ clientes }) {
                                             {cliente.active && (
                                                 <button
                                                     type="button"
+                                                    data-tour="owner-clientes-baja"
                                                     onClick={() => handleDeactivate(cliente)}
                                                     aria-label={`Desactivar ${cliente.name}`}
                                                     title="Desactivar"
