@@ -13,6 +13,7 @@ use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
 use App\Http\Controllers\CorteController;
 use App\Http\Controllers\Owner\BarberiaController;
 use App\Http\Controllers\Owner\BarberoController;
+use App\Http\Controllers\Owner\CajaController;
 use App\Http\Controllers\Owner\ClienteController;
 use App\Http\Controllers\Owner\ConsolidadoController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
@@ -103,6 +104,14 @@ Route::prefix('owner')
 
                 Route::get('cortes', [CorteController::class, 'index'])->name('cortes.index');
                 Route::post('cortes', [CorteController::class, 'store'])->name('cortes.store');
+                Route::patch('cortes/{corte}', [CorteController::class, 'update'])->name('cortes.update');
+
+                // Caja: reúne servicios y medios de pago del día para que el
+                // owner controle manualmente contra la realidad. El conteo
+                // por medio de pago es opcional (ver CajaController).
+                Route::get('caja', [CajaController::class, 'index'])->name('caja.index');
+                Route::post('caja/cerrar', [CajaController::class, 'cerrar'])->name('caja.cerrar');
+                Route::patch('caja/reabrir', [CajaController::class, 'reabrir'])->name('caja.reabrir');
 
                 Route::resource('barberos', BarberoController::class)->except(['destroy']);
                 Route::patch('barberos/{barbero}/deactivate', [BarberoController::class, 'deactivate'])->name('barberos.deactivate');

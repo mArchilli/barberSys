@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\ResolvesBarberiaContext;
+use App\Http\Requests\Owner\UpdateCorteRequest;
 use App\Http\Requests\StoreCorteRequest;
 use App\Models\Barberia;
 use App\Models\Cliente;
 use App\Models\Corte;
 use App\Models\MedioPago;
 use App\Models\Servicio;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -114,5 +116,36 @@ class CorteController extends Controller
         return $user->isBarber()
             ? redirect()->route('barber.cortes.index')->with('success', 'Corte cargado correctamente.')
             : redirect()->route('owner.barberias.cortes.index', $barberia->id)->with('success', 'Corte cargado correctamente.');
+    }
+
+    // Este controller es compartido entre owner y barber (index/store), pero
+    // update() es exclusivamente una corrección de conciliación de caja: el
+    // owner ajusta un corte que no necesariamente cargó él. No es una
+    // capacidad general de "editar mi propio corte" para el barbero, así que
+    // se valida el rol explícitamente en vez de confiar solo en el middleware
+    // de la ruta (que hoy la registra únicamente bajo el grupo owner).
+    public function update(UpdateCorteRequest $request, Barberia $barberia, Corte $corte): RedirectResponse
+    {
+        abort_unless($request->user()->isOwner(), 403);
+        abort_if($corte->barberia_id !== $barberia->id, 403);
+
+        $servicio = Servicio::where('barberia_id', $barberia->id)
+            ->where('active', true)
+            ->findOrFail($request->servicio_id);
+        $cliente = Cliente::where('barberia_id', $barberia->id)
+            ->where('active', true)
+            ->findOrFail($request->cliente_id);
+        $medioPago = MedioPago::where('barberia_id', $barberia->id)
+            ->where('active', true)
+            ->findOrFail($request->medio_pago_id);
+
+        $corte->update([
+            'servicio_id' => $servicio->id,
+            'cliente_id' => $cliente->id,
+            'medio_pago_id' => $medioPago->id,
+            'price' => $request->price,
+        ]);
+
+        return back()->with('success', 'Corte corregido correctamente.');
     }
 }

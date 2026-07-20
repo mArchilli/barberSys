@@ -7,6 +7,7 @@ import {
     IconHeadset,
     IconLayoutDashboard,
     IconList,
+    IconLockDollar,
     IconLogout,
     IconMenu2,
     IconReceipt2,
@@ -70,6 +71,12 @@ export default function DashNavbar() {
                 label: 'Clientes',
                 icon: IconUserCircle,
                 active: route().current('owner.barberias.clientes.*'),
+            },
+            {
+                href: route('owner.barberias.caja.index', { barberia: currentBarberia.id }),
+                label: 'Caja',
+                icon: IconLockDollar,
+                active: route().current('owner.barberias.caja.*'),
             },
             {
                 href: route('owner.barberias.finanzas', { barberia: currentBarberia.id }),

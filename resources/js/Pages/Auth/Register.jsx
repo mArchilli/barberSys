@@ -196,7 +196,7 @@ export default function Register({ plans }) {
     };
 
     return (
-        <GuestLayout maxWidth="sm:max-w-xl">
+        <GuestLayout maxWidth="sm:max-w-7xl">
             <Head title="Crear cuenta" />
 
             <div className="mb-6 text-center">
