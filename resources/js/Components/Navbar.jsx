@@ -37,8 +37,8 @@ export default function Navbar({
         return [
             {
                 label: 'Conocé Pelito',
-                bgColor: '#1D2221',
-                textColor: '#EDF1F2',
+                bgColor: '#48D5FC',
+                textColor: '#242726',
                 links: [features, howItWorks]
                     .filter(Boolean)
                     .map((link) => ({
@@ -59,9 +59,9 @@ export default function Navbar({
                 ].filter(Boolean),
             },
             {
-                label: loginCta ? 'Ayuda y acceso' : 'Ayuda',
-                bgColor: '#48D5FC',
-                textColor: '#242726',
+                label: 'Ayuda',
+                bgColor: '#1D2221',
+                textColor: '#EDF1F2',
                 links: [
                     faq && {
                         ...faq,

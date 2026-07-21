@@ -108,6 +108,7 @@ export default function PricingSection({
     whatsappSalesNumber,
 }) {
     const [cycle, setCycle] = useState('monthly');
+    const [hoveredPlanId, setHoveredPlanId] = useState(null);
 
     return (
         <section
@@ -146,8 +147,13 @@ export default function PricingSection({
                         return (
                             <article
                                 key={plan.id}
+                                onMouseEnter={() => setHoveredPlanId(plan.id)}
+                                onMouseLeave={() => setHoveredPlanId(null)}
                                 className={[
-                                    'relative flex h-full min-h-[760px] flex-col overflow-hidden rounded-brand-xl border p-7 shadow-brand-card transition-all duration-200 hover:-translate-y-1 hover:shadow-brand-card-hover motion-reduce:transition-none motion-reduce:hover:transform-none',
+                                    'relative flex h-full min-h-[760px] flex-col overflow-hidden rounded-brand-xl border p-7 shadow-brand-card transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-brand-card-hover motion-reduce:transition-none motion-reduce:hover:transform-none',
+                                    hoveredPlanId !== null && hoveredPlanId !== plan.id
+                                        ? 'opacity-45 blur-[1px]'
+                                        : 'opacity-100 blur-0',
                                     dark
                                         ? 'border-brand-nav-bg bg-brand-nav-bg text-brand-surface'
                                         : featured

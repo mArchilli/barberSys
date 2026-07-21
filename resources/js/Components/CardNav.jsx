@@ -209,7 +209,7 @@ export default function CardNav({
             <nav
                 ref={navRef}
                 aria-label="Navegación principal"
-                className={`card-nav relative mx-auto block h-[60px] max-h-[calc(100svh-32px)] max-w-[800px] overflow-hidden rounded-brand-lg border border-brand-border/80 shadow-brand-floating backdrop-blur-md will-change-[height] ${isExpanded ? 'open' : ''}`}
+                className={`card-nav relative mx-auto block h-[60px] max-h-[calc(100svh-32px)] max-w-[920px] overflow-hidden rounded-brand-lg border border-brand-border/80 shadow-brand-floating backdrop-blur-md will-change-[height] ${isExpanded ? 'open' : ''}`}
                 style={{ backgroundColor: baseColor }}
             >
                 <div className="absolute inset-x-0 top-0 z-[2] flex h-[60px] items-center justify-between p-2 pl-3 sm:pl-[1.1rem]">
