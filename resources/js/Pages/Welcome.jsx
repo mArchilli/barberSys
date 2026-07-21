@@ -25,6 +25,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
           : canLogin
             ? route('login')
             : '#';
+    const primaryCtaLabel = auth.user ? 'Ir al panel' : 'Probar gratis';
     const whatsappHref =
         'https://wa.me/' +
         (whatsappSalesNumber ?? '') +
@@ -38,7 +39,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                 <Navbar
                     links={links}
                     cta={{
-                        label: 'Probar gratis',
+                        label: primaryCtaLabel,
                         href: ctaHref,
                         inertia: ctaHref !== '#',
                     }}
@@ -54,7 +55,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                 />
                 <HeroSection
                     primaryCta={{
-                        label: 'Probar gratis',
+                        label: primaryCtaLabel,
                         href: ctaHref,
                         inertia: ctaHref !== '#',
                     }}
@@ -88,7 +89,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                 <PricingSection
                     plans={plans}
                     cta={{
-                        label: 'Probar gratis',
+                        label: primaryCtaLabel,
                         href: ctaHref,
                         inertia: ctaHref !== '#',
                     }}
