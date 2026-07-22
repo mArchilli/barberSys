@@ -11,6 +11,7 @@ use App\Models\GastoRegistro;
 use App\Models\User;
 use App\Services\ComisionCalculator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -68,7 +69,7 @@ class FinanzasController extends Controller
             ->orderByDesc('performed_at')
             ->get()
             ->map(fn ($fila) => [
-                'date' => $fila->date,
+                'date' => Carbon::parse($fila->date)->toDateString(),
                 'total' => (float) $fila->total,
                 'cantidad' => (int) $fila->cantidad,
             ]);

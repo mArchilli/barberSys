@@ -81,7 +81,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                 />
                 <FeaturesSection
                     cta={{
-                        label: 'Configurar cadena',
+                        label: 'Probar Pelito',
                         href: ctaHref,
                         inertia: ctaHref !== '#',
                     }}

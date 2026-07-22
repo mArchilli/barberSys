@@ -26,6 +26,12 @@
         scrollbar-color: #48D5FC rgb(var(--brand-border-rgb) / 0.4);
     }
 
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+    }
+
     body {
         @apply bg-brand-bg font-sans text-brand-text antialiased;
     }
