@@ -31,11 +31,11 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
     const whatsappHref =
         'https://wa.me/' +
         (whatsappSalesNumber ?? '') +
-        '?text=Hola%20Pelito%2C%20quiero%20conocer%20el%20sistema%20para%20mi%20barber%C3%ADa.';
+        '?text=Hola%20Estilus%2C%20quiero%20conocer%20el%20sistema%20para%20mi%20barber%C3%ADa.';
 
     return (
         <>
-            <Head title="Pelito">
+            <Head title="Estilus">
                 <link
                     rel="stylesheet"
                     href="https://fonts.bunny.net/css?family=bricolage-grotesque:600,700,800|plus-jakarta-sans:400,500,600,700,800&display=swap"
@@ -81,7 +81,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                 />
                 <FeaturesSection
                     cta={{
-                        label: 'Probar Pelito',
+                        label: 'Probar Estilus',
                         href: ctaHref,
                         inertia: ctaHref !== '#',
                     }}
@@ -125,8 +125,9 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                 <div className="bg-brand-primary">
                     <CTASection
                         cta={{
-                            label: 'Hablar por WhatsApp',
-                            href: whatsappHref,
+                            label: 'Probar gratis',
+                            href: ctaHref,
+                            inertia: ctaHref !== '#',
                         }}
                     />
                     <FAQSection
@@ -148,7 +149,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                 />
                 <WhatsAppButton
                     href={whatsappHref}
-                    label="Abrir conversación de WhatsApp con Pelito"
+                    label="Abrir conversación de WhatsApp con Estilus"
                 />
             </div>
         </>

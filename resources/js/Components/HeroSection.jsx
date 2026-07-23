@@ -47,7 +47,7 @@ export default function HeroSection({
                             Vos encargate de cortar.
                         </span>
                         <span className="mt-1 block text-brand-primary xl:whitespace-nowrap">
-                            Pelito ordena tu barbería.
+                            Estilus ordena tu barbería.
                         </span>
                     </h1>
 

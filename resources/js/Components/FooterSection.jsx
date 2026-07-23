@@ -16,7 +16,7 @@ const defaultLinks = [
 ];
 
 export default function FooterSection({
-    brandName = 'Pelito',
+    brandName = 'Estilus',
     links = defaultLinks,
     whatsappHref = 'https://wa.me/',
     instagramHref = '#',
@@ -75,7 +75,7 @@ export default function FooterSection({
                                     href={whatsappHref}
                                     target="_blank"
                                     rel="noreferrer"
-                                    aria-label="WhatsApp de Pelito"
+                                    aria-label="WhatsApp de Estilus"
                                     className={socialBaseClass}
                                 >
                                     <IconBrandWhatsapp className="h-5 w-5" stroke={2.1} />
@@ -84,7 +84,7 @@ export default function FooterSection({
                                     href={instagramHref}
                                     target="_blank"
                                     rel="noreferrer"
-                                    aria-label="Instagram de Pelito"
+                                    aria-label="Instagram de Estilus"
                                     className={socialBaseClass}
                                 >
                                     <IconBrandInstagram className="h-5 w-5" stroke={2.1} />

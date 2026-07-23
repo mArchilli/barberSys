@@ -3,9 +3,9 @@ import { IconChevronDown } from '@tabler/icons-react';
 
 const faqs = [
     {
-        question: '¿Pelito reemplaza mi sistema de turnos?',
+        question: '¿Estilus reemplaza mi sistema de turnos?',
         answer:
-            'No. Pelito no es un turnero. Podés seguir usando WhatsApp, agenda o el sistema de turnos que ya tengas. Pelito se enfoca en la gestión interna, productividad, facturación, gastos y rentabilidad.',
+            'No. Estilus no es un turnero. Podés seguir usando WhatsApp, agenda o el sistema de turnos que ya tengas. Estilus se enfoca en la gestión interna, productividad, facturación, gastos y rentabilidad.',
     },
     {
         question: '¿Puedo ver los números desde mi casa?',
@@ -15,7 +15,7 @@ const faqs = [
     {
         question: '¿Cómo se pagan las comisiones?',
         answer:
-            'Pelito te ayuda a registrar servicios, montos y productividad para que calcular comisiones deje de depender de cuentas manuales, cuadernos o planillas sueltas.',
+            'Estilus te ayuda a registrar servicios, montos y productividad para que calcular comisiones deje de depender de cuentas manuales, cuadernos o planillas sueltas.',
     },
     {
         question: '¿Sirve para una sola barbería?',
@@ -30,7 +30,7 @@ const faqs = [
     {
         question: '¿Puedo registrar efectivo, transferencia y tarjeta?',
         answer:
-            'Sí. Pelito contempla los distintos medios de pago para que entiendas cómo se mueve la caja y qué peso tiene cada canal en la facturación.',
+            'Sí. Estilus contempla los distintos medios de pago para que entiendas cómo se mueve la caja y qué peso tiene cada canal en la facturación.',
     },
     {
         question: '¿Puedo calcular la ganancia neta?',
@@ -40,7 +40,7 @@ const faqs = [
     {
         question: '¿Necesito instalar algo?',
         answer:
-            'No hace falta una instalación compleja. La propuesta es que puedas usar Pelito de forma simple, con acceso desde tus dispositivos habituales.',
+            'No hace falta una instalación compleja. La propuesta es que puedas usar Estilus de forma simple, con acceso desde tus dispositivos habituales.',
     },
 ];
 
@@ -128,7 +128,7 @@ export default function FAQSection({
                         Lo que más preguntan antes de empezar
                     </h2>
                     <p className="mt-5 text-base leading-7 text-brand-text/75 sm:text-lg sm:leading-8">
-                        Si todavía estás evaluando si Pelito encaja con tu forma de
+                        Si todavía estás evaluando si Estilus encaja con tu forma de
                         trabajar, acá tenés respuestas claras a las dudas más comunes.
                     </p>
                 </div>

@@ -578,7 +578,7 @@ export default function CardSwap({
         <div
             ref={containerRef}
             role="region"
-            aria-label={labelledBy ? undefined : 'Funcionalidades de Pelito'}
+            aria-label={labelledBy ? undefined : 'Funcionalidades de Estilus'}
             aria-labelledby={labelledBy}
             aria-roledescription="carrusel"
             className={`relative isolate overflow-visible [perspective:1200px] ${className}`.trim()}

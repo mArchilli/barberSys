@@ -21,7 +21,7 @@ function BrandLogo({ brandName }) {
 }
 
 export default function Navbar({
-    brandName = 'Pelito',
+    brandName = 'Estilus',
     homeHref = '#inicio',
     links = defaultLinks,
     cta = {
@@ -36,7 +36,7 @@ export default function Navbar({
 
         return [
             {
-                label: 'Conocé Pelito',
+                label: 'Conocé Estilus',
                 bgColor: '#48D5FC',
                 textColor: '#242726',
                 links: [features, howItWorks]

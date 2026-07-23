@@ -15,9 +15,9 @@ export const SOFTWARE_FEATURES = [
         eyebrow: 'Servicios y cortes',
         title: 'Registrar cortes nunca fue tan sencillo',
         description:
-            'Elegí el cliente, seleccioná el servicio y Pelito completa el precio. Confirmás el cobro y el movimiento queda registrado al instante.',
+            'Elegí el cliente, seleccioná el servicio y Estilus completa el precio. Confirmás el cobro y el movimiento queda registrado al instante.',
         image: '/images/features/cortes.png',
-        imageAlt: 'Vista del módulo para cargar cortes en Pelito',
+        imageAlt: 'Vista del módulo para cargar cortes en Estilus',
         icon: IconScissors,
         tone: 'primary',
     },
@@ -28,29 +28,29 @@ export const SOFTWARE_FEATURES = [
         description:
             'Creá perfiles, definí sueldo fijo o comisión y seguí el rendimiento de cada barbero desde un mismo lugar.',
         image: '/images/features/barberos.png',
-        imageAlt: 'Vista de la gestión del equipo de barberos en Pelito',
+        imageAlt: 'Vista de la gestión del equipo de barberos en Estilus',
         icon: IconUsers,
         tone: 'secondary',
     },
     {
         id: 'finanzas',
         eyebrow: 'Gestión y finanzas',
-        title: 'Pelito te muestra cuánto ingresa, cuánto egresa y cuánto te queda',
+        title: 'Estilus te muestra cuánto ingresa, cuánto egresa y cuánto te queda',
         description:
             'Facturación, sueldos y gastos se ordenan en una sola vista para que conozcas la rentabilidad real de tu barbería.',
         image: '/images/features/finanzas.png',
-        imageAlt: 'Vista del panel financiero de Pelito',
+        imageAlt: 'Vista del panel financiero de Estilus',
         icon: IconWallet,
         tone: 'dark',
     },
     {
         id: 'medios-de-pago',
         eyebrow: 'Medios de pago',
-        title: 'Pelito se adapta a vos',
+        title: 'Estilus se adapta a vos',
         description:
-            'Sea cual sea el medio con el que cobrás, cargalo en el sistema. Pelito registra cada movimiento y te ordena la caja automáticamente.',
+            'Sea cual sea el medio con el que cobrás, cargalo en el sistema. Estilus registra cada movimiento y te ordena la caja automáticamente.',
         image: '/images/features/medios-pago.png',
-        imageAlt: 'Vista de los medios de pago configurados en Pelito',
+        imageAlt: 'Vista de los medios de pago configurados en Estilus',
         icon: IconCreditCard,
         tone: 'surface',
     },
@@ -181,7 +181,7 @@ SoftwareFeatureCard.displayName = 'SoftwareFeatureCard';
 
 export default function FeaturesSection({
     cta = {
-        label: 'Probar Pelito',
+        label: 'Probar Estilus',
         href: '#',
         inertia: false,
     },
@@ -208,7 +208,7 @@ export default function FeaturesSection({
                             Herramientas profesionales para ordenar tu barbería
                         </h2>
                         <p className="mt-7 max-w-[460px] text-lg font-medium leading-8 text-brand-text-secondary xl:text-[1.1875rem]">
-                            Desde el primer corte hasta el cierre del mes: Pelito
+                            Desde el primer corte hasta el cierre del mes: Estilus
                             reúne la operación de tu barbería para que trabajes
                             con más orden y decidas con números claros.
                         </p>
@@ -240,7 +240,7 @@ export default function FeaturesSection({
                             skewAmount={1.2}
                             easing="linear"
                             labelledBy="software-features-heading"
-                            controlsLabel="Elegir una funcionalidad de Pelito"
+                            controlsLabel="Elegir una funcionalidad de Estilus"
                             className="ml-0 mr-auto max-w-[860px]"
                         >
                             {SOFTWARE_FEATURES.map((feature, index) => (

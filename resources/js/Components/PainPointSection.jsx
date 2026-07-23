@@ -65,7 +65,7 @@ export default function PainPointSection({
                     </h2>
                     <p className="mt-5 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
                         Dejá de adivinar y empezá a decidir con datos reales.
-                        Pelito transforma el caos operativo en una estructura
+                        Estilus transforma el caos operativo en una estructura
                         más clara, rentable y profesional.
                     </p>
                 </div>

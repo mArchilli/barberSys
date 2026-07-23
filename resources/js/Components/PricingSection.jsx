@@ -92,7 +92,7 @@ function PricingAction({ href, inertia = false, className, children, ...rest }) 
 
 function buildSalesWhatsappHref(whatsappSalesNumber, planName) {
     const text = encodeURIComponent(
-        `Hola Pelito, quiero hablar con ventas sobre el plan ${planName}.`,
+        `Hola Estilus, quiero hablar con ventas sobre el plan ${planName}.`,
     );
 
     return `https://wa.me/${whatsappSalesNumber ?? ''}?text=${text}`;
