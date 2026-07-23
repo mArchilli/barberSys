@@ -8,6 +8,7 @@ import Navbar from '@/Components/Navbar';
 import PainPointSection from '@/Components/PainPointSection';
 import PricingSection from '@/Components/PricingSection';
 import StepSection from '@/Components/StepSection';
+import WaveTransition from '@/Components/WaveTransition';
 import WhatsAppButton from '@/Components/WhatsAppButton';
 import { Head } from '@inertiajs/react';
 
@@ -117,17 +118,28 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                     }}
                     whatsappSalesNumber={whatsappSalesNumber}
                 />
-                <CTASection
-                    cta={{
-                        label: 'Hablar por WhatsApp',
-                        href: whatsappHref,
-                    }}
+                <WaveTransition
+                    fromClassName="text-brand-bg"
+                    toClassName="bg-brand-primary"
                 />
-                <FAQSection
-                    cta={{
-                        label: 'Hablar por WhatsApp',
-                        href: whatsappHref,
-                    }}
+                <div className="bg-brand-primary">
+                    <CTASection
+                        cta={{
+                            label: 'Hablar por WhatsApp',
+                            href: whatsappHref,
+                        }}
+                    />
+                    <FAQSection
+                        cta={{
+                            label: 'Hablar por WhatsApp',
+                            href: whatsappHref,
+                        }}
+                    />
+                </div>
+                <WaveTransition
+                    fromClassName="text-brand-primary"
+                    toClassName="bg-brand-nav-bg"
+                    flip
                 />
                 <FooterSection
                     links={links}

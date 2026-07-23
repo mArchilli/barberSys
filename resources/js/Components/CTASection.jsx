@@ -12,10 +12,10 @@ export default function CTASection({
         'Sin poner tu tarjeta de credito. Al vencerse el plazo gratuito te damos la opcion de mantenerlo o darte de baja sin ningun compromiso.';
 
     return (
-        <section className="px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12">
+        <section className="px-6 pb-16 pt-8 sm:px-8 sm:pb-24 sm:pt-12 lg:px-10 lg:pb-28 lg:pt-14 xl:px-12">
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="overflow-hidden rounded-[28px] border border-brand-nav-bg bg-brand-nav-bg shadow-brand-floating">
-                    <div className="grid gap-10 px-6 py-8 sm:px-8 sm:py-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:items-stretch lg:px-12 lg:py-12 xl:px-14">
+                    <div className="grid grid-cols-[minmax(0,1fr)] gap-10 px-6 py-8 sm:px-8 sm:py-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:items-stretch lg:px-12 lg:py-12 xl:px-14">
                         <div className="relative flex min-w-0 flex-col lg:min-h-[420px]">
                             <div className="absolute left-0 top-0 h-32 w-32 rounded-full bg-brand-accent/25 blur-3xl" />
 
@@ -52,7 +52,7 @@ export default function CTASection({
                             </div>
                         </div>
 
-                        <div className="flex lg:h-full">
+                        <div className="flex min-w-0 lg:h-full">
                             <div className="w-full overflow-hidden rounded-brand-xl bg-brand-surface/6 shadow-brand-card lg:h-full">
                                 <div className="aspect-[1672/941] min-h-[280px] w-full sm:min-h-[340px] lg:h-full lg:min-h-[420px]">
                                     <img

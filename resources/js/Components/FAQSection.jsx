@@ -60,19 +60,14 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
                 aria-expanded={isOpen}
                 className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left sm:px-6"
             >
-                <span
-                    className={[
-                        'pr-2 text-base font-semibold leading-7 sm:text-lg',
-                        isOpen ? 'text-brand-primary' : 'text-brand-text',
-                    ].join(' ')}
-                >
+                <span className="pr-2 text-base font-semibold leading-7 text-brand-text sm:text-lg">
                     {question}
                 </span>
                 <span
                     className={[
                         'flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-all duration-200 motion-reduce:transition-none',
                         isOpen
-                            ? 'border-brand-primary bg-brand-primary-soft text-brand-primary'
+                            ? 'border-brand-primary bg-brand-primary-soft text-brand-text'
                             : 'border-brand-border bg-brand-surface-alt text-brand-primary',
                     ].join(' ')}
                 >
@@ -101,14 +96,7 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
                                 : 'border-brand-border-subtle',
                         ].join(' ')}
                     >
-                        <p
-                            className={[
-                                'max-w-3xl text-sm leading-7 sm:text-base',
-                                isOpen
-                                    ? 'text-brand-primary-soft-text'
-                                    : 'text-brand-text-secondary',
-                            ].join(' ')}
-                        >
+                        <p className="max-w-3xl text-sm leading-7 text-brand-text-secondary sm:text-base">
                             {answer}
                         </p>
                     </div>
@@ -133,13 +121,13 @@ export default function FAQSection({
         >
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="mx-auto max-w-3xl text-center">
-                    <span className="inline-flex rounded-brand-pill border border-brand-accent/20 bg-brand-accent/12 px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-brand-accent">
+                    <span className="inline-flex rounded-brand-pill border border-brand-text/20 bg-brand-text/10 px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-brand-text">
                         Preguntas frecuentes
                     </span>
                     <h2 className="mt-5 text-4xl text-brand-text sm:text-5xl lg:text-6xl">
                         Lo que más preguntan antes de empezar
                     </h2>
-                    <p className="mt-5 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
+                    <p className="mt-5 text-base leading-7 text-brand-text/75 sm:text-lg sm:leading-8">
                         Si todavía estás evaluando si Pelito encaja con tu forma de
                         trabajar, acá tenés respuestas claras a las dudas más comunes.
                     </p>
