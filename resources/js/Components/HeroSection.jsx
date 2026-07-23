@@ -2,7 +2,6 @@ import { Link } from '@inertiajs/react';
 import {
     IconArrowRight,
     IconPlayerPlayFilled,
-    IconSparkles,
 } from '@tabler/icons-react';
 
 function HeroAction({ href, inertia = false, className, children }) {
@@ -36,19 +35,14 @@ export default function HeroSection({
     return (
         <section
             id="inicio"
-            className="relative flex min-h-[calc(100svh-76px)] overflow-hidden bg-cover bg-center bg-no-repeat px-5 py-10 sm:px-8 sm:py-12 lg:px-10 lg:py-10 xl:px-12"
+            className="relative -mt-[76px] flex min-h-[100svh] overflow-hidden bg-cover bg-center bg-no-repeat px-5 pb-10 pt-[116px] sm:px-8 sm:pb-12 sm:pt-[124px] lg:px-10 lg:pb-10 lg:pt-[116px] xl:px-12"
             style={{
                 backgroundImage: "url('/images/hero-background.png')",
             }}
         >
             <div className="mx-auto flex w-full max-w-[1760px] flex-1 items-center">
                 <div className="flex max-w-[760px] flex-col items-start lg:pb-2">
-                    <div className="inline-flex min-h-[40px] items-center gap-2 rounded-brand-pill border border-brand-accent/20 bg-brand-accent/12 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-brand-accent">
-                        <IconSparkles className="h-4 w-4" stroke={2.2} />
-                        <span>Sistema de gestión para barberías</span>
-                    </div>
-
-                    <h1 className="mt-6 max-w-[11ch] font-display text-4xl font-extrabold leading-[0.95] tracking-[-0.06em] text-brand-text sm:text-5xl lg:max-w-none lg:text-[3.25rem] xl:text-[3.55rem] 2xl:text-[3.75rem]">
+                    <h1 className="max-w-[11ch] font-display text-4xl font-extrabold leading-[0.95] tracking-[-0.06em] text-brand-text sm:text-5xl lg:max-w-none lg:text-[3.25rem] xl:text-[3.55rem] 2xl:text-[3.75rem]">
                         <span className="block xl:whitespace-nowrap">
                             Vos encargate de cortar.
                         </span>

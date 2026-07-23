@@ -216,7 +216,7 @@ export default function CardNav({
                     <button
                         ref={menuButtonRef}
                         type="button"
-                        className="order-2 inline-flex h-11 w-11 flex-col items-center justify-center gap-[6px] rounded-brand-pill transition-colors hover:bg-brand-bg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 md:order-none"
+                        className="order-1 inline-flex h-11 w-11 flex-col items-center justify-center gap-[6px] rounded-brand-pill transition-colors hover:bg-brand-bg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 md:order-none"
                         onClick={toggleMenu}
                         aria-label={isExpanded ? 'Cerrar menú' : 'Abrir menú'}
                         aria-controls="card-nav-content"
@@ -236,7 +236,7 @@ export default function CardNav({
                     <NavAction
                         href={homeHref}
                         aria-label={logoAlt}
-                        className="order-1 inline-flex min-h-11 items-center rounded-brand-pill px-1 text-brand-text transition-colors hover:text-brand-link focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 md:absolute md:left-1/2 md:top-1/2 md:order-none md:-translate-x-1/2 md:-translate-y-1/2"
+                        className="order-2 inline-flex min-h-11 items-center rounded-brand-pill px-1 text-brand-text transition-colors hover:text-brand-link focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 md:absolute md:left-1/2 md:top-1/2 md:order-none md:-translate-x-1/2 md:-translate-y-1/2"
                         onClick={() => closeMenu()}
                     >
                         {renderLogo()}
