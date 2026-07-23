@@ -81,10 +81,10 @@ function TextBlock({ step, state, side = 'left' }) {
                 }`}
             />
 
-            <p className="text-[0.72rem] font-bold uppercase tracking-[0.22em] text-brand-primary-soft-text">
+            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-brand-primary-soft-text">
                 {step.eyebrow}
             </p>
-            <h3 className="mt-4 font-display text-3xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-[2.1rem]">
+            <h3 className="mt-4 text-3xl text-brand-text sm:text-[2.1rem]">
                 {step.title}
             </h3>
             <p className="mt-4 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
@@ -294,7 +294,7 @@ function TimelineNode({ number, state }) {
     return (
         <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-brand-bg">
             <div
-                className={`flex h-12 w-12 items-center justify-center rounded-full border text-base font-extrabold transition-all duration-500 ${nodeClass}`}
+                className={`flex h-12 w-12 items-center justify-center rounded-full border text-base font-bold transition-all duration-500 ${nodeClass}`}
             >
                 {number}
             </div>
@@ -435,10 +435,10 @@ export default function StepSection({
         >
             <div className="mx-auto w-full max-w-[1180px]">
                 <div className="mx-auto max-w-3xl text-center">
-                    <span className="inline-flex rounded-brand-pill bg-brand-primary-tint px-4 py-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-brand-primary-soft-text">
+                    <span className="inline-flex rounded-brand-pill bg-brand-primary-tint px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-brand-primary-soft-text">
                         PROCESO OPTIMIZADO
                     </span>
-                    <h2 className="mt-5 font-display text-3xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-4xl lg:text-5xl">
+                    <h2 className="mt-5 text-3xl text-brand-text sm:text-4xl lg:text-5xl">
                         3 pasos para el control total
                     </h2>
                     <p className="mt-5 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
@@ -476,7 +476,7 @@ export default function StepSection({
                     <StepAction
                         href={cta.href}
                         inertia={cta.inertia}
-                        className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-8 text-sm font-bold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                        className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-8 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
                     >
                         <span>{cta.label}</span>
                         <IconArrowRight className="ml-2 h-4 w-4" stroke={2.3} />

@@ -133,10 +133,10 @@ export default function FAQSection({
         >
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="mx-auto max-w-3xl text-center">
-                    <span className="inline-flex rounded-brand-pill border border-brand-accent/20 bg-brand-accent/12 px-4 py-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-brand-accent">
+                    <span className="inline-flex rounded-brand-pill border border-brand-accent/20 bg-brand-accent/12 px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-brand-accent">
                         Preguntas frecuentes
                     </span>
-                    <h2 className="mt-5 font-display text-4xl font-extrabold tracking-[-0.06em] text-brand-text sm:text-5xl lg:text-6xl">
+                    <h2 className="mt-5 text-4xl text-brand-text sm:text-5xl lg:text-6xl">
                         Lo que más preguntan antes de empezar
                     </h2>
                     <p className="mt-5 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
@@ -172,7 +172,7 @@ export default function FAQSection({
                                 href={cta.href}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-7 text-sm font-bold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                                className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-7 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
                             >
                                 {cta.label}
                             </a>

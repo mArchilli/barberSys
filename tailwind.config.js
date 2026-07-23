@@ -36,8 +36,14 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', ...defaultTheme.fontFamily.sans],
-                display: ['Hanken Grotesk', 'sans-serif'],
+                sans: [
+                    'var(--font-sans-family)',
+                    ...defaultTheme.fontFamily.sans,
+                ],
+                display: [
+                    'var(--font-display-family)',
+                    ...defaultTheme.fontFamily.sans,
+                ],
             },
             colors: {
                 brand: {

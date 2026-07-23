@@ -7,7 +7,7 @@ export default function CTASection({
     },
 }) {
     const ctaButtonClasses =
-        'inline-flex min-h-[52px] items-center justify-center rounded-brand-pill bg-brand-primary px-7 text-sm font-bold text-brand-on-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-surface focus-visible:ring-offset-2 focus-visible:ring-offset-brand-nav-bg motion-reduce:transform-none motion-reduce:transition-none';
+        'inline-flex min-h-[52px] items-center justify-center rounded-brand-pill bg-brand-primary px-7 text-sm font-semibold text-brand-on-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-surface focus-visible:ring-offset-2 focus-visible:ring-offset-brand-nav-bg motion-reduce:transform-none motion-reduce:transition-none';
     const trialNote =
         'Sin poner tu tarjeta de credito. Al vencerse el plazo gratuito te damos la opcion de mantenerlo o darte de baja sin ningun compromiso.';
 
@@ -20,7 +20,7 @@ export default function CTASection({
                             <div className="absolute left-0 top-0 h-32 w-32 rounded-full bg-brand-accent/25 blur-3xl" />
 
                             <div className="relative flex min-w-0 h-full flex-col">
-                                <h2 className="w-full max-w-full font-display text-[1.8rem] font-extrabold leading-[1.08] tracking-[-0.02em] text-brand-surface break-words sm:max-w-2xl sm:text-4xl sm:leading-[1.04] sm:tracking-[-0.05em] lg:text-[3.2rem] lg:leading-[1.02]">
+                                <h2 className="w-full max-w-full break-words text-[1.8rem] leading-[1.08] text-brand-surface sm:max-w-2xl sm:text-4xl sm:leading-[1.04] lg:text-[3.2rem] lg:leading-[1.02]">
                                     Si querés ver cómo{' '}
                                     <span className="text-brand-primary">
                                         Pelito ordena tu barbería.

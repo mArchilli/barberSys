@@ -246,7 +246,7 @@ export default function CardNav({
                         <NavAction
                             href={cta.href}
                             inertia={cta.inertia}
-                            className="hidden h-11 items-center justify-center rounded-brand-pill px-5 text-sm font-bold shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none md:inline-flex"
+                            className="hidden h-11 items-center justify-center rounded-brand-pill px-5 text-sm font-semibold shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none md:inline-flex"
                             onClick={() => closeMenu()}
                             style={{
                                 backgroundColor: buttonBgColor,
@@ -275,7 +275,7 @@ export default function CardNav({
                                 color: item.textColor,
                             }}
                         >
-                            <p className="font-display text-lg font-bold tracking-[-0.025em] md:text-[1.35rem]">
+                            <p className="text-lg font-semibold md:text-[1.35rem]">
                                 {item.label}
                             </p>
                             <div className="mt-auto flex flex-col gap-0.5">
@@ -285,7 +285,7 @@ export default function CardNav({
                                         href={link.href}
                                         inertia={link.inertia}
                                         aria-label={link.ariaLabel}
-                                        className="group inline-flex min-h-11 items-center gap-1.5 rounded-md text-sm font-medium no-underline hover:underline hover:underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 focus-visible:ring-offset-transparent md:text-[15px]"
+                                        className="group inline-flex min-h-11 items-center gap-1.5 rounded-md text-sm font-semibold no-underline hover:underline hover:underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2 focus-visible:ring-offset-transparent md:text-[15px]"
                                         onClick={() => closeMenu()}
                                     >
                                         <IconArrowUpRight

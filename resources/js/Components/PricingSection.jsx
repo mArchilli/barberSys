@@ -61,7 +61,7 @@ function BillingCycleToggle({ cycle, onChange }) {
                     type="button"
                     onClick={() => onChange(option.value)}
                     className={[
-                        'rounded-brand-pill px-5 py-2 text-sm font-bold transition-colors duration-150',
+                        'rounded-brand-pill px-5 py-2 text-sm font-semibold transition-colors duration-150',
                         cycle === option.value
                             ? 'bg-brand-primary text-brand-on-primary shadow-brand-cta'
                             : 'text-brand-text-secondary hover:text-brand-text',
@@ -113,14 +113,11 @@ export default function PricingSection({
     return (
         <section
             id="precios"
-            className="px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
+            className="px-6 pb-16 pt-6 sm:px-8 sm:pb-24 sm:pt-8 lg:px-10 lg:pb-28 lg:pt-10 xl:px-12"
         >
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="mx-auto max-w-3xl text-center">
-                    <span className="inline-flex rounded-brand-pill border border-brand-accent/20 bg-brand-accent/12 px-4 py-2 text-[0.68rem] font-bold uppercase tracking-[0.18em] text-brand-accent">
-                        Pricing claro
-                    </span>
-                    <h2 className="mt-5 font-display text-4xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-5xl lg:text-6xl">
+                    <h2 className="text-4xl text-brand-text sm:text-5xl lg:text-6xl">
                         Tenemos el plan perfecto para tu barbería
                     </h2>
                     <p className="mt-5 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
@@ -168,7 +165,7 @@ export default function PricingSection({
                                 <div className="flex items-center justify-between gap-3">
                                     <h3
                                         className={[
-                                            'font-display text-[2rem] font-extrabold tracking-[-0.05em]',
+                                            'text-[2rem]',
                                             dark
                                                 ? 'text-brand-surface'
                                                 : 'text-brand-text',
@@ -186,7 +183,7 @@ export default function PricingSection({
 
                                 <div className="mt-7">
                                     <div className="flex items-end gap-2">
-                                        <span className="font-display text-[2.4rem] font-extrabold tracking-[-0.06em]">
+                                        <span className="text-[2.4rem] font-bold tabular-nums">
                                             {plan.is_custom ? 'A medida' : formatMoney(displayPrice)}
                                         </span>
                                         {!plan.is_custom && (
@@ -244,7 +241,7 @@ export default function PricingSection({
                                         inertia={plan.is_custom ? false : cta.inertia}
                                         {...(plan.is_custom ? { target: '_blank', rel: 'noreferrer' } : {})}
                                         className={[
-                                            'inline-flex min-h-[48px] w-full items-center justify-center rounded-brand-pill px-6 text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none',
+                                            'inline-flex min-h-[48px] w-full items-center justify-center rounded-brand-pill px-6 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none',
                                             dark
                                                 ? 'bg-brand-primary text-brand-on-primary hover:-translate-y-0.5 hover:bg-brand-primary-hover focus-visible:ring-brand-primary focus-visible:ring-offset-brand-nav-bg'
                                                 : featured
@@ -272,7 +269,7 @@ export default function PricingSection({
                                 >
                                     <p
                                         className={[
-                                            'text-[0.68rem] font-bold uppercase tracking-[0.18em]',
+                                            'text-[0.68rem] font-semibold uppercase tracking-[0.18em]',
                                             dark
                                                 ? 'text-brand-text-on-dark'
                                                 : featured

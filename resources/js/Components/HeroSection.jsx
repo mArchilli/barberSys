@@ -41,8 +41,8 @@ export default function HeroSection({
             }}
         >
             <div className="mx-auto flex w-full max-w-[1760px] flex-1 items-center">
-                <div className="flex max-w-[760px] flex-col items-start lg:pb-2">
-                    <h1 className="max-w-[11ch] font-display text-4xl font-extrabold leading-[0.95] tracking-[-0.06em] text-brand-text sm:text-5xl lg:max-w-none lg:text-[3.25rem] xl:text-[3.55rem] 2xl:text-[3.75rem]">
+                <div className="flex w-full max-w-[760px] flex-col items-start lg:pb-2">
+                    <h1 className="max-w-[11ch] text-4xl leading-[0.98] text-brand-text sm:text-5xl lg:max-w-none lg:text-[3.25rem] xl:text-[3.55rem] 2xl:text-[3.75rem]">
                         <span className="block xl:whitespace-nowrap">
                             Vos encargate de cortar.
                         </span>
@@ -62,7 +62,7 @@ export default function HeroSection({
                         <HeroAction
                             href={primaryCta.href}
                             inertia={primaryCta.inertia}
-                            className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-6 text-sm font-bold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                            className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-6 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
                         >
                             <span>{primaryCta.label}</span>
                             <IconArrowRight
@@ -74,7 +74,7 @@ export default function HeroSection({
                         <HeroAction
                             href={secondaryCta.href}
                             inertia={secondaryCta.inertia}
-                            className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill border border-brand-border bg-brand-surface px-6 text-sm font-bold text-brand-text transition-colors duration-200 hover:border-brand-primary-muted hover:bg-brand-surface-alt focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transition-none"
+                            className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill border border-brand-border bg-brand-surface px-6 text-sm font-semibold text-brand-text transition-colors duration-200 hover:border-brand-primary-muted hover:bg-brand-surface-alt focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transition-none"
                         >
                             <IconPlayerPlayFilled className="mr-2 h-4 w-4 fill-current" />
                             <span>{secondaryCta.label}</span>
@@ -86,7 +86,7 @@ export default function HeroSection({
                             {['LR', 'MN', 'AG'].map((initials) => (
                                 <div
                                     key={initials}
-                                    className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-brand-surface bg-brand-surface-alt text-[11px] font-bold text-brand-text"
+                                    className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-brand-surface bg-brand-surface-alt text-[11px] font-semibold text-brand-text"
                                 >
                                     {initials}
                                 </div>

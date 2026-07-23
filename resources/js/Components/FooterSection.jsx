@@ -38,12 +38,12 @@ export default function FooterSection({
                                 className="inline-flex items-center gap-3 rounded-brand-pill text-brand-bg transition-colors duration-200 hover:text-brand-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-nav-bg motion-reduce:transition-none"
                             >
                                 <BrandMark className="h-10 w-10 text-brand-bg" />
-                                <span className="font-display text-[1.6rem] font-extrabold tracking-[-0.04em] text-brand-bg">
+                                <span className="font-display text-[1.6rem] font-extrabold tracking-[-0.03em] text-brand-bg">
                                     {brandName}
                                 </span>
                             </a>
 
-                            <p className="mt-5 max-w-2xl font-display text-3xl font-extrabold leading-[1.04] tracking-[-0.05em] text-brand-bg sm:text-[2.4rem] lg:text-[2.8rem]">
+                            <p className="mt-5 max-w-2xl font-display text-3xl font-extrabold leading-[1.04] tracking-[-0.03em] text-brand-bg sm:text-[2.4rem] lg:text-[2.8rem]">
                                 Gestion para tu barberia, con una salida mas prolija que la entrada.
                             </p>
 
@@ -54,7 +54,7 @@ export default function FooterSection({
 
                         <div className="grid gap-8 rounded-[28px] border border-white/8 bg-white/[0.025] p-6 sm:grid-cols-2 sm:p-7 lg:p-8">
                             <div>
-                                <p className="text-xs font-bold uppercase tracking-[0.22em] text-brand-primary">
+                                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-primary">
                                     Navegacion
                                 </p>
                                 <nav
@@ -74,7 +74,7 @@ export default function FooterSection({
                             </div>
 
                             <div>
-                                <p className="text-xs font-bold uppercase tracking-[0.22em] text-brand-primary">
+                                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-primary">
                                     Contacto
                                 </p>
                                 <div className="mt-4 flex items-center gap-3">

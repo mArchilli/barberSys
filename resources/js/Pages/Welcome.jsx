@@ -1,4 +1,5 @@
 import CTASection from '@/Components/CTASection';
+import CurvedLoop from '@/Components/CurvedLoop';
 import FAQSection from '@/Components/FAQSection';
 import FeaturesSection from '@/Components/FeaturesSection';
 import FooterSection from '@/Components/FooterSection';
@@ -33,9 +34,14 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
 
     return (
         <>
-            <Head title="Pelito" />
+            <Head title="Pelito">
+                <link
+                    rel="stylesheet"
+                    href="https://fonts.bunny.net/css?family=bricolage-grotesque:600,700,800|plus-jakarta-sans:400,500,600,700,800&display=swap"
+                />
+            </Head>
 
-            <div className="min-h-screen bg-brand-bg text-brand-text">
+            <div className="landing-theme min-h-screen bg-brand-bg text-brand-text">
                 <Navbar
                     links={links}
                     cta={{
@@ -72,13 +78,6 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                         inertia: ctaHref !== '#',
                     }}
                 />
-                <StepSection
-                    cta={{
-                        label: 'Empezar ahora',
-                        href: ctaHref,
-                        inertia: ctaHref !== '#',
-                    }}
-                />
                 <FeaturesSection
                     cta={{
                         label: 'Probar Pelito',
@@ -86,6 +85,29 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                         inertia: ctaHref !== '#',
                     }}
                 />
+                <StepSection
+                    cta={{
+                        label: 'Empezar ahora',
+                        href: ctaHref,
+                        inertia: ctaHref !== '#',
+                    }}
+                />
+                <section
+                    aria-label="Estilus, ordená tu barbería"
+                    className="overflow-hidden"
+                >
+                    <span className="sr-only">
+                        Estilus, ordená tu barbería
+                    </span>
+                    <CurvedLoop
+                        marqueeText="ESTILUS ✦ ORDENÁ TU BARBERÍA ✦"
+                        speed={0.55}
+                        curveAmount={140}
+                        direction="left"
+                        interactive
+                        className="font-display text-brand-primary"
+                    />
+                </section>
                 <PricingSection
                     plans={plans}
                     cta={{

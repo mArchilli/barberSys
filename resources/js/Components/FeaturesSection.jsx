@@ -130,13 +130,13 @@ const SoftwareFeatureCard = forwardRef(function SoftwareFeatureCard(
                     </div>
 
                     <p
-                        className={`mt-5 text-[11px] font-bold uppercase tracking-[0.18em] ${tone.eyebrow}`}
+                        className={`mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] ${tone.eyebrow}`}
                     >
                         {feature.eyebrow}
                     </p>
                     <h3
                         id={titleId}
-                        className="mt-2 font-display text-[1.35rem] font-extrabold leading-[1.05] tracking-[-0.045em] sm:text-[1.8rem] lg:text-[2rem]"
+                        className="mt-2 text-[1.35rem] leading-[1.05] sm:text-[1.8rem] lg:text-[2rem]"
                     >
                         {feature.title}
                     </h3>
@@ -147,7 +147,7 @@ const SoftwareFeatureCard = forwardRef(function SoftwareFeatureCard(
                     </p>
 
                     <span
-                        className={`mt-auto hidden w-fit rounded-brand-pill border px-3 py-1.5 text-xs font-bold tabular-nums sm:inline-flex ${tone.count}`}
+                        className={`mt-auto hidden w-fit rounded-brand-pill border px-3 py-1.5 text-xs font-semibold tabular-nums sm:inline-flex ${tone.count}`}
                     >
                         {String(index + 1).padStart(2, '0')} /{' '}
                         {String(total).padStart(2, '0')}
@@ -198,12 +198,12 @@ export default function FeaturesSection({
             <div className="relative mx-auto w-full max-w-[1440px]">
                 <div className="grid gap-y-10 xl:grid-cols-[minmax(360px,500px)_minmax(0,860px)] xl:items-center xl:justify-center xl:gap-x-12 2xl:gap-x-14">
                     <div className="w-full max-w-xl xl:max-w-[500px]">
-                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-secondary">
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-secondary">
                             Todo en un solo lugar
                         </p>
                         <h2
                             id="software-features-heading"
-                            className="mt-4 max-w-[500px] font-display text-3xl font-extrabold leading-[1.02] tracking-[-0.05em] text-brand-text sm:text-4xl lg:text-5xl xl:text-[3.25rem]"
+                            className="mt-4 max-w-[500px] text-3xl leading-[1.02] text-brand-text sm:text-4xl lg:text-5xl xl:text-[3.25rem]"
                         >
                             Herramientas profesionales para ordenar tu barbería
                         </h2>
@@ -217,7 +217,7 @@ export default function FeaturesSection({
                             <FeatureAction
                                 href={cta.href}
                                 inertia={cta.inertia}
-                                className="mt-8 inline-flex min-h-[52px] items-center justify-center rounded-brand-pill bg-brand-primary px-8 text-base font-bold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover hover:shadow-brand-floating focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                                className="mt-8 inline-flex min-h-[52px] items-center justify-center rounded-brand-pill bg-brand-primary px-8 text-base font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover hover:shadow-brand-floating focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
                             >
                                 <span>{cta.label}</span>
                                 <IconArrowRight

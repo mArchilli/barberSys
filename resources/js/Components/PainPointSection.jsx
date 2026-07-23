@@ -57,10 +57,10 @@ export default function PainPointSection({
         >
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="mx-auto max-w-3xl text-center">
-                    <span className="inline-flex rounded-brand-pill border border-brand-accent/25 bg-brand-accent/12 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-brand-accent">
+                    <span className="inline-flex rounded-brand-pill border border-brand-accent/25 bg-brand-accent/12 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-brand-accent">
                         100% en gestión interna
                     </span>
-                    <h2 className="mt-6 font-display text-3xl font-extrabold tracking-[-0.05em] text-brand-text sm:text-4xl lg:text-5xl">
+                    <h2 className="mt-6 text-3xl text-brand-text sm:text-4xl lg:text-5xl">
                         ¿Manejás tu barbería a ojo?
                     </h2>
                     <p className="mt-5 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
@@ -80,7 +80,7 @@ export default function PainPointSection({
                                 <Icon className="h-5 w-5" stroke={2.1} />
                             </div>
 
-                            <h3 className="mt-6 font-display text-2xl font-bold tracking-[-0.03em] text-brand-text">
+                            <h3 className="mt-6 text-2xl text-brand-text">
                                 {title}
                             </h3>
                             <p className="mt-4 text-base leading-7 text-brand-text-secondary">
@@ -94,7 +94,7 @@ export default function PainPointSection({
                     <SectionAction
                         href={cta.href}
                         inertia={cta.inertia}
-                        className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-nav-bg px-7 text-sm font-bold text-brand-surface shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-brand-floating focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                        className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-nav-bg px-7 text-sm font-semibold text-brand-surface shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-brand-floating focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
                     >
                         <span>{cta.label}</span>
                         <IconArrowRight className="ml-2 h-4 w-4" stroke={2.3} />
