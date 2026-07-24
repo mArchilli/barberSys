@@ -1,7 +1,7 @@
 import BrandMark from '@/Components/BrandMark';
 import { Link } from '@inertiajs/react';
 import {
-    IconArrowRight,
+    IconArrowUpRight,
     IconChartBar,
     IconCreditCard,
     IconMapPin,
@@ -434,6 +434,22 @@ function CTAAction({ cta, className, children }) {
     );
 }
 
+function CTAButton({ cta, className = '' }) {
+    return (
+        <CTAAction
+            cta={cta}
+            className={`group inline-flex min-h-[52px] items-center justify-center rounded-brand-pill bg-brand-nav-bg px-7 text-sm font-semibold text-brand-bg shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-text focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-nav-bg focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary motion-reduce:transform-none motion-reduce:transition-none ${className}`}
+        >
+            <span>{cta.label}</span>
+            <IconArrowUpRight
+                aria-hidden="true"
+                className="ml-2 h-4 w-4 text-brand-primary transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+                stroke={2}
+            />
+        </CTAAction>
+    );
+}
+
 export default function CTASection({
     cta = {
         label: 'Probar gratis',
@@ -444,7 +460,7 @@ export default function CTASection({
     return (
         <section
             aria-labelledby="estilus-cta-heading"
-            className="px-6 pb-16 pt-8 sm:px-8 sm:pb-24 sm:pt-12 lg:px-10 lg:pb-28 lg:pt-14 xl:px-12"
+            className="px-6 pb-16 pt-8 sm:px-8 sm:pb-24 sm:pt-12 lg:px-10 lg:pb-28 lg:pt-24 xl:px-12 xl:pt-28"
         >
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="mx-auto max-w-4xl text-center">
@@ -456,17 +472,10 @@ export default function CTASection({
                         gratis 2 semanas.
                     </h2>
 
-                    <CTAAction
+                    <CTAButton
                         cta={cta}
-                        className="group mt-7 inline-flex min-h-[52px] items-center justify-center rounded-brand-pill bg-brand-nav-bg px-7 text-sm font-semibold text-brand-bg shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-text focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-nav-bg focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary motion-reduce:transform-none motion-reduce:transition-none"
-                    >
-                        <span>{cta.label}</span>
-                        <IconArrowRight
-                            aria-hidden="true"
-                            className="ml-2 h-4 w-4 text-brand-primary transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none"
-                            stroke={2.2}
-                        />
-                    </CTAAction>
+                        className="mt-7"
+                    />
                 </div>
 
                 <p className="sr-only">
@@ -477,23 +486,25 @@ export default function CTASection({
 
                 <MobileDiagram />
 
-                <div
-                    role="img"
-                    aria-label="Las áreas desordenadas de la barbería convergen en Estilus"
-                    className="relative mx-auto mt-8 hidden h-[42rem] w-full max-w-[1200px] lg:block"
-                >
-                    <ArrowField
-                        paths={desktopArrowPaths}
-                        markerId="estilus-arrow-desktop"
-                        viewBox="0 0 1200 680"
-                    />
-                    {areas.map((area) => (
-                        <AreaNode
-                            key={`desktop-${area.label}`}
-                            area={area}
+                <div className="relative mx-auto hidden h-[42rem] w-full max-w-[1200px] lg:-mt-12 lg:block xl:-mt-16">
+                    <div
+                        role="img"
+                        aria-label="Las áreas desordenadas de la barbería convergen en Estilus"
+                        className="absolute inset-0"
+                    >
+                        <ArrowField
+                            paths={desktopArrowPaths}
+                            markerId="estilus-arrow-desktop"
+                            viewBox="0 0 1200 680"
                         />
-                    ))}
-                    <EstilusCore />
+                        {areas.map((area) => (
+                            <AreaNode
+                                key={`desktop-${area.label}`}
+                                area={area}
+                            />
+                        ))}
+                        <EstilusCore />
+                    </div>
                 </div>
             </div>
         </section>
