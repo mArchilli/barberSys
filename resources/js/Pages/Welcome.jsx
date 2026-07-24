@@ -72,13 +72,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                         inertia: false,
                     }}
                 />
-                <PainPointSection
-                    cta={{
-                        label: 'Digitalizá tu barbería hoy',
-                        href: ctaHref,
-                        inertia: ctaHref !== '#',
-                    }}
-                />
+                <PainPointSection />
                 <FeaturesSection
                     cta={{
                         label: 'Probar Estilus',

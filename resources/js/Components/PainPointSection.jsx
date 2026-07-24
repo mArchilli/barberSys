@@ -1,108 +1,262 @@
-import { Link } from '@inertiajs/react';
-import {
-    IconArrowRight,
-    IconReceipt2,
-    IconTrendingDown,
-    IconWriting,
-} from '@tabler/icons-react';
-
-const painPoints = [
+const closingRows = [
     {
-        title: 'No sabés cuánto factura cada uno',
-        description:
-            'A fin de mes calcular comisiones y productividad termina siendo lento, manual y lleno de dudas.',
-        icon: IconReceipt2,
+        label: 'Facturación total',
+        value: '$2.480.000',
+        tone: 'clear',
     },
     {
-        title: 'Cuentas en cuadernos',
-        description:
-            'Hojas, tachones y anotaciones sueltas esconden información importante justo cuando más la necesitás.',
-        icon: IconWriting,
+        label: 'Comisiones',
+        value: 'Por calcular',
+        tone: 'warning',
     },
     {
-        title: 'No ves ganancia neta',
-        description:
-            'Facturar mucho no alcanza si no entendés cuánto queda realmente después de sueldos y gastos.',
-        icon: IconTrendingDown,
+        label: 'Gastos',
+        value: 'Faltan cargar',
+        tone: 'warning',
     },
 ];
 
-function SectionAction({ href, inertia = false, className, children }) {
-    if (inertia) {
-        return (
-            <Link href={href} className={className}>
-                {children}
-            </Link>
-        );
-    }
-
+function ClosingRow({ label, value, tone }) {
     return (
-        <a href={href} className={className}>
-            {children}
-        </a>
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-brand-border-subtle px-1 py-4 last:border-b-0 sm:gap-6 sm:px-2 sm:py-5">
+            <dt className="text-[0.8rem] font-medium leading-5 text-brand-text-secondary sm:text-sm">
+                {label}
+            </dt>
+            <dd
+                className={
+                    tone === 'warning'
+                        ? 'rounded-[9px] border border-brand-warning/30 bg-brand-warning-soft px-2.5 py-1 text-right text-xs font-semibold leading-5 text-brand-text'
+                        : 'flex items-center justify-end gap-2 text-right text-sm font-bold text-brand-text sm:text-base'
+                }
+            >
+                {tone === 'clear' && (
+                    <span
+                        aria-hidden="true"
+                        className="h-2 w-2 shrink-0 rounded-full bg-brand-primary"
+                    />
+                )}
+                {value}
+            </dd>
+        </div>
     );
 }
 
-export default function PainPointSection({
-    cta = {
-        label: 'Digitalizá tu barbería hoy',
-        href: '#',
-        inertia: false,
-    },
-}) {
+function NotebookSheet() {
+    return (
+        <div
+            aria-hidden="true"
+            className="absolute bottom-24 left-[4%] top-10 z-0 w-[84%] rotate-[-1.5deg] overflow-hidden rounded-[24px_30px_22px_28px] border border-brand-border/80 bg-brand-surface-alt shadow-brand-card sm:bottom-28 sm:left-[6%] sm:top-12 sm:rotate-[-3deg] lg:bottom-24 lg:rotate-[-4deg]"
+            style={{
+                backgroundImage:
+                    'repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(78, 117, 165, 0.12) 32px)',
+            }}
+        >
+            <span className="absolute bottom-0 left-8 top-0 w-px bg-brand-primary/20 sm:left-11" />
+            <div className="ml-11 mt-16 max-w-[68%] rotate-[-1deg] text-[0.68rem] font-medium leading-7 text-brand-secondary/65 sm:ml-16 sm:mt-20 sm:text-xs">
+                <p>48.000 + 32.000 + 27.500</p>
+                <p className="line-through decoration-brand-primary decoration-2">
+                    Comisión Martín 40%
+                </p>
+                <p>productos + alquiler + ...</p>
+            </div>
+        </div>
+    );
+}
+
+function PaperNote({ children, className = '', tone = 'light' }) {
+    const toneClass =
+        tone === 'cyan'
+            ? 'border-brand-primary/40 bg-brand-primary-soft text-brand-text'
+            : 'border-brand-border bg-brand-surface text-brand-text';
+
+    return (
+        <p
+            className={`absolute z-30 rounded-[16px_11px_18px_12px] border px-3 py-3 text-[0.68rem] font-semibold italic leading-[1.45] shadow-brand-card sm:px-4 sm:py-3.5 sm:text-xs ${toneClass} ${className}`}
+        >
+            {children}
+        </p>
+    );
+}
+
+function TransferTicket() {
+    return (
+        <aside
+            aria-label="Duda sobre una transferencia recibida"
+            className="absolute bottom-1 left-0 z-30 w-[54%] max-w-[235px] rotate-[-1.5deg] bg-brand-surface px-4 pb-7 pt-4 text-brand-text drop-shadow-[0_16px_22px_rgba(29,34,33,0.12)] sm:left-[2%] sm:rotate-[-3deg] sm:px-5 sm:pt-5"
+            style={{
+                clipPath:
+                    'polygon(0 0, 100% 0, 100% 92%, 94% 100%, 88% 92%, 82% 100%, 76% 92%, 70% 100%, 64% 92%, 58% 100%, 52% 92%, 46% 100%, 40% 92%, 34% 100%, 28% 92%, 22% 100%, 16% 92%, 10% 100%, 4% 92%, 0 100%)',
+            }}
+        >
+            <p className="border-b border-dashed border-brand-border pb-2 text-[0.625rem] font-bold uppercase tracking-[0.16em] text-brand-secondary sm:text-[0.65rem]">
+                Transferencia recibida
+            </p>
+            <p className="mt-3 text-[0.68rem] font-semibold leading-5 sm:text-sm">
+                ¿De qué servicio era?
+            </p>
+        </aside>
+    );
+}
+
+function MonthlyClosingScene() {
+    return (
+        <figure
+            aria-labelledby="monthly-closing-title"
+            aria-describedby="monthly-closing-caption"
+            className="relative mx-auto w-full min-w-0 max-w-[760px] pb-32 pt-20 sm:px-5 sm:pb-36 sm:pt-24 lg:px-2 lg:pb-32 lg:pt-24 xl:px-8"
+        >
+            <NotebookSheet />
+
+            <PaperNote
+                tone="cyan"
+                className="right-0 top-1 w-[47%] max-w-[215px] rotate-[1deg] sm:right-[1%] sm:top-3 sm:rotate-[2deg]"
+            >
+                ¿Cuánto hizo cada barbero?
+            </PaperNote>
+
+            <article
+                aria-labelledby="monthly-closing-title"
+                className="relative z-20 mx-auto w-[96%] max-w-[580px] rotate-[0.35deg] overflow-visible rounded-[28px_24px_32px_26px] border border-brand-nav-bg bg-brand-surface shadow-brand-floating sm:w-[88%] sm:rotate-[0.7deg] lg:w-[84%] lg:rotate-[1deg]"
+            >
+                <span
+                    aria-hidden="true"
+                    className="absolute -top-3 left-9 h-6 w-24 rotate-[-2deg] rounded-[4px] bg-brand-primary/35 backdrop-blur-[1px] sm:left-12 sm:w-28"
+                />
+
+                <header className="flex min-h-16 items-center justify-between rounded-t-[26px] bg-brand-nav-bg px-5 py-4 text-brand-surface sm:min-h-[72px] sm:px-7">
+                    <p
+                        id="monthly-closing-title"
+                        className="text-sm font-bold uppercase tracking-[0.14em] text-brand-surface sm:text-base"
+                    >
+                        CIERRE DEL MES
+                    </p>
+                    <span
+                        aria-hidden="true"
+                        className="flex items-center gap-1.5"
+                    >
+                        <span className="h-2 w-2 rounded-full bg-brand-primary" />
+                        <span className="h-2 w-2 rounded-full bg-brand-surface/35" />
+                        <span className="h-2 w-2 rounded-full bg-brand-surface/20" />
+                    </span>
+                </header>
+
+                <dl className="px-4 pb-4 pt-1 sm:px-6 sm:pb-6 sm:pt-2">
+                    {closingRows.map((row) => (
+                        <ClosingRow key={row.label} {...row} />
+                    ))}
+
+                    <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 rounded-[18px_14px_20px_16px] bg-brand-nav-bg px-4 py-4 text-brand-surface sm:mt-4 sm:px-5 sm:py-5">
+                        <dt className="text-sm font-semibold leading-5 sm:text-base">
+                            Ganancia real
+                        </dt>
+                        <dd className="font-display text-3xl font-extrabold leading-none text-brand-primary sm:text-4xl">
+                            <span aria-hidden="true">¿?</span>
+                            <span className="sr-only">Desconocida</span>
+                        </dd>
+                    </div>
+                </dl>
+            </article>
+
+            <TransferTicket />
+
+            <PaperNote className="bottom-5 right-0 w-[42%] max-w-[200px] rotate-[1deg] sm:bottom-8 sm:right-[1%] sm:rotate-[2deg]">
+                Falta cargar el gasto de productos
+            </PaperNote>
+
+            <figcaption id="monthly-closing-caption" className="sr-only">
+                Un cierre mensual incompleto entre anotaciones manuales,
+                transferencias sin identificar y gastos pendientes.
+            </figcaption>
+        </figure>
+    );
+}
+
+function BackgroundDetails() {
+    return (
+        <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+        >
+            <div
+                className="absolute left-1/2 top-[64%] h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 sm:h-[620px] sm:w-[620px] lg:left-auto lg:right-[-5rem] lg:top-1/2 lg:h-[740px] lg:w-[740px] lg:translate-x-0"
+                style={{
+                    background:
+                        'radial-gradient(circle, rgba(72, 213, 252, 0.18) 0%, rgba(72, 213, 252, 0.08) 42%, transparent 72%)',
+                }}
+            />
+
+            <div
+                className="absolute bottom-[7%] left-[12%] right-[-12%] top-[47%] opacity-35 sm:left-[25%] sm:opacity-50 lg:bottom-[10%] lg:left-[43%] lg:right-[-4%] lg:top-[12%] lg:opacity-100"
+                style={{
+                    backgroundImage:
+                        'linear-gradient(rgba(78, 117, 165, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(78, 117, 165, 0.06) 1px, transparent 1px)',
+                    backgroundSize: '56px 56px',
+                    maskImage:
+                        'radial-gradient(ellipse at center, black 16%, transparent 74%)',
+                    WebkitMaskImage:
+                        'radial-gradient(ellipse at center, black 16%, transparent 74%)',
+                }}
+            />
+
+            <div className="absolute -left-56 top-[10%] hidden h-[310px] w-[470px] rounded-[50%] border border-brand-primary/15 sm:block" />
+            <div className="absolute right-[-230px] top-[54%] h-[340px] w-[440px] -translate-y-1/2 rounded-[48%] border border-brand-primary/10 sm:right-[-190px] sm:h-[430px] sm:w-[560px] lg:right-[-110px] lg:top-[48%] lg:h-[560px] lg:w-[680px]" />
+        </div>
+    );
+}
+
+export default function PainPointSection() {
     return (
         <section
             id="pain-points"
-            className="px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
+            aria-labelledby="pain-points-heading"
+            className="relative isolate overflow-hidden bg-brand-bg px-6 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-32 xl:px-12 xl:py-36"
         >
-            <div className="mx-auto w-full max-w-[1440px]">
-                <div className="mx-auto max-w-3xl text-center">
-                    <span className="inline-flex rounded-brand-pill border border-brand-accent/25 bg-brand-accent/12 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-brand-accent">
-                        100% en gestión interna
-                    </span>
-                    <h2 className="mt-6 text-3xl text-brand-text sm:text-4xl lg:text-5xl">
-                        ¿Manejás tu barbería a ojo?
-                    </h2>
-                    <p className="mt-5 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
-                        Dejá de adivinar y empezá a decidir con datos reales.
-                        Estilus transforma el caos operativo en una estructura
-                        más clara, rentable y profesional.
-                    </p>
-                </div>
+            <BackgroundDetails />
 
-                <div className="mt-12 grid gap-4 md:grid-cols-3 lg:gap-5">
-                    {painPoints.map(({ title, description, icon: Icon }) => (
-                        <article
-                            key={title}
-                            className="group rounded-brand-lg border border-brand-border bg-brand-surface p-6 shadow-brand-card transition-all duration-200 hover:-translate-y-1 hover:border-brand-accent/30 hover:shadow-brand-card-hover motion-reduce:transform-none motion-reduce:transition-none"
+            <div className="relative z-10 mx-auto w-full max-w-[1440px]">
+                <div className="grid min-w-0 items-center gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-10 xl:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] xl:gap-20">
+                    <div className="min-w-0 max-w-[38rem] lg:max-w-[31rem]">
+                        <div className="flex items-center gap-3 text-[0.68rem] font-bold uppercase tracking-[0.2em] text-brand-text/70 sm:text-xs">
+                            <span
+                                aria-hidden="true"
+                                className="h-px w-8 shrink-0 bg-brand-primary sm:w-10"
+                            />
+                            <span>EL CIERRE DE CADA MES</span>
+                        </div>
+
+                        <h2
+                            id="pain-points-heading"
+                            className="mt-6 text-[clamp(2.5rem,7vw,3.75rem)] leading-[0.98] text-brand-text lg:text-[clamp(3.75rem,5vw,4.75rem)]"
                         >
-                            <div className="flex h-12 w-12 items-center justify-center rounded-brand-md bg-brand-accent/12 text-brand-accent transition-colors duration-200 group-hover:bg-brand-accent group-hover:text-brand-dark motion-reduce:transition-none">
-                                <Icon className="h-5 w-5" stroke={2.1} />
-                            </div>
+                            <span className="block">
+                                Facturaste todo el mes.
+                            </span>
+                            <span className="mt-1 block">
+                                ¿Pero cuánto ganaste?
+                            </span>
+                        </h2>
 
-                            <h3 className="mt-6 text-2xl text-brand-text">
-                                {title}
-                            </h3>
-                            <p className="mt-4 text-base leading-7 text-brand-text-secondary">
-                                {description}
+                        <p className="mt-7 max-w-[35rem] text-base leading-7 text-brand-text/70 sm:text-lg sm:leading-8">
+                            Cuando los servicios, los pagos y las comisiones
+                            están repartidos entre cuadernos y memoria, cerrar
+                            los números se vuelve una adivinanza.
+                        </p>
+
+                        <div className="mt-8 flex max-w-[34rem] items-start gap-4 border-t border-brand-border/75 pt-6">
+                            <span
+                                aria-hidden="true"
+                                className="mt-1 h-12 w-1 shrink-0 rounded-brand-pill bg-brand-primary"
+                            />
+                            <p className="text-base font-semibold leading-7 text-brand-text sm:text-lg sm:leading-8">
+                                Si tus números dependen de acordarte, todavía no
+                                tenés el control.
                             </p>
-                        </article>
-                    ))}
-                </div>
+                        </div>
+                    </div>
 
-                <div className="mt-14 flex flex-col items-center">
-                    <SectionAction
-                        href={cta.href}
-                        inertia={cta.inertia}
-                        className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-nav-bg px-7 text-sm font-semibold text-brand-surface shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-brand-floating focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
-                    >
-                        <span>{cta.label}</span>
-                        <IconArrowRight className="ml-2 h-4 w-4" stroke={2.3} />
-                    </SectionAction>
-
-                    <p className="mt-5 text-sm font-medium text-brand-accent">
-                        Sin tarjeta de crédito requerida
-                    </p>
+                    <div className="min-w-0">
+                        <MonthlyClosingScene />
+                    </div>
                 </div>
             </div>
         </section>
