@@ -6,7 +6,7 @@ const steps = [
     {
         number: '1',
         eyebrow: 'PASO 1',
-        title: 'Cargás tu estructura',
+        title: 'Cargá tu equipo de trabajo y los servicios.',
         description:
             'Configurás barberías, servicios, barberos y comisiones en pocos minutos.',
         textSide: 'left',
@@ -435,15 +435,14 @@ export default function StepSection({
         >
             <div className="mx-auto w-full max-w-[1180px]">
                 <div className="mx-auto max-w-3xl text-center">
-                    <span className="inline-flex rounded-brand-pill bg-brand-primary-tint px-4 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-brand-primary-soft-text">
-                        PROCESO OPTIMIZADO
-                    </span>
-                    <h2 className="mt-5 text-3xl text-brand-text sm:text-4xl lg:text-5xl">
-                        3 pasos para el control total
+                    <h2 className="text-3xl text-brand-text sm:text-4xl lg:text-5xl">
+                        Asi es un dia con{' '}
+                        <span className="text-brand-primary">Estilus</span> en tu
+                        barberia
                     </h2>
                     <p className="mt-5 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
-                        Ordená tu barbería desde la carga inicial hasta los números
-                        finales, sin cuadernos ni planillas sueltas.
+                        Este es un dia normal en tu barbería con Estilus; desde la
+                        carga inicial hasta los números finales.
                     </p>
                 </div>
 

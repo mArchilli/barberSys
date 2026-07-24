@@ -205,12 +205,14 @@ export default function FeaturesSection({
                             id="software-features-heading"
                             className="mt-4 max-w-[500px] text-3xl leading-[1.02] text-brand-text sm:text-4xl lg:text-5xl xl:text-[3.25rem]"
                         >
-                            Herramientas profesionales para ordenar tu barbería
+                            Estilus ordena por vos cada centimetro de tu barberia
                         </h2>
                         <p className="mt-7 max-w-[460px] text-lg font-medium leading-8 text-brand-text-secondary xl:text-[1.1875rem]">
-                            Desde el primer corte hasta el cierre del mes: Estilus
-                            reúne la operación de tu barbería para que trabajes
-                            con más orden y decidas con números claros.
+                            Gestiona tu equipo de barberos, carga cortes y
+                            servicios, registra gastos, sueldos, comisiones y
+                            mucho mas. Estilus reune todas tus operaciones en un
+                            solo lugar para que decidas en tu barberia con
+                            numeros claros, todo momento.
                         </p>
 
                         {cta && (

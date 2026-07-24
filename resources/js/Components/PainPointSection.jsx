@@ -171,39 +171,6 @@ function MonthlyClosingScene() {
     );
 }
 
-function BackgroundDetails() {
-    return (
-        <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-        >
-            <div
-                className="absolute left-1/2 top-[64%] h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 sm:h-[620px] sm:w-[620px] lg:left-auto lg:right-[-5rem] lg:top-1/2 lg:h-[740px] lg:w-[740px] lg:translate-x-0"
-                style={{
-                    background:
-                        'radial-gradient(circle, rgba(72, 213, 252, 0.18) 0%, rgba(72, 213, 252, 0.08) 42%, transparent 72%)',
-                }}
-            />
-
-            <div
-                className="absolute bottom-[7%] left-[12%] right-[-12%] top-[47%] opacity-35 sm:left-[25%] sm:opacity-50 lg:bottom-[10%] lg:left-[43%] lg:right-[-4%] lg:top-[12%] lg:opacity-100"
-                style={{
-                    backgroundImage:
-                        'linear-gradient(rgba(78, 117, 165, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(78, 117, 165, 0.06) 1px, transparent 1px)',
-                    backgroundSize: '56px 56px',
-                    maskImage:
-                        'radial-gradient(ellipse at center, black 16%, transparent 74%)',
-                    WebkitMaskImage:
-                        'radial-gradient(ellipse at center, black 16%, transparent 74%)',
-                }}
-            />
-
-            <div className="absolute -left-56 top-[10%] hidden h-[310px] w-[470px] rounded-[50%] border border-brand-primary/15 sm:block" />
-            <div className="absolute right-[-230px] top-[54%] h-[340px] w-[440px] -translate-y-1/2 rounded-[48%] border border-brand-primary/10 sm:right-[-190px] sm:h-[430px] sm:w-[560px] lg:right-[-110px] lg:top-[48%] lg:h-[560px] lg:w-[680px]" />
-        </div>
-    );
-}
-
 export default function PainPointSection() {
     return (
         <section
@@ -211,47 +178,28 @@ export default function PainPointSection() {
             aria-labelledby="pain-points-heading"
             className="relative isolate overflow-hidden bg-brand-bg px-6 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-32 xl:px-12 xl:py-36"
         >
-            <BackgroundDetails />
-
             <div className="relative z-10 mx-auto w-full max-w-[1440px]">
                 <div className="grid min-w-0 items-center gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-10 xl:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] xl:gap-20">
                     <div className="min-w-0 max-w-[38rem] lg:max-w-[31rem]">
-                        <div className="flex items-center gap-3 text-[0.68rem] font-bold uppercase tracking-[0.2em] text-brand-text/70 sm:text-xs">
-                            <span
-                                aria-hidden="true"
-                                className="h-px w-8 shrink-0 bg-brand-primary sm:w-10"
-                            />
-                            <span>EL CIERRE DE CADA MES</span>
-                        </div>
-
                         <h2
                             id="pain-points-heading"
-                            className="mt-6 text-[clamp(2.5rem,7vw,3.75rem)] leading-[0.98] text-brand-text lg:text-[clamp(3.75rem,5vw,4.75rem)]"
+                            className="text-[clamp(2.5rem,7vw,3.75rem)] leading-[0.98] text-brand-text lg:text-[clamp(3.75rem,5vw,4.75rem)]"
                         >
-                            <span className="block">
+                            <span className="block text-brand-primary">
                                 Facturaste todo el mes.
                             </span>
-                            <span className="mt-1 block">
-                                ¿Pero cuánto ganaste?
+                            <span className="mt-1 block text-brand-text">
+                                ¿Pero cuánto te quedo en el bolsillo?
                             </span>
                         </h2>
 
                         <p className="mt-7 max-w-[35rem] text-base leading-7 text-brand-text/70 sm:text-lg sm:leading-8">
                             Cuando los servicios, los pagos y las comisiones
-                            están repartidos entre cuadernos y memoria, cerrar
-                            los números se vuelve una adivinanza.
+                            están repartidos entre cuadernos, excel, notas y
+                            memoria, cerrar los números se vuelve una
+                            adivinanza.
                         </p>
 
-                        <div className="mt-8 flex max-w-[34rem] items-start gap-4 border-t border-brand-border/75 pt-6">
-                            <span
-                                aria-hidden="true"
-                                className="mt-1 h-12 w-1 shrink-0 rounded-brand-pill bg-brand-primary"
-                            />
-                            <p className="text-base font-semibold leading-7 text-brand-text sm:text-lg sm:leading-8">
-                                Si tus números dependen de acordarte, todavía no
-                                tenés el control.
-                            </p>
-                        </div>
                     </div>
 
                     <div className="min-w-0">
