@@ -431,7 +431,7 @@ export default function StepSection({
         <section
             id="como-funciona"
             ref={sectionRef}
-            className="relative overflow-hidden px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
+            className="relative z-10 px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
         >
             <div className="mx-auto w-full max-w-[1180px]">
                 <div className="mx-auto max-w-3xl text-center">

@@ -176,7 +176,7 @@ export default function PainPointSection() {
         <section
             id="pain-points"
             aria-labelledby="pain-points-heading"
-            className="relative isolate overflow-hidden bg-brand-bg px-6 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-32 xl:px-12 xl:py-36"
+            className="relative z-10 px-6 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-32 xl:px-12 xl:py-36"
         >
             <div className="relative z-10 mx-auto w-full max-w-[1440px]">
                 <div className="grid min-w-0 items-center gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-10 xl:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] xl:gap-20">

@@ -4,6 +4,7 @@ import FAQSection from '@/Components/FAQSection';
 import FeaturesSection from '@/Components/FeaturesSection';
 import FooterSection from '@/Components/FooterSection';
 import HeroSection from '@/Components/HeroSection';
+import IntroFlow from '@/Components/IntroFlow';
 import Navbar from '@/Components/Navbar';
 import PainPointSection from '@/Components/PainPointSection';
 import PricingSection from '@/Components/PricingSection';
@@ -60,33 +61,35 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                             : null
                     }
                 />
-                <HeroSection
-                    primaryCta={{
-                        label: primaryCtaLabel,
-                        href: ctaHref,
-                        inertia: ctaHref !== '#',
-                    }}
-                    secondaryCta={{
-                        label: 'Cómo funciona',
-                        href: '#como-funciona',
-                        inertia: false,
-                    }}
-                />
-                <PainPointSection />
-                <FeaturesSection
-                    cta={{
-                        label: 'Probar Estilus',
-                        href: ctaHref,
-                        inertia: ctaHref !== '#',
-                    }}
-                />
-                <StepSection
-                    cta={{
-                        label: 'Empezar ahora',
-                        href: ctaHref,
-                        inertia: ctaHref !== '#',
-                    }}
-                />
+                <IntroFlow>
+                    <HeroSection
+                        primaryCta={{
+                            label: primaryCtaLabel,
+                            href: ctaHref,
+                            inertia: ctaHref !== '#',
+                        }}
+                        secondaryCta={{
+                            label: 'Cómo funciona',
+                            href: '#como-funciona',
+                            inertia: false,
+                        }}
+                    />
+                    <PainPointSection />
+                    <FeaturesSection
+                        cta={{
+                            label: 'Probar Estilus',
+                            href: ctaHref,
+                            inertia: ctaHref !== '#',
+                        }}
+                    />
+                    <StepSection
+                        cta={{
+                            label: 'Empezar ahora',
+                            href: ctaHref,
+                            inertia: ctaHref !== '#',
+                        }}
+                    />
+                </IntroFlow>
                 <section
                     aria-label="Estilus, ordená tu barbería"
                     className="overflow-hidden"

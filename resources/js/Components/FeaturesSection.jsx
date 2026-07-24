@@ -190,11 +190,8 @@ export default function FeaturesSection({
         <section
             id="funcionalidades"
             aria-labelledby="software-features-heading"
-            className="relative overflow-hidden px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
+            className="relative z-10 px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
         >
-            <div className="pointer-events-none absolute left-[-180px] top-[18%] h-[360px] w-[360px] rounded-full bg-brand-primary/10 blur-3xl" />
-            <div className="pointer-events-none absolute bottom-[12%] right-[-160px] h-[320px] w-[320px] rounded-full bg-brand-secondary/10 blur-3xl" />
-
             <div className="relative mx-auto w-full max-w-[1440px]">
                 <div className="grid gap-y-10 xl:grid-cols-[minmax(360px,500px)_minmax(0,860px)] xl:items-center xl:justify-center xl:gap-x-12 2xl:gap-x-14">
                     <div className="w-full max-w-xl xl:max-w-[500px]">

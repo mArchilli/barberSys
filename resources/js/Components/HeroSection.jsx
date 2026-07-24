@@ -20,6 +20,44 @@ function HeroAction({ href, inertia = false, className, children }) {
     );
 }
 
+function ProductPreview() {
+    return (
+        <figure
+            aria-label="Dashboard de Estilus en sus vistas de escritorio y mobile"
+            className="relative mx-auto h-[390px] w-full max-w-[900px] sm:h-[500px] md:h-[540px] lg:h-[700px] xl:h-[640px]"
+        >
+            <div className="absolute left-[1%] top-[12%] w-[96%] -rotate-[0.7deg] sm:left-0 sm:top-[11%] sm:w-[94%] lg:left-[-1%] lg:top-[16%] lg:w-[96%] lg:-rotate-[1.5deg]">
+                <div className="hero-product-reveal hero-product-reveal--dashboard overflow-hidden rounded-[20px] border border-white/55 bg-brand-nav-bg shadow-[0_32px_80px_rgba(29,34,33,0.22)] sm:rounded-[26px] xl:rounded-[30px]">
+                    <img
+                        src="/images/estilus-dashboard-desktop.jpg"
+                        alt="Dashboard de escritorio de Estilus con facturación, cortes y medios de pago"
+                        width="1895"
+                        height="899"
+                        loading="eager"
+                        fetchPriority="high"
+                        decoding="async"
+                        className="block h-auto w-full"
+                    />
+                </div>
+            </div>
+
+            <div className="absolute right-[3%] top-[39%] z-10 w-[27%] rotate-[1.25deg] sm:right-[3%] sm:top-[36%] sm:w-[24%] lg:right-0 lg:top-[39%] lg:w-[22%] lg:rotate-[2.5deg] xl:w-[21%]">
+                <div className="hero-product-reveal hero-product-reveal--mobile overflow-hidden rounded-[22px] border border-white/70 bg-brand-nav-bg shadow-[0_22px_46px_rgba(29,34,33,0.2)] sm:rounded-[28px]">
+                    <img
+                        src="/images/estilus-dashboard-mobile.jpg"
+                        alt="Vista mobile de Estilus con evolución de facturación y medios de pago"
+                        width="376"
+                        height="834"
+                        loading="eager"
+                        decoding="async"
+                        className="block h-auto w-full"
+                    />
+                </div>
+            </div>
+        </figure>
+    );
+}
+
 export default function HeroSection({
     primaryCta = {
         label: 'Probar gratis',
@@ -35,14 +73,11 @@ export default function HeroSection({
     return (
         <section
             id="inicio"
-            className="relative -mt-[76px] flex min-h-[100svh] overflow-hidden bg-cover bg-center bg-no-repeat px-5 pb-10 pt-[116px] sm:px-8 sm:pb-12 sm:pt-[124px] lg:px-10 lg:pb-10 lg:pt-[116px] xl:px-12"
-            style={{
-                backgroundImage: "url('/images/hero-background.png')",
-            }}
+            className="relative z-10 flex min-h-[100svh] px-5 pb-10 pt-[116px] sm:px-8 sm:pb-12 sm:pt-[124px] lg:px-10 lg:pb-10 lg:pt-[116px] xl:px-12"
         >
-            <div className="mx-auto flex w-full max-w-[1760px] flex-1 items-center">
+            <div className="mx-auto grid w-full max-w-[1760px] flex-1 items-center gap-6 sm:gap-8 xl:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)] xl:gap-6 2xl:gap-10">
                 <div className="flex w-full max-w-[760px] flex-col items-start lg:pb-2">
-                    <h1 className="max-w-[11ch] text-4xl leading-[0.98] text-brand-text sm:text-5xl lg:max-w-none lg:text-[3.25rem] xl:text-[3.55rem] 2xl:text-[3.75rem]">
+                    <h1 className="max-w-[11ch] text-4xl leading-[0.98] text-brand-text sm:text-5xl md:max-w-none lg:text-[3.25rem] xl:text-[clamp(2.875rem,3.4vw,3.25rem)] 2xl:text-[3.75rem]">
                         <span className="block xl:whitespace-nowrap">
                             Vos encargate de cortar.
                         </span>
@@ -99,6 +134,9 @@ export default function HeroSection({
                     </div>
                 </div>
 
+                <div className="min-w-0 self-center">
+                    <ProductPreview />
+                </div>
             </div>
         </section>
     );
