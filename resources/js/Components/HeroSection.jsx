@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import {
-    IconArrowRight,
+    IconArrowUpRight,
     IconPlayerPlayFilled,
 } from '@tabler/icons-react';
 
@@ -76,13 +76,15 @@ export default function HeroSection({
             className="relative z-10 flex min-h-[100svh] px-5 pb-10 pt-[116px] sm:px-8 sm:pb-12 sm:pt-[124px] lg:px-10 lg:pb-10 lg:pt-[116px] xl:px-12"
         >
             <div className="mx-auto grid w-full max-w-[1760px] flex-1 items-center gap-6 sm:gap-8 xl:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)] xl:gap-6 2xl:gap-10">
-                <div className="flex w-full max-w-[760px] flex-col items-start lg:pb-2">
-                    <h1 className="max-w-[11ch] text-4xl leading-[0.98] text-brand-text sm:text-5xl md:max-w-none lg:text-[3.25rem] xl:text-[clamp(2.875rem,3.4vw,3.25rem)] 2xl:text-[3.75rem]">
-                        <span className="block xl:whitespace-nowrap">
-                            Vos encargate de cortar.
+                <div className="flex w-full max-w-[820px] flex-col items-start lg:pb-2">
+                    <h1 className="w-full text-[clamp(2.75rem,10vw,4.5rem)] font-extrabold leading-[0.9] text-brand-text lg:text-[clamp(4.5rem,5.2vw,5.25rem)]">
+                        <span className="block">Vos encargate</span>
+                        <span className="block">de cortar.</span>
+                        <span className="mt-2 block text-brand-primary">
+                            Estilus barber
                         </span>
-                        <span className="mt-1 block text-brand-primary xl:whitespace-nowrap">
-                            Estilus ordena tu barbería.
+                        <span className="block text-brand-primary">
+                            Ordena tu barbería.
                         </span>
                     </h1>
 
@@ -97,12 +99,13 @@ export default function HeroSection({
                         <HeroAction
                             href={primaryCta.href}
                             inertia={primaryCta.inertia}
-                            className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-6 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                            className="group inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-6 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
                         >
                             <span>{primaryCta.label}</span>
-                            <IconArrowRight
-                                className="ml-2 h-4 w-4"
-                                stroke={2.4}
+                            <IconArrowUpRight
+                                aria-hidden="true"
+                                className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+                                stroke={2}
                             />
                         </HeroAction>
 
@@ -116,22 +119,6 @@ export default function HeroSection({
                         </HeroAction>
                     </div>
 
-                    <div className="mt-7 flex flex-wrap items-center gap-3 text-sm text-brand-text-secondary">
-                        <div className="flex -space-x-2">
-                            {['LR', 'MN', 'AG'].map((initials) => (
-                                <div
-                                    key={initials}
-                                    className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-brand-surface bg-brand-surface-alt text-[11px] font-semibold text-brand-text"
-                                >
-                                    {initials}
-                                </div>
-                            ))}
-                        </div>
-                        <p className="max-w-[24rem] leading-6">
-                            Diseñado para barberías que quieren dejar atrás el
-                            cuaderno y entender sus números en tiempo real.
-                        </p>
-                    </div>
                 </div>
 
                 <div className="min-w-0 self-center">
