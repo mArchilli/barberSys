@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import {
-    IconArrowRight,
+    IconArrowUpRight,
     IconAsterisk,
     IconChartBar,
     IconChevronRight,
@@ -11,51 +11,6 @@ import {
 import { useRef, useState } from 'react';
 
 export const PRODUCT_TOUR_FEATURES = [
-    {
-        id: 'finanzas',
-        category: 'Finanzas',
-        title: 'Sabé cuánto te queda realmente',
-        description:
-            'Ingresos, sueldos, comisiones y gastos reunidos para mostrarte la rentabilidad real de tu barbería.',
-        benefits: ['Ganancia neta real', 'Evolución por período'],
-        image: '/images/features/finanzas.png',
-        imageAlt:
-            'Panel de Finanzas de Estilus con resultado neto, facturación, sueldos, gastos y evolución del período',
-        imageWidth: 1440,
-        imageHeight: 900,
-        icon: IconWallet,
-    },
-    {
-        id: 'equipo',
-        category: 'Equipo',
-        title: 'Medí el rendimiento de cada barbero',
-        description:
-            'Creá perfiles, definí sueldos fijos o comisiones y compará el rendimiento de tu equipo desde un solo lugar.',
-        benefits: ['Sueldos y comisiones', 'Productividad individual'],
-        image: '/images/features/barberos.png',
-        imageAlt:
-            'Panel de Barberos de Estilus con capacidad del equipo, modalidades de pago y perfiles individuales',
-        imageWidth: 1440,
-        imageHeight: 900,
-        icon: IconUsers,
-    },
-    {
-        id: 'operacion',
-        category: 'Operación',
-        title: 'Registrá cada corte en segundos',
-        description:
-            'Elegí el cliente y el servicio, confirmá el medio de pago y Estilus registra el movimiento automáticamente.',
-        benefits: [
-            'Precio completado automáticamente',
-            'Cobro y movimiento en un paso',
-        ],
-        image: '/images/features/cortes.png',
-        imageAlt:
-            'Pantalla Cargar corte de Estilus con selección de cliente, servicio, precio y medio de pago',
-        imageWidth: 1440,
-        imageHeight: 900,
-        icon: IconScissors,
-    },
     {
         id: 'control',
         category: 'Control',
@@ -72,6 +27,51 @@ export const PRODUCT_TOUR_FEATURES = [
         imageWidth: 1895,
         imageHeight: 899,
         icon: IconChartBar,
+    },
+    {
+        id: 'finanzas',
+        category: 'Finanzas',
+        title: 'Sabé cuánto te queda realmente',
+        description:
+            'Ingresos, sueldos, comisiones y gastos reunidos para mostrarte la rentabilidad real de tu barbería.',
+        benefits: ['Ganancia neta real', 'Evolución por período'],
+        image: '/images/features/finanzas.png',
+        imageAlt:
+            'Panel de Finanzas de Estilus con resultado neto, facturación, sueldos, gastos y evolución del período',
+        imageWidth: 1440,
+        imageHeight: 900,
+        icon: IconWallet,
+    },
+    {
+        id: 'equipo',
+        category: 'Equipo de trabajo',
+        title: 'Medí el rendimiento de cada barbero',
+        description:
+            'Creá perfiles, definí sueldos fijos o comisiones y compará el rendimiento de tu equipo desde un solo lugar.',
+        benefits: ['Sueldos y comisiones', 'Productividad individual'],
+        image: '/images/features/barberos.png',
+        imageAlt:
+            'Panel de Barberos de Estilus con capacidad del equipo, modalidades de pago y perfiles individuales',
+        imageWidth: 1440,
+        imageHeight: 900,
+        icon: IconUsers,
+    },
+    {
+        id: 'operacion',
+        category: 'Cortes y servicios',
+        title: 'Registrá cada corte en segundos',
+        description:
+            'Elegí el cliente y el servicio, confirmá el medio de pago y Estilus registra el movimiento automáticamente.',
+        benefits: [
+            'Precio completado automáticamente',
+            'Cobro y movimiento en un paso',
+        ],
+        image: '/images/features/cortes.png',
+        imageAlt:
+            'Pantalla Cargar corte de Estilus con selección de cliente, servicio, precio y medio de pago',
+        imageWidth: 1440,
+        imageHeight: 900,
+        icon: IconScissors,
     },
 ];
 
@@ -140,17 +140,23 @@ function ProductTourOrganicShape({ compact = false }) {
     );
 }
 
-function ProductScreenshot({ activeId, compact = false }) {
+function ProductScreenshot({ activeId, compact = false, flush = false }) {
     return (
-        <div className="relative isolate w-full">
-            <ProductTourOrganicShape compact={compact} />
+        <div
+            className={
+                flush
+                    ? 'relative h-full w-full bg-brand-nav-bg'
+                    : 'relative isolate w-full'
+            }
+        >
+            {!flush && <ProductTourOrganicShape compact={compact} />}
 
-            {compact ? (
+            {!flush && compact ? (
                 <div
                     aria-hidden="true"
                     className="absolute inset-x-3 bottom-0 top-3 z-[1] translate-y-3 rounded-[22px] bg-brand-secondary/35"
                 />
-            ) : (
+            ) : !flush ? (
                 <>
                     <div
                         aria-hidden="true"
@@ -161,16 +167,24 @@ function ProductScreenshot({ activeId, compact = false }) {
                         className="absolute inset-x-4 bottom-3 top-3 z-[2] translate-x-1 translate-y-1.5 rounded-[26px] bg-brand-primary/55"
                     />
                 </>
-            )}
+            ) : null}
 
             <figure
                 className={
-                    compact
+                    flush
+                        ? 'relative h-full w-full overflow-hidden bg-brand-nav-bg'
+                        : compact
                         ? 'relative z-10 aspect-[8/5] overflow-hidden rounded-[22px] border border-brand-nav-bg/80 bg-brand-nav-bg p-1.5 shadow-brand-floating'
                         : 'relative z-10 aspect-[8/5] overflow-hidden rounded-[26px] border border-brand-nav-bg/80 bg-brand-nav-bg p-2 shadow-brand-floating'
                 }
             >
-                <div className="relative h-full w-full overflow-hidden rounded-[17px] bg-brand-nav-bg sm:rounded-[20px]">
+                <div
+                    className={
+                        flush
+                            ? 'relative h-full w-full overflow-hidden bg-brand-nav-bg'
+                            : 'relative h-full w-full overflow-hidden rounded-[17px] bg-brand-nav-bg sm:rounded-[20px]'
+                    }
+                >
                     {PRODUCT_TOUR_FEATURES.map((feature) => {
                         const isActive = feature.id === activeId;
 
@@ -321,9 +335,9 @@ function MobileProductTour({
                         className="group mt-8 inline-flex min-h-[52px] w-full items-center justify-center rounded-brand-pill bg-brand-primary px-8 text-base font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover hover:shadow-brand-floating focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg sm:w-auto motion-reduce:transform-none motion-reduce:transition-none"
                     >
                         <span>{cta.label}</span>
-                        <IconArrowRight
+                        <IconArrowUpRight
                             aria-hidden="true"
-                            className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+                            className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
                             stroke={2.3}
                         />
                     </FeatureAction>
@@ -343,12 +357,12 @@ function DesktopProductTour({
 }) {
     return (
         <div className="relative mt-16 hidden xl:block">
-            <div className="relative z-10 grid grid-cols-[minmax(0,2fr)_minmax(340px,1fr)] overflow-hidden rounded-[30px] border border-brand-border bg-brand-surface shadow-brand-floating">
-                <div className="relative flex min-h-[650px] min-w-0 items-center bg-brand-bg p-5 2xl:p-6">
-                    <ProductScreenshot activeId={activeId} />
+            <div className="relative z-10 grid h-[600px] grid-cols-[minmax(0,2fr)_minmax(340px,1fr)] overflow-hidden rounded-[30px] border border-brand-border bg-brand-surface shadow-brand-floating">
+                <div className="relative h-full min-w-0 overflow-hidden bg-brand-nav-bg">
+                    <ProductScreenshot activeId={activeId} flush />
                 </div>
 
-                <aside className="flex min-h-[650px] min-w-0 flex-col border-l border-brand-border bg-brand-surface">
+                <aside className="flex min-w-0 flex-col border-l border-brand-border bg-brand-surface">
                     <div
                         role="group"
                         aria-label="Funcionalidades de Estilus"
@@ -460,16 +474,16 @@ function DesktopProductTour({
                     </div>
 
                     {cta && (
-                        <div className="mt-auto border-t border-brand-border px-4 py-5 2xl:px-5">
+                        <div className="mt-auto px-4 py-5 2xl:px-5">
                             <FeatureAction
                                 href={cta.href}
                                 inertia={cta.inertia}
                                 className="group inline-flex min-h-[50px] w-full items-center justify-center rounded-brand-pill bg-brand-primary px-6 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover hover:shadow-brand-floating focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-surface motion-reduce:transform-none motion-reduce:transition-none"
                             >
                                 <span>{cta.label}</span>
-                                <IconArrowRight
+                                <IconArrowUpRight
                                     aria-hidden="true"
-                                    className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+                                    className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
                                     stroke={2.3}
                                 />
                             </FeatureAction>
@@ -547,8 +561,10 @@ export default function FeaturesSection({
                             id="software-features-heading"
                             className="text-[clamp(2.25rem,9vw,2.75rem)] leading-[0.98] text-brand-text sm:text-[clamp(2.75rem,6vw,4rem)] xl:text-[clamp(3.5rem,4.4vw,4.5rem)]"
                         >
-                            Todo lo que pasa en tu barbería, claro de un
-                            vistazo.
+                            <span className="text-brand-primary">
+                                Estilus barber
+                            </span>{' '}
+                            te cuenta lo que pasa en tu barbería.
                         </h2>
                     </div>
 
