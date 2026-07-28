@@ -5,12 +5,10 @@ export default function WhatsAppButton({
     href = 'https://wa.me/',
     label = 'Hablar por WhatsApp',
     suppressHintWithin = null,
-    hideWithin = null,
 }) {
     const [hasScrolled, setHasScrolled] = useState(false);
     const [isHintVisible, setIsHintVisible] = useState(false);
     const [isHintSuppressed, setIsHintSuppressed] = useState(false);
-    const [isHiddenWithin, setIsHiddenWithin] = useState(false);
 
     useEffect(() => {
         const updateScrollState = () => {
@@ -63,50 +61,9 @@ export default function WhatsAppButton({
         return () => observer.disconnect();
     }, [suppressHintWithin]);
 
-    useEffect(() => {
-        if (!hideWithin || typeof IntersectionObserver === 'undefined') {
-            return undefined;
-        }
-
-        const hiddenZones = Array.from(document.querySelectorAll(hideWithin));
-
-        if (hiddenZones.length === 0) {
-            return undefined;
-        }
-
-        const visibleZones = new Set();
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        visibleZones.add(entry.target);
-                    } else {
-                        visibleZones.delete(entry.target);
-                    }
-                });
-
-                setIsHiddenWithin(visibleZones.size > 0);
-            },
-            {
-                rootMargin: '-76px 0px 0px 0px',
-                threshold: 0,
-            },
-        );
-
-        hiddenZones.forEach((zone) => observer.observe(zone));
-
-        return () => observer.disconnect();
-    }, [hideWithin]);
-
     return (
         <div
-            aria-hidden={isHiddenWithin ? 'true' : undefined}
-            className={[
-                'fixed bottom-4 right-4 z-50 flex max-w-[260px] flex-col items-end gap-2 transition-[opacity,transform,visibility] duration-200 motion-reduce:transition-none md:bottom-6 md:right-6 md:max-w-[320px] md:gap-3',
-                isHiddenWithin
-                    ? 'pointer-events-none invisible translate-y-2 opacity-0'
-                    : 'visible translate-y-0 opacity-100',
-            ].join(' ')}
+            className="fixed bottom-4 right-4 z-50 flex max-w-[260px] flex-col items-end gap-2 md:bottom-6 md:right-6 md:max-w-[320px] md:gap-3"
         >
             <div
                 className={[
@@ -116,7 +73,7 @@ export default function WhatsAppButton({
                         : 'translate-y-2 opacity-0',
                 ].join(' ')}
             >
-                Tenes alguna duda? Mandanos mensaje y te respondemos a la
+                ¿Tenés alguna duda? Mandanos un mensaje y te respondemos a la
                 brevedad.
                 <div className="absolute -bottom-2 right-5 h-4 w-4 rotate-45 border-b border-r border-brand-border bg-brand-surface" />
             </div>
@@ -126,7 +83,6 @@ export default function WhatsAppButton({
                 target="_blank"
                 rel="noreferrer"
                 aria-label={label}
-                tabIndex={isHiddenWithin ? -1 : undefined}
                 className={[
                     'inline-flex h-14 w-14 items-center justify-center rounded-full border text-brand-on-primary shadow-brand-floating transition-all duration-300 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg motion-reduce:transform-none motion-reduce:transition-none md:h-16 md:w-16',
                     hasScrolled

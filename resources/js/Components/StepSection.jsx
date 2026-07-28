@@ -527,9 +527,6 @@ export default function StepSection({
 
             <div className="relative z-10 mx-auto w-full max-w-[1320px]">
                 <header className="max-w-3xl text-left xl:mx-auto xl:text-center">
-                    <p className="text-xs font-bold uppercase tracking-[0.26em] text-brand-primary-soft-text sm:text-sm">
-                        De principio a fin
-                    </p>
                     <h2
                         id="step-section-title"
                         className="mt-4 text-[2.5rem] leading-[0.98] text-brand-text sm:text-5xl sm:leading-[0.98] lg:text-6xl"
