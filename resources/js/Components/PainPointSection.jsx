@@ -206,7 +206,7 @@ export default function PainPointSection() {
         <section
             id="pain-points"
             aria-labelledby="pain-points-heading"
-            className="relative isolate overflow-clip px-6 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-32 xl:px-12 xl:py-36"
+            className="relative isolate scroll-mt-24 overflow-clip px-6 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-32 xl:px-12 xl:py-36"
         >
             <PainPointOrganicBackground />
 

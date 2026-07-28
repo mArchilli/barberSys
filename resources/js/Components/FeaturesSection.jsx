@@ -552,7 +552,7 @@ export default function FeaturesSection({
         <section
             id="funcionalidades"
             aria-labelledby="software-features-heading"
-            className="relative isolate scroll-mt-20 overflow-clip px-6 py-20 sm:px-8 sm:py-24 md:pr-24 lg:py-28 lg:pl-10 xl:py-36 xl:pl-12 min-[1664px]:px-12"
+            className="relative isolate scroll-mt-24 overflow-clip px-6 py-20 sm:px-8 sm:py-24 md:pr-24 lg:py-28 lg:pl-10 xl:py-36 xl:pl-12 min-[1664px]:px-12"
         >
             <div className="relative z-10 mx-auto w-full max-w-[1440px]">
                 <header className="xl:grid xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] xl:items-end xl:gap-16 2xl:gap-20">

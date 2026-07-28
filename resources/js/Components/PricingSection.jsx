@@ -940,7 +940,7 @@ export default function PricingSection({
     return (
         <section
             id="precios"
-            className="px-5 pb-14 pt-5 md:px-8 md:pb-24 md:pt-8 lg:px-10 lg:pb-28 lg:pt-10 xl:px-12"
+            className="scroll-mt-24 px-5 pb-14 pt-5 md:px-8 md:pb-24 md:pt-8 lg:px-10 lg:pb-28 lg:pt-10 xl:px-12"
         >
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="mx-auto max-w-3xl text-center">

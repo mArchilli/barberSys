@@ -1,35 +1,75 @@
-import { useEffect, useRef, useState } from 'react';
 import { Link } from '@inertiajs/react';
-import { IconArrowRight } from '@tabler/icons-react';
+import { IconArrowRight, IconAsterisk } from '@tabler/icons-react';
+import { useEffect, useRef, useState } from 'react';
 
-const steps = [
+const TIMELINE_STEPS = [
     {
-        number: '1',
-        eyebrow: 'PASO 1',
-        title: 'Cargá tu equipo de trabajo y los servicios.',
+        id: 'al-abrir',
+        moment: 'AL ABRIR',
+        title: 'Todo está listo para empezar',
         description:
-            'Configurás barberías, servicios, barberos y comisiones en pocos minutos.',
-        textSide: 'left',
+            'Tu equipo, tus servicios y la forma de trabajar quedan configurados para que la jornada arranque sin perder tiempo.',
+        benefits: ['Equipo organizado', 'Servicios listos'],
+        desktopImage: '/images/features/barberos.png',
+        mobileImage: '/images/steps/barberos-mobile.png',
+        imageAlt:
+            'Vista real de Estilus con el equipo de barberos organizado y listo para comenzar la jornada.',
+        desktopWidth: 1440,
+        desktopHeight: 900,
+        mobileWidth: 390,
+        mobileHeight: 844,
     },
     {
-        number: '2',
-        eyebrow: 'PASO 2',
-        title: 'Registrás cada servicio',
+        id: 'durante-el-dia',
+        moment: 'DURANTE EL DÍA',
+        title: 'Cada corte queda registrado en segundos',
         description:
-            'Cada corte queda cargado al instante, sin depender del cuaderno ni de planillas sueltas.',
-        textSide: 'right',
+            'Seleccionás el cliente, el servicio y el medio de pago. Estilus registra el cobro y actualiza tus números automáticamente.',
+        benefits: ['Cobro registrado', 'Números actualizados'],
+        desktopImage: '/images/features/cortes.png',
+        mobileImage: '/images/steps/cortes-mobile.png',
+        imageAlt:
+            'Vista real de Estilus para seleccionar el cliente y el servicio al registrar un corte.',
+        desktopWidth: 1440,
+        desktopHeight: 900,
+        mobileWidth: 390,
+        mobileHeight: 844,
     },
     {
-        number: '3',
-        eyebrow: 'PASO 3',
-        title: 'Ves el negocio claro',
+        id: 'al-cerrar',
+        moment: 'AL CERRAR',
+        title: 'Terminás el día sabiendo cuánto te quedó',
         description:
-            'Facturación, productividad, medios de pago y ganancia neta en tiempo real.',
-        textSide: 'left',
+            'Revisás la facturación, los gastos, las comisiones y el rendimiento del equipo sin hacer cuentas manualmente.',
+        benefits: ['Ganancia real', 'Resultados del equipo'],
+        desktopImage: '/images/estilus-dashboard-desktop.jpg',
+        mobileImage: '/images/estilus-dashboard-mobile.jpg',
+        imageAlt:
+            'Dashboard real de Estilus con la evolución de la facturación y la distribución de los cobros.',
+        desktopWidth: 1895,
+        desktopHeight: 899,
+        mobileWidth: 376,
+        mobileHeight: 834,
     },
 ];
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+function usePrefersReducedMotion() {
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
+
+        updatePreference();
+        mediaQuery.addEventListener('change', updatePreference);
+
+        return () => mediaQuery.removeEventListener('change', updatePreference);
+    }, []);
+
+    return prefersReducedMotion;
+}
 
 function StepAction({ href, inertia = false, className, children }) {
     if (inertia) {
@@ -59,289 +99,160 @@ function getStepState(index, activeIndex) {
     return 'inactive';
 }
 
-function TextBlock({ step, state, side = 'left' }) {
-    const stateClass =
+function TimelineNode({ state, registerNode }) {
+    const outerClass =
         state === 'active'
-            ? 'opacity-100 translate-y-0'
+            ? 'border-brand-primary bg-brand-bg shadow-[0_0_0_6px_rgba(72,213,252,0.12)]'
             : state === 'complete'
-              ? 'opacity-80 translate-y-0'
-              : 'opacity-60 translate-y-2';
+              ? 'border-brand-primary/70 bg-brand-primary-soft'
+              : 'border-brand-border bg-brand-bg';
+    const innerClass =
+        state === 'active'
+            ? 'scale-100 bg-brand-primary'
+            : state === 'complete'
+              ? 'scale-90 bg-brand-primary/70'
+              : 'scale-75 bg-brand-border';
 
     return (
-        <div
-            className={`relative w-full max-w-[420px] transition-all duration-500 ${stateClass} ${
-                side === 'left'
-                    ? 'md:justify-self-end md:pr-10 md:text-right'
-                    : 'md:justify-self-start md:pl-10'
-            }`}
+        <span
+            ref={registerNode}
+            aria-hidden="true"
+            className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 transition-[border-color,background-color,box-shadow] duration-300 motion-reduce:transition-none ${outerClass}`}
         >
-            <div
-                className={`absolute top-1/2 hidden h-px w-14 -translate-y-1/2 bg-brand-border-subtle md:block ${
-                    side === 'left' ? '-right-14' : '-left-14'
-                }`}
+            <span
+                className={`h-3 w-3 rounded-full transition-[background-color,transform] duration-300 motion-reduce:transition-none ${innerClass}`}
             />
+        </span>
+    );
+}
 
-            <p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-brand-primary-soft-text">
-                {step.eyebrow}
+function StepCopy({ step, textOnLeft, isHidden }) {
+    return (
+        <div
+            className={[
+                'col-start-2 row-start-1 w-full max-w-[480px] transition-[opacity,transform] duration-500 ease-out motion-reduce:transform-none motion-reduce:transition-none',
+                textOnLeft
+                    ? 'xl:col-start-1 xl:justify-self-end xl:pr-9 xl:text-right'
+                    : 'xl:col-start-3 xl:justify-self-start xl:pl-9',
+                isHidden ? 'translate-y-3 opacity-0' : 'translate-y-0 opacity-100',
+            ].join(' ')}
+        >
+            <p className="text-[0.7rem] font-bold uppercase tracking-[0.24em] text-brand-primary sm:text-xs">
+                {step.moment}
             </p>
-            <h3 className="mt-4 text-3xl text-brand-text sm:text-[2.1rem]">
+            <h3 className="mt-4 text-[1.8rem] leading-[1.08] text-brand-text sm:text-4xl sm:leading-[1.05]">
                 {step.title}
             </h3>
-            <p className="mt-4 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
+            <p className="mt-4 text-[0.98rem] leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
                 {step.description}
             </p>
-        </div>
-    );
-}
 
-function MockupShell({ title, badge, state, side = 'right', children }) {
-    const stateClass =
-        state === 'active'
-            ? 'border-brand-primary/70 shadow-[0_24px_60px_rgba(29,34,33,0.14)]'
-            : state === 'complete'
-              ? 'border-brand-border shadow-[0_18px_40px_rgba(29,34,33,0.1)]'
-              : 'border-brand-border shadow-[0_12px_30px_rgba(29,34,33,0.07)]';
-
-    return (
-        <div
-            className={`relative w-full max-w-[420px] rounded-[28px] border bg-brand-surface p-5 transition-all duration-500 ${stateClass} ${
-                side === 'left'
-                    ? 'md:justify-self-end md:mr-10'
-                    : 'md:justify-self-start md:ml-10'
-            }`}
-        >
-            <div
-                className={`absolute top-1/2 hidden h-px w-14 -translate-y-1/2 bg-brand-border-subtle md:block ${
-                    side === 'left' ? '-right-14' : '-left-14'
-                }`}
-            />
-
-            <div className="flex items-start justify-between gap-4">
-                <div>
-                    <p className="text-[0.68rem] font-bold uppercase tracking-[0.18em] text-brand-text-secondary">
-                        Vista del sistema
-                    </p>
-                    <h4 className="mt-2 text-sm font-semibold text-brand-text-strong sm:text-base">
-                        {title}
-                    </h4>
-                </div>
-                <span className="rounded-full border border-brand-border bg-brand-bg px-3 py-1 text-[0.68rem] font-semibold text-brand-text-secondary">
-                    {badge}
-                </span>
-            </div>
-
-            <div className="mt-5">{children}</div>
-        </div>
-    );
-}
-
-function SetupMockup({ state, side }) {
-    const chips = [
-        'Corte clásico',
-        'Corte + barba',
-        'Lucas R.',
-        'Comisión 40%',
-        'Sucursal Centro',
-    ];
-
-    return (
-        <MockupShell title="Configuración inicial" badge="Base lista" state={state} side={side}>
-            <div className="grid grid-cols-2 gap-2">
-                {chips.map((chip) => (
-                    <div
-                        key={chip}
-                        className="rounded-2xl border border-brand-border bg-brand-bg px-3 py-2 text-sm font-medium text-brand-text"
-                    >
-                        {chip}
-                    </div>
-                ))}
-            </div>
-
-            <div className="mt-4 rounded-2xl border border-brand-border bg-brand-bg p-4">
-                <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-brand-text">Barbería principal</p>
-                    <span className="rounded-full bg-brand-primary-soft px-2.5 py-1 text-[0.68rem] font-semibold text-brand-primary-soft-text">
-                        Activa
-                    </span>
-                </div>
-                <p className="mt-2 text-sm leading-6 text-brand-text-secondary">
-                    Todo queda unificado desde el primer día: servicios, comisiones y equipo.
-                </p>
-            </div>
-        </MockupShell>
-    );
-}
-
-function ActivityMockup({ state, side }) {
-    const rows = [
-        ['10:30', 'Corte clásico', 'Mati N.'],
-        ['12:00', 'Corte + barba', 'Lucas R.'],
-        ['15:30', 'Fade', 'Agus G.'],
-    ];
-
-    return (
-        <MockupShell title="Registro diario" badge="Hoy" state={state} side={side}>
-            <div className="space-y-3">
-                {rows.map(([time, service, barber]) => (
-                    <div
-                        key={`${time}-${service}`}
-                        className="rounded-2xl border border-brand-border bg-brand-bg p-3"
-                    >
-                        <div className="flex items-center justify-between gap-3">
-                            <span className="text-sm font-semibold text-brand-primary-soft-text">
-                                {time}
-                            </span>
-                            <span className="rounded-full bg-brand-surface px-2.5 py-1 text-[0.68rem] font-semibold text-brand-text-secondary">
-                                Servicio completado
-                            </span>
-                        </div>
-                        <div className="mt-2 flex items-center justify-between gap-3 text-sm">
-                            <p className="font-semibold text-brand-text">{service}</p>
-                            <p className="text-brand-text-secondary">{barber}</p>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            <div className="mt-4 flex items-center justify-between rounded-2xl border border-brand-border bg-brand-bg px-4 py-3">
-                <p className="text-sm font-medium text-brand-text-secondary">Estado de caja</p>
-                <span className="rounded-full bg-brand-primary-soft px-3 py-1 text-xs font-semibold text-brand-primary-soft-text">
-                    Pago registrado
-                </span>
-            </div>
-        </MockupShell>
-    );
-}
-
-function DashboardMockup({ state, side }) {
-    const metrics = [
-        ['Facturación', '$1.240.000'],
-        ['Ganancia neta', '$480.000'],
-    ];
-
-    const channels = [
-        ['Transferencia', '62%'],
-        ['Efectivo', '24%'],
-        ['Tarjeta', '14%'],
-    ];
-
-    return (
-        <MockupShell title="Resultados en tiempo real" badge="Resumen" state={state} side={side}>
-            <div className="grid grid-cols-2 gap-3">
-                {metrics.map(([label, value]) => (
-                    <div
-                        key={label}
-                        className="rounded-2xl border border-brand-border bg-brand-bg p-4"
-                    >
-                        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                            {label}
-                        </p>
-                        <p className="mt-2 text-lg font-extrabold text-brand-text">{value}</p>
-                    </div>
-                ))}
-            </div>
-
-            <div className="mt-4 rounded-2xl border border-brand-border bg-brand-bg p-4">
-                <div className="space-y-2">
-                    {channels.map(([label, value]) => (
-                        <div key={label} className="flex items-center justify-between text-sm">
-                            <span className="text-brand-text-secondary">{label}</span>
-                            <span className="font-semibold text-brand-text">{value}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            <div className="mt-4 rounded-2xl border border-brand-border bg-brand-bg p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-text-secondary">
-                    Ranking de barberos
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                    {['1. Lucas R.', '2. Mati N.', '3. Agus G.'].map((item) => (
-                        <span
-                            key={item}
-                            className="rounded-full border border-brand-border bg-brand-surface px-3 py-1.5 text-sm font-medium text-brand-text"
-                        >
-                            {item}
-                        </span>
-                    ))}
-                </div>
-            </div>
-        </MockupShell>
-    );
-}
-
-function StepMockup({ step, state, side = 'right' }) {
-    if (step.number === '1') {
-        return <SetupMockup state={state} side={side} />;
-    }
-
-    if (step.number === '2') {
-        return <ActivityMockup state={state} side={side} />;
-    }
-
-    return <DashboardMockup state={state} side={side} />;
-}
-
-function TimelineNode({ number, state }) {
-    const nodeClass =
-        state === 'active'
-            ? 'border-brand-primary bg-brand-primary-soft text-brand-primary-soft-text shadow-[0_0_0_10px_rgba(72,213,252,0.12)]'
-            : state === 'complete'
-              ? 'border-brand-primary/60 bg-brand-primary/10 text-brand-primary-soft-text'
-              : 'border-brand-border bg-brand-surface text-brand-text-secondary';
-
-    return (
-        <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-brand-bg">
-            <div
-                className={`flex h-12 w-12 items-center justify-center rounded-full border text-base font-bold transition-all duration-500 ${nodeClass}`}
+            <ul
+                className={`mt-6 space-y-3 ${textOnLeft ? 'xl:ml-auto xl:w-fit' : ''}`}
+                aria-label={`Beneficios de ${step.moment.toLocaleLowerCase('es-AR')}`}
             >
-                {number}
-            </div>
+                {step.benefits.map((benefit) => (
+                    <li
+                        key={benefit}
+                        className="flex items-start gap-2.5 text-sm font-medium leading-5 text-brand-text"
+                    >
+                        <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center text-brand-primary">
+                            <IconAsterisk
+                                aria-hidden="true"
+                                className="h-4 w-4"
+                                stroke={2.4}
+                            />
+                        </span>
+                        <span>{benefit}</span>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 }
 
-function TimelineStage({ step, index, activeIndex, registerStage }) {
-    const state = getStepState(index, activeIndex);
-    const textFirst = step.textSide === 'left';
+function ProductScreenshot({ step, index, imageOnRight, isHidden }) {
+    const desktopEntrance = imageOnRight
+        ? 'xl:translate-x-5'
+        : 'xl:-translate-x-5';
+    const emphasisClass =
+        index === 1
+            ? 'border-brand-primary/70 shadow-[0_28px_70px_rgba(29,34,33,0.17)] ring-1 ring-brand-primary/15'
+            : 'border-brand-border shadow-[0_24px_60px_rgba(29,34,33,0.13)]';
 
     return (
-        <article
-            ref={(element) => registerStage(index, element)}
-            className="relative min-h-[300px] py-5 md:min-h-[360px] md:py-6"
+        <figure
+            className={[
+                'col-start-2 row-start-2 w-full max-w-[760px] justify-self-start transition-[opacity,transform] delay-75 duration-500 ease-out motion-reduce:transform-none motion-reduce:transition-none xl:row-start-1 xl:max-w-[580px]',
+                imageOnRight
+                    ? 'xl:col-start-3 xl:justify-self-start xl:pl-9'
+                    : 'xl:col-start-1 xl:justify-self-end xl:pr-9',
+                isHidden
+                    ? `translate-y-3 opacity-0 xl:translate-y-0 ${desktopEntrance}`
+                    : 'translate-x-0 translate-y-0 opacity-100',
+            ].join(' ')}
         >
-            <div className="md:hidden">
-                <div className="absolute left-[0.2rem] top-10 z-10">
-                    <TimelineNode number={step.number} state={state} />
-                </div>
+            <div
+                className={`overflow-hidden rounded-[22px] border bg-brand-dark p-1.5 sm:rounded-[28px] sm:p-2 ${emphasisClass}`}
+            >
+                <picture>
+                    <source
+                        media="(max-width: 767px)"
+                        srcSet={step.mobileImage}
+                        width={step.mobileWidth}
+                        height={step.mobileHeight}
+                    />
+                    <img
+                        src={step.desktopImage}
+                        alt={step.imageAlt}
+                        width={step.desktopWidth}
+                        height={step.desktopHeight}
+                        loading="lazy"
+                        decoding="async"
+                        sizes="(min-width: 1280px) 580px, (min-width: 768px) 760px, calc(100vw - 88px)"
+                        className="block h-auto w-full rounded-[17px] sm:rounded-[21px]"
+                    />
+                </picture>
+            </div>
+        </figure>
+    );
+}
 
-                <div className="space-y-5 pl-16">
-                    <TextBlock step={step} state={state} />
-                    <StepMockup step={step} state={state} />
-                </div>
+function TimelineStep({
+    step,
+    index,
+    activeIndex,
+    isMotionReady,
+    isRevealed,
+    registerStage,
+    registerNode,
+}) {
+    const state = getStepState(index, activeIndex);
+    const textOnLeft = index % 2 === 0;
+    const imageOnRight = textOnLeft;
+    const isHidden = isMotionReady && !isRevealed;
+
+    return (
+        <li
+            ref={registerStage}
+            aria-current={state === 'active' ? 'step' : undefined}
+            data-step-id={step.id}
+            data-step-state={state}
+            data-revealed={isRevealed ? 'true' : 'false'}
+            className="relative grid grid-cols-[48px_minmax(0,1fr)] gap-x-4 gap-y-6 py-5 sm:grid-cols-[52px_minmax(0,1fr)] sm:gap-x-5 sm:py-7 xl:min-h-[390px] xl:grid-cols-[minmax(0,1fr)_96px_minmax(0,1fr)] xl:items-center xl:gap-x-0 xl:py-3"
+        >
+            <div className="col-start-1 row-start-1 flex justify-center pt-1 xl:col-start-2 xl:self-center xl:pt-0">
+                <TimelineNode state={state} registerNode={registerNode} />
             </div>
 
-            <div className="hidden md:grid md:grid-cols-[minmax(0,1fr)_88px_minmax(0,1fr)] md:items-center">
-                {textFirst ? (
-                    <>
-                        <TextBlock step={step} state={state} side="left" />
-                        <div className="flex justify-center">
-                            <TimelineNode number={step.number} state={state} />
-                        </div>
-                        <StepMockup step={step} state={state} side="right" />
-                    </>
-                ) : (
-                    <>
-                        <StepMockup step={step} state={state} side="left" />
-                        <div className="flex justify-center">
-                            <TimelineNode number={step.number} state={state} />
-                        </div>
-                        <TextBlock step={step} state={state} side="right" />
-                    </>
-                )}
-            </div>
-        </article>
+            <StepCopy step={step} textOnLeft={textOnLeft} isHidden={isHidden} />
+            <ProductScreenshot
+                step={step}
+                index={index}
+                imageOnRight={imageOnRight}
+                isHidden={isHidden}
+            />
+        </li>
     );
 }
 
@@ -351,36 +262,24 @@ function StepOrganicBackgrounds() {
             <svg
                 aria-hidden="true"
                 focusable="false"
-                viewBox="0 0 640 900"
-                className="pointer-events-none absolute left-[-17%] top-[18%] z-0 hidden h-auto w-[34%] max-w-[520px] xl:block 2xl:left-[-13%] 2xl:top-[17%] 2xl:w-[28%] 2xl:max-w-[580px]"
+                viewBox="0 0 420 620"
+                className="pointer-events-none absolute left-[-12rem] top-[28%] z-0 h-auto w-[19rem] text-brand-primary opacity-[0.16] sm:left-[-11rem] sm:w-[23rem] xl:left-[-9rem] xl:w-[26rem]"
             >
                 <path
-                    fill="#48D5FC"
-                    d="M-72 18C105-22 318 29 468 148C573 232 606 338 530 418C466 486 386 458 338 535C286 593 354 671 372 750C396 844 226 900 111 850C-28 784-103 166-72 18Z"
+                    fill="currentColor"
+                    d="M17 53C105-11 238-14 327 48C407 103 438 215 382 292C337 354 250 348 228 420C203 500 290 550 235 599C170 657 47 585 16 493C-21 382-50 102 17 53Z"
                 />
             </svg>
 
             <svg
                 aria-hidden="true"
                 focusable="false"
-                viewBox="0 0 760 440"
-                className="pointer-events-none absolute bottom-[7%] right-[-50%] z-0 h-auto w-[86%] max-w-[420px] md:bottom-[10%] md:right-[-5%] md:w-[55%] md:max-w-[480px] xl:hidden"
+                viewBox="0 0 560 360"
+                className="pointer-events-none absolute bottom-[9%] right-[-13rem] z-0 h-auto w-[24rem] text-brand-primary opacity-[0.12] sm:right-[-10rem] sm:w-[28rem] xl:right-[-8rem] xl:w-[32rem]"
             >
                 <path
-                    fill="#48D5FC"
-                    d="M62 66C178 4 353-9 482 42C576 80 602 149 698 163C796 178 817 265 754 325C694 382 587 372 503 355C420 338 361 405 267 422C163 442 59 397 35 327C14 267 91 233 120 188C153 137 20 105 62 66Z"
-                />
-            </svg>
-
-            <svg
-                aria-hidden="true"
-                focusable="false"
-                viewBox="0 0 900 360"
-                className="pointer-events-none absolute bottom-[12%] right-[-10%] z-0 hidden h-auto w-[34%] max-w-[580px] xl:block 2xl:right-[-8%]"
-            >
-                <path
-                    fill="#48D5FC"
-                    d="M-36 235C55 126 195 85 329 111C444 133 512 206 623 171C734 136 828 72 895 126C970 186 941 291 852 322C742 360 657 314 550 336C409 365 284 377 151 347C27 319-84 298-36 235Z"
+                    fill="currentColor"
+                    d="M22 122C86 37 203 7 310 35C405 59 443 128 526 139C614 151 619 250 548 300C474 351 387 309 307 325C203 347 75 371 22 295C-21 234-23 181 22 122Z"
                 />
             </svg>
         </>
@@ -394,132 +293,298 @@ export default function StepSection({
         inertia: false,
     },
 }) {
-    const sectionRef = useRef(null);
     const timelineRef = useRef(null);
+    const lineRef = useRef(null);
+    const progressRef = useRef(null);
     const stageRefs = useRef([]);
-    const [progress, setProgress] = useState(0);
-    const [activeIndex, setActiveIndex] = useState(0);
+    const nodeRefs = useRef([]);
+    const activeIndexRef = useRef(-1);
+    const prefersReducedMotion = usePrefersReducedMotion();
+    const [activeIndex, setActiveIndex] = useState(-1);
+    const [isMotionReady, setIsMotionReady] = useState(false);
+    const [revealedSteps, setRevealedSteps] = useState(() =>
+        TIMELINE_STEPS.map(() => false),
+    );
 
     useEffect(() => {
+        setIsMotionReady(true);
+
+        if (
+            prefersReducedMotion ||
+            typeof window.IntersectionObserver === 'undefined'
+        ) {
+            setRevealedSteps(TIMELINE_STEPS.map(() => true));
+            return undefined;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    }
+
+                    const index = stageRefs.current.indexOf(entry.target);
+
+                    if (index !== -1) {
+                        setRevealedSteps((current) => {
+                            if (current[index]) {
+                                return current;
+                            }
+
+                            const next = [...current];
+                            next[index] = true;
+                            return next;
+                        });
+                    }
+
+                    observer.unobserve(entry.target);
+                });
+            },
+            {
+                rootMargin: '0px 0px -12% 0px',
+                threshold: 0.08,
+            },
+        );
+
+        stageRefs.current.forEach((stage) => {
+            if (stage) {
+                observer.observe(stage);
+            }
+        });
+
+        return () => observer.disconnect();
+    }, [prefersReducedMotion]);
+
+    useEffect(() => {
+        const timeline = timelineRef.current;
+        const line = lineRef.current;
+        const progress = progressRef.current;
+
+        if (!timeline || !line || !progress) {
+            return undefined;
+        }
+
         let frameId = null;
+        let isAlive = true;
+        let isNearViewport = false;
+        let needsMeasurement = true;
+        let nodeOffsets = [];
 
-        const measure = () => {
-            frameId = null;
-
-            if (!sectionRef.current) {
+        const updateActiveIndex = (nextIndex) => {
+            if (activeIndexRef.current === nextIndex) {
                 return;
             }
 
-            const viewportHeight = window.innerHeight;
-            const triggerY = viewportHeight * 0.5;
+            activeIndexRef.current = nextIndex;
+            setActiveIndex(nextIndex);
+        };
 
-            if (timelineRef.current) {
-                const timelineRect = timelineRef.current.getBoundingClientRect();
-                const lineInset = 40;
-                const progressTravel = Math.max(timelineRect.height - lineInset * 2, 1);
-                const nextProgress = clamp(
-                    (triggerY - timelineRect.top - lineInset) / progressTravel,
-                    0,
-                    1,
-                );
+        const measureGeometry = () => {
+            const timelineRect = timeline.getBoundingClientRect();
 
-                setProgress(nextProgress);
+            nodeOffsets = nodeRefs.current
+                .map((node) => {
+                    if (!node) {
+                        return null;
+                    }
+
+                    const nodeRect = node.getBoundingClientRect();
+                    return nodeRect.top + nodeRect.height / 2 - timelineRect.top;
+                })
+                .filter((offset) => offset !== null);
+
+            if (nodeOffsets.length !== TIMELINE_STEPS.length) {
+                return;
             }
 
-            let closestIndex = 0;
-            let closestDistance = Number.POSITIVE_INFINITY;
+            const start = nodeOffsets[0];
+            const end = nodeOffsets[nodeOffsets.length - 1];
 
-            stageRefs.current.forEach((stage, index) => {
-                if (!stage) {
-                    return;
-                }
+            line.style.top = `${start}px`;
+            line.style.height = `${Math.max(end - start, 1)}px`;
+        };
 
-                const rect = stage.getBoundingClientRect();
-                const center = rect.top + rect.height / 2;
-                const distance = Math.abs(center - viewportHeight / 2);
+        const updateScrollProgress = () => {
+            if (nodeOffsets.length !== TIMELINE_STEPS.length) {
+                return;
+            }
 
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    closestIndex = index;
+            if (prefersReducedMotion) {
+                progress.style.transform = 'scaleY(1)';
+                updateActiveIndex(TIMELINE_STEPS.length - 1);
+                return;
+            }
+
+            if (!isNearViewport) {
+                return;
+            }
+
+            const timelineRect = timeline.getBoundingClientRect();
+            const cursor = window.innerHeight * 0.6 - timelineRect.top;
+            const start = nodeOffsets[0];
+            const end = nodeOffsets[nodeOffsets.length - 1];
+            const nextProgress = clamp((cursor - start) / Math.max(end - start, 1), 0, 1);
+
+            progress.style.transform = `scaleY(${nextProgress})`;
+
+            let nextActiveIndex = -1;
+            nodeOffsets.forEach((offset, index) => {
+                if (cursor >= offset - 1) {
+                    nextActiveIndex = index;
                 }
             });
-
-            setActiveIndex(closestIndex);
+            updateActiveIndex(nextActiveIndex);
         };
 
-        const onFrame = () => {
-            if (frameId !== null) {
-                return;
+        const runFrame = () => {
+            frameId = null;
+
+            if (needsMeasurement) {
+                measureGeometry();
+                needsMeasurement = false;
             }
 
-            frameId = window.requestAnimationFrame(measure);
+            updateScrollProgress();
         };
 
-        onFrame();
-        window.addEventListener('scroll', onFrame, { passive: true });
-        window.addEventListener('resize', onFrame);
+        const scheduleFrame = (measure = false) => {
+            if (measure) {
+                needsMeasurement = true;
+            }
+
+            if (frameId === null) {
+                frameId = window.requestAnimationFrame(runFrame);
+            }
+        };
+
+        const onScroll = () => {
+            if (isNearViewport) {
+                scheduleFrame();
+            }
+        };
+        const onResize = () => scheduleFrame(true);
+
+        let visibilityObserver = null;
+
+        if (
+            !prefersReducedMotion &&
+            typeof window.IntersectionObserver !== 'undefined'
+        ) {
+            visibilityObserver = new IntersectionObserver(
+                ([entry]) => {
+                    isNearViewport = entry.isIntersecting;
+
+                    if (isNearViewport) {
+                        scheduleFrame();
+                    }
+                },
+                { rootMargin: '100% 0px 100% 0px', threshold: 0 },
+            );
+            visibilityObserver.observe(timeline);
+        } else {
+            isNearViewport = true;
+        }
+
+        const resizeObserver =
+            typeof window.ResizeObserver !== 'undefined'
+                ? new ResizeObserver(() => scheduleFrame(true))
+                : null;
+        resizeObserver?.observe(timeline);
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onResize);
+        scheduleFrame(true);
+
+        if (document.fonts?.ready) {
+            document.fonts.ready.then(() => {
+                if (isAlive) {
+                    scheduleFrame(true);
+                }
+            });
+        }
 
         return () => {
+            isAlive = false;
+            visibilityObserver?.disconnect();
+            resizeObserver?.disconnect();
+            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', onResize);
+
             if (frameId !== null) {
                 window.cancelAnimationFrame(frameId);
             }
-
-            window.removeEventListener('scroll', onFrame);
-            window.removeEventListener('resize', onFrame);
         };
-    }, []);
+    }, [prefersReducedMotion]);
 
     return (
         <section
             id="como-funciona"
-            ref={sectionRef}
-            className="relative isolate overflow-clip px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
+            aria-labelledby="step-section-title"
+            className="relative isolate overflow-clip px-6 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12 xl:py-32"
         >
             <StepOrganicBackgrounds />
 
-            <div className="relative z-10 mx-auto w-full max-w-[1180px]">
-                <div className="mx-auto max-w-3xl text-center">
-                    <h2 className="text-3xl text-brand-text sm:text-4xl lg:text-5xl">
-                        Asi es un dia con{' '}
-                        <span className="text-brand-primary">Estilus</span> en tu
-                        barberia
-                    </h2>
-                    <p className="mt-5 text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8">
-                        Este es un dia normal en tu barbería con Estilus; desde la
-                        carga inicial hasta los números finales.
+            <div className="relative z-10 mx-auto w-full max-w-[1320px]">
+                <header className="max-w-3xl text-left xl:mx-auto xl:text-center">
+                    <p className="text-xs font-bold uppercase tracking-[0.26em] text-brand-primary-soft-text sm:text-sm">
+                        De principio a fin
                     </p>
-                </div>
+                    <h2
+                        id="step-section-title"
+                        className="mt-4 text-[2.5rem] leading-[0.98] text-brand-text sm:text-5xl sm:leading-[0.98] lg:text-6xl"
+                    >
+                        Así es un día con{' '}
+                        <span className="text-brand-primary">Estilus</span> en tu barbería
+                    </h2>
+                    <p className="mt-6 max-w-2xl text-base leading-7 text-brand-text-secondary sm:text-lg sm:leading-8 xl:mx-auto">
+                        Desde que abrís hasta que termina la jornada, Estilus registra lo
+                        importante y convierte cada movimiento en información clara.
+                    </p>
+                </header>
 
                 <div
                     ref={timelineRef}
-                    className="relative mx-auto mt-16 max-w-6xl md:mt-20"
+                    data-motion-ready={isMotionReady ? 'true' : 'false'}
+                    className="relative mt-14 sm:mt-16 xl:mt-20"
                 >
-                    <div className="absolute bottom-10 left-6 top-10 w-px bg-brand-border-subtle md:left-1/2 md:-translate-x-1/2" />
                     <div
-                        className="absolute left-6 top-10 w-px bg-brand-primary transition-[height] duration-200 md:left-1/2 md:-translate-x-1/2"
-                        style={{ height: `${progress * 100}%` }}
-                    />
+                        ref={lineRef}
+                        aria-hidden="true"
+                        className="pointer-events-none absolute left-[24px] z-0 w-[2px] -translate-x-1/2 overflow-hidden rounded-full bg-brand-border-subtle sm:left-[26px] xl:left-1/2"
+                        style={{ top: '20px', height: 'calc(100% - 40px)' }}
+                    >
+                        <span
+                            ref={progressRef}
+                            className="absolute inset-0 block origin-top scale-y-0 rounded-full bg-brand-primary will-change-transform"
+                        />
+                    </div>
 
-                    <div className="space-y-6 md:space-y-10">
-                        {steps.map((step, index) => (
-                            <TimelineStage
-                                key={step.number}
+                    <ol className="space-y-10 sm:space-y-14 xl:space-y-16">
+                        {TIMELINE_STEPS.map((step, index) => (
+                            <TimelineStep
+                                key={step.id}
                                 step={step}
                                 index={index}
                                 activeIndex={activeIndex}
-                                registerStage={(stageIndex, element) => {
-                                    stageRefs.current[stageIndex] = element;
+                                isMotionReady={isMotionReady}
+                                isRevealed={revealedSteps[index]}
+                                registerStage={(element) => {
+                                    stageRefs.current[index] = element;
+                                }}
+                                registerNode={(element) => {
+                                    nodeRefs.current[index] = element;
                                 }}
                             />
                         ))}
-                    </div>
+                    </ol>
                 </div>
 
-                <div className="mt-14 flex justify-center">
+                <div className="mt-12 flex justify-center pl-16 sm:mt-16 sm:pl-0 xl:mt-20">
                     <StepAction
                         href={cta.href}
                         inertia={cta.inertia}
-                        className="inline-flex min-h-[48px] items-center justify-center rounded-brand-pill bg-brand-primary px-8 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                        className="inline-flex min-h-[52px] w-full max-w-md items-center justify-center rounded-brand-pill bg-brand-primary px-8 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none sm:w-auto"
                     >
                         <span>{cta.label}</span>
                         <IconArrowRight className="ml-2 h-4 w-4" stroke={2.3} />

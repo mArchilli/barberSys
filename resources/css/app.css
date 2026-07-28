@@ -168,6 +168,102 @@
     }
 }
 
+.bubble-menu .menu-line {
+    transform-origin: center;
+    transition: transform 300ms ease;
+}
+
+.bubble-menu-backdrop {
+    background-color: rgb(var(--brand-bg-rgb) / 0.55);
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+    will-change: opacity;
+}
+
+.bubble-menu-items .pill-list .pill-col {
+    flex: 0 0 calc(100% / 3);
+}
+
+.bubble-menu-items .pill-list .pill-col:nth-child(4):nth-last-child(2) {
+    margin-left: calc(100% / 6);
+}
+
+.bubble-menu-items .pill-list .pill-col:nth-child(4):last-child {
+    margin-left: calc(100% / 3);
+}
+
+.bubble-menu-items .pill-link {
+    min-height: 160px;
+    padding: clamp(1.5rem, 3vw, 4rem) 1rem;
+    background: var(--pill-bg);
+    color: var(--pill-color);
+    font-size: clamp(1.5rem, 3.3vw, 3.75rem);
+    line-height: 1;
+    transform: rotate(var(--item-rot));
+    transition:
+        transform 250ms ease,
+        background-color 250ms ease,
+        color 250ms ease;
+}
+
+.bubble-menu-items .pill-link:hover,
+.bubble-menu-items .pill-link:focus-visible {
+    background: var(--hover-bg);
+    color: var(--hover-color);
+    transform: rotate(var(--item-rot)) scale(1.045);
+}
+
+.bubble-menu-items .pill-link:focus-visible {
+    outline: 3px solid #242726;
+    outline-offset: 3px;
+}
+
+.bubble-menu-items .pill-link:active {
+    transform: rotate(var(--item-rot)) scale(0.96);
+}
+
+@media (max-width: 899px) {
+    .bubble-menu-items {
+        align-items: flex-start;
+        padding-top: max(104px, env(safe-area-inset-top));
+        padding-bottom: max(24px, env(safe-area-inset-bottom));
+    }
+
+    .bubble-menu-items .pill-list {
+        row-gap: 12px;
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+    .bubble-menu-items .pill-list .pill-col {
+        flex: 0 0 100%;
+        margin-left: 0 !important;
+    }
+
+    .bubble-menu-items .pill-link {
+        min-height: 72px;
+        padding: 1rem;
+        font-size: clamp(1.25rem, 7vw, 2rem);
+        transform: none;
+    }
+
+    .bubble-menu-items .pill-link:hover,
+    .bubble-menu-items .pill-link:focus-visible {
+        transform: scale(1.025);
+    }
+
+    .bubble-menu-items .pill-link:active {
+        transform: scale(0.97);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bubble-menu .menu-line,
+    .bubble-menu-items .pill-link {
+        transition: none;
+    }
+}
+
 /* Tours guiados (driver.js) — el panel de barber siempre corre en tema oscuro
    (.panel-theme), pero driver.js monta el popover como hijo directo de
    <body>, fuera de ese árbol, así que las variables --brand-* no le llegan

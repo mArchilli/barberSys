@@ -117,7 +117,7 @@ export default function FAQSection({
     return (
         <section
             id="faq"
-            className="px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
+            className="scroll-mt-24 px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
         >
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="mx-auto max-w-3xl text-center">

@@ -43,23 +43,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
             </Head>
 
             <div className="landing-theme min-h-screen bg-brand-bg text-brand-text">
-                <Navbar
-                    links={links}
-                    cta={{
-                        label: primaryCtaLabel,
-                        href: ctaHref,
-                        inertia: ctaHref !== '#',
-                    }}
-                    loginCta={
-                        !auth.user && canLogin
-                            ? {
-                                  label: 'Iniciar sesión',
-                                  href: route('login'),
-                                  inertia: true,
-                              }
-                            : null
-                    }
-                />
+                <Navbar />
                 <HeroSection
                     primaryCta={{
                         label: primaryCtaLabel,
@@ -145,6 +129,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                     href={whatsappHref}
                     label="Abrir conversación de WhatsApp con Estilus"
                     suppressHintWithin="#funcionalidades"
+                    hideWithin="#como-funciona"
                 />
             </div>
         </>
