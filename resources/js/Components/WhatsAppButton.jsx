@@ -4,9 +4,11 @@ import { IconBrandWhatsapp } from '@tabler/icons-react';
 export default function WhatsAppButton({
     href = 'https://wa.me/',
     label = 'Hablar por WhatsApp',
+    suppressHintWithin = null,
 }) {
     const [hasScrolled, setHasScrolled] = useState(false);
     const [isHintVisible, setIsHintVisible] = useState(false);
+    const [isHintSuppressed, setIsHintSuppressed] = useState(false);
 
     useEffect(() => {
         const updateScrollState = () => {
@@ -38,12 +40,33 @@ export default function WhatsAppButton({
         };
     }, [hasScrolled]);
 
+    useEffect(() => {
+        if (!suppressHintWithin) return undefined;
+
+        const clearZone = document.querySelector(suppressHintWithin);
+        if (!clearZone || typeof IntersectionObserver === 'undefined') {
+            return undefined;
+        }
+
+        const observer = new IntersectionObserver(
+            ([entry]) => setIsHintSuppressed(entry.isIntersecting),
+            {
+                rootMargin: '-76px 0px 0px 0px',
+                threshold: 0,
+            },
+        );
+
+        observer.observe(clearZone);
+
+        return () => observer.disconnect();
+    }, [suppressHintWithin]);
+
     return (
         <div className="fixed bottom-4 right-4 z-50 flex max-w-[260px] flex-col items-end gap-2 md:bottom-6 md:right-6 md:max-w-[320px] md:gap-3">
             <div
                 className={[
                     'pointer-events-none relative rounded-[22px] border border-brand-border bg-brand-surface px-4 py-3 text-sm leading-6 text-brand-text shadow-brand-card transition-all duration-300',
-                    isHintVisible
+                    isHintVisible && !isHintSuppressed
                         ? 'translate-y-0 opacity-100'
                         : 'translate-y-2 opacity-0',
                 ].join(' ')}

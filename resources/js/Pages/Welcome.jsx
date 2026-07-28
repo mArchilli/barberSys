@@ -144,6 +144,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                 <WhatsAppButton
                     href={whatsappHref}
                     label="Abrir conversación de WhatsApp con Estilus"
+                    suppressHintWithin="#funcionalidades"
                 />
             </div>
         </>

@@ -1,99 +1,85 @@
-import CardSwap, { Card } from '@/Components/CardSwap';
 import { Link } from '@inertiajs/react';
 import {
     IconArrowRight,
-    IconCreditCard,
+    IconAsterisk,
+    IconChartBar,
+    IconChevronRight,
     IconScissors,
     IconUsers,
     IconWallet,
 } from '@tabler/icons-react';
-import { forwardRef } from 'react';
+import { useRef, useState } from 'react';
 
-export const SOFTWARE_FEATURES = [
-    {
-        id: 'servicios',
-        eyebrow: 'Servicios y cortes',
-        title: 'Registrar cortes nunca fue tan sencillo',
-        description:
-            'Elegí el cliente, seleccioná el servicio y Estilus completa el precio. Confirmás el cobro y el movimiento queda registrado al instante.',
-        image: '/images/features/cortes.png',
-        imageAlt: 'Vista del módulo para cargar cortes en Estilus',
-        icon: IconScissors,
-        tone: 'primary',
-    },
-    {
-        id: 'barberos',
-        eyebrow: 'Equipo',
-        title: 'Manejá todo tu equipo de barberos',
-        description:
-            'Creá perfiles, definí sueldo fijo o comisión y seguí el rendimiento de cada barbero desde un mismo lugar.',
-        image: '/images/features/barberos.png',
-        imageAlt: 'Vista de la gestión del equipo de barberos en Estilus',
-        icon: IconUsers,
-        tone: 'secondary',
-    },
+export const PRODUCT_TOUR_FEATURES = [
     {
         id: 'finanzas',
-        eyebrow: 'Gestión y finanzas',
-        title: 'Estilus te muestra cuánto ingresa, cuánto egresa y cuánto te queda',
+        category: 'Finanzas',
+        title: 'Sabé cuánto te queda realmente',
         description:
-            'Facturación, sueldos y gastos se ordenan en una sola vista para que conozcas la rentabilidad real de tu barbería.',
+            'Ingresos, sueldos, comisiones y gastos reunidos para mostrarte la rentabilidad real de tu barbería.',
+        benefits: ['Ganancia neta real', 'Evolución por período'],
         image: '/images/features/finanzas.png',
-        imageAlt: 'Vista del panel financiero de Estilus',
+        imageAlt:
+            'Panel de Finanzas de Estilus con resultado neto, facturación, sueldos, gastos y evolución del período',
+        imageWidth: 1440,
+        imageHeight: 900,
         icon: IconWallet,
-        tone: 'dark',
     },
     {
-        id: 'medios-de-pago',
-        eyebrow: 'Medios de pago',
-        title: 'Estilus se adapta a vos',
+        id: 'equipo',
+        category: 'Equipo',
+        title: 'Medí el rendimiento de cada barbero',
         description:
-            'Sea cual sea el medio con el que cobrás, cargalo en el sistema. Estilus registra cada movimiento y te ordena la caja automáticamente.',
-        image: '/images/features/medios-pago.png',
-        imageAlt: 'Vista de los medios de pago configurados en Estilus',
-        icon: IconCreditCard,
-        tone: 'surface',
+            'Creá perfiles, definí sueldos fijos o comisiones y compará el rendimiento de tu equipo desde un solo lugar.',
+        benefits: ['Sueldos y comisiones', 'Productividad individual'],
+        image: '/images/features/barberos.png',
+        imageAlt:
+            'Panel de Barberos de Estilus con capacidad del equipo, modalidades de pago y perfiles individuales',
+        imageWidth: 1440,
+        imageHeight: 900,
+        icon: IconUsers,
+    },
+    {
+        id: 'operacion',
+        category: 'Operación',
+        title: 'Registrá cada corte en segundos',
+        description:
+            'Elegí el cliente y el servicio, confirmá el medio de pago y Estilus registra el movimiento automáticamente.',
+        benefits: [
+            'Precio completado automáticamente',
+            'Cobro y movimiento en un paso',
+        ],
+        image: '/images/features/cortes.png',
+        imageAlt:
+            'Pantalla Cargar corte de Estilus con selección de cliente, servicio, precio y medio de pago',
+        imageWidth: 1440,
+        imageHeight: 900,
+        icon: IconScissors,
+    },
+    {
+        id: 'control',
+        category: 'Control',
+        title: 'Toda tu barbería en una sola vista',
+        description:
+            'Revisá facturación, actividad y métricas clave desde un panel pensado para decidir rápido y con información clara.',
+        benefits: [
+            'Indicadores en tiempo real',
+            'Vista general del negocio',
+        ],
+        image: '/images/estilus-dashboard-desktop.jpg',
+        imageAlt:
+            'Dashboard general de Estilus con facturación, ganancia neta, cortes, ticket promedio y evolución del negocio',
+        imageWidth: 1895,
+        imageHeight: 899,
+        icon: IconChartBar,
     },
 ];
 
-const FEATURE_TONES = {
-    primary: {
-        card: 'border-brand-primary-hover/35 bg-brand-primary text-brand-on-primary',
-        icon: 'bg-brand-nav-bg text-brand-primary',
-        eyebrow: 'text-brand-on-primary/70',
-        description: 'text-brand-on-primary/80',
-        count: 'border-brand-on-primary/15 bg-brand-on-primary/10 text-brand-on-primary',
-        visual: 'bg-brand-on-primary/10',
-        frame: 'border-brand-on-primary/20 bg-brand-nav-bg',
-    },
-    secondary: {
-        card: 'border-white/15 bg-brand-secondary text-white',
-        icon: 'bg-brand-primary text-brand-on-primary',
-        eyebrow: 'text-white/70',
-        description: 'text-white/80',
-        count: 'border-white/15 bg-white/10 text-white',
-        visual: 'bg-white/[0.07]',
-        frame: 'border-white/20 bg-brand-nav-bg',
-    },
-    dark: {
-        card: 'border-white/15 bg-brand-nav-bg text-brand-text-on-dark',
-        icon: 'bg-brand-primary text-brand-on-primary',
-        eyebrow: 'text-brand-primary',
-        description: 'text-brand-text-on-dark/72',
-        count: 'border-white/15 bg-white/[0.06] text-brand-text-on-dark',
-        visual: 'bg-white/[0.04]',
-        frame: 'border-white/15 bg-black',
-    },
-    surface: {
-        card: 'border-brand-border bg-brand-surface text-brand-text',
-        icon: 'bg-brand-secondary text-white',
-        eyebrow: 'text-brand-secondary',
-        description: 'text-brand-text-secondary',
-        count: 'border-brand-border bg-brand-bg text-brand-text-secondary',
-        visual: 'bg-brand-bg',
-        frame: 'border-brand-border bg-brand-nav-bg',
-    },
-};
+const tabId = (scope, featureId) =>
+    `product-tour-${scope}-trigger-${featureId}`;
+const panelId = (scope, featureId) =>
+    `product-tour-${scope}-panel-${featureId}`;
+const mobilePanelId = 'product-tour-mobile-panel';
 
 function FeatureAction({ href, inertia = false, className, children }) {
     const Component = inertia ? Link : 'a';
@@ -105,93 +91,393 @@ function FeatureAction({ href, inertia = false, className, children }) {
     );
 }
 
-const SoftwareFeatureCard = forwardRef(function SoftwareFeatureCard(
-    { feature, index, total, className = '', ...cardProps },
-    ref,
-) {
+function FeatureIcon({ feature, className = '' }) {
     const Icon = feature.icon;
-    const tone = FEATURE_TONES[feature.tone] ?? FEATURE_TONES.surface;
-    const titleId = `software-feature-${feature.id}`;
 
+    return <Icon aria-hidden="true" className={className} stroke={1.9} />;
+}
+
+function FeatureBenefits({ benefits, compact = false }) {
     return (
-        <Card
-            ref={ref}
-            {...cardProps}
-            data-swap-label={feature.eyebrow}
-            aria-labelledby={titleId}
-            className={`${tone.card} ${className}`.trim()}
-        >
-            <div className="grid h-full grid-rows-[minmax(238px,auto)_minmax(0,1fr)] sm:grid-cols-[minmax(230px,0.37fr)_minmax(0,0.63fr)] sm:grid-rows-1">
-                <div className="relative z-10 flex min-w-0 flex-col p-5 sm:p-7 lg:p-8">
-                    <div
-                        className={`flex h-11 w-11 items-center justify-center rounded-brand-md sm:h-12 sm:w-12 ${tone.icon}`}
-                    >
-                        <Icon className="h-5 w-5 sm:h-6 sm:w-6" stroke={1.9} />
-                    </div>
-
-                    <p
-                        className={`mt-5 text-[11px] font-semibold uppercase tracking-[0.18em] ${tone.eyebrow}`}
-                    >
-                        {feature.eyebrow}
-                    </p>
-                    <h3
-                        id={titleId}
-                        className="mt-2 text-[1.35rem] leading-[1.05] sm:text-[1.8rem] lg:text-[2rem]"
-                    >
-                        {feature.title}
-                    </h3>
-                    <p
-                        className={`mt-4 text-sm leading-6 sm:text-[15px] sm:leading-6 ${tone.description}`}
-                    >
-                        {feature.description}
-                    </p>
-
-                    <span
-                        className={`mt-auto hidden w-fit rounded-brand-pill border px-3 py-1.5 text-xs font-semibold tabular-nums sm:inline-flex ${tone.count}`}
-                    >
-                        {String(index + 1).padStart(2, '0')} /{' '}
-                        {String(total).padStart(2, '0')}
-                    </span>
-                </div>
-
-                <figure
-                    className={`relative flex min-h-0 items-center overflow-hidden p-3 sm:p-5 lg:p-6 ${tone.visual}`}
+        <ul className={compact ? 'mt-4 space-y-2.5' : 'mt-5 space-y-3'}>
+            {benefits.map((benefit) => (
+                <li
+                    key={benefit}
+                    className="flex items-start gap-2.5 text-sm font-medium leading-5 text-brand-text"
                 >
-                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(72,213,252,0.18),transparent_48%)]" />
-                    <div
-                        className={`relative w-full overflow-hidden rounded-brand-md border shadow-brand-floating ${tone.frame}`}
-                    >
-                        <img
-                            src={feature.image}
-                            alt={feature.imageAlt}
-                            width="1440"
-                            height="900"
-                            loading="lazy"
-                            decoding="async"
-                            className="aspect-[8/5] h-auto w-full object-cover object-left-top"
+                    <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center text-brand-primary">
+                        <IconAsterisk
+                            aria-hidden="true"
+                            className="h-4 w-4"
+                            stroke={2.4}
                         />
-                    </div>
-                </figure>
-            </div>
-        </Card>
+                    </span>
+                    <span>{benefit}</span>
+                </li>
+            ))}
+        </ul>
     );
-});
+}
 
-SoftwareFeatureCard.displayName = 'SoftwareFeatureCard';
-
-function FeaturesOrganicBackground() {
+function ProductTourOrganicShape({ compact = false }) {
     return (
         <svg
             aria-hidden="true"
             focusable="false"
-            viewBox="0 0 1120 380"
-            className="pointer-events-none absolute bottom-0 right-[-42%] z-0 h-auto w-[138%] max-w-[900px] sm:right-[-25%] sm:w-[112%] xl:-bottom-2 xl:right-[-22%] xl:w-[110%] 2xl:right-[-30%]"
+            viewBox="0 0 760 250"
+            preserveAspectRatio="none"
+            className={
+                compact
+                    ? 'pointer-events-none absolute -bottom-5 -left-[7%] z-0 h-24 w-[72%]'
+                    : 'pointer-events-none absolute -bottom-8 -left-[5%] z-0 h-36 w-[64%]'
+            }
         >
             <path
-                fill="#48D5FC"
-                d="M-48 210C55 92 205 55 351 91C468 120 526 188 651 169C785 149 905 38 1024 54C1153 72 1194 199 1090 281C996 355 842 309 715 323C553 341 407 369 254 331C99 292-103 294-48 210Z"
+                className="fill-brand-primary"
+                d="M-38 128C38 48 158 24 267 54C360 80 423 123 520 103C618 84 697 27 760 55C828 86 817 168 744 207C660 251 558 210 462 224C344 241 224 260 116 225C22 195-92 184-38 128Z"
             />
         </svg>
+    );
+}
+
+function ProductScreenshot({ activeId, compact = false }) {
+    return (
+        <div className="relative isolate w-full">
+            <ProductTourOrganicShape compact={compact} />
+
+            {compact ? (
+                <div
+                    aria-hidden="true"
+                    className="absolute inset-x-3 bottom-0 top-3 z-[1] translate-y-3 rounded-[22px] bg-brand-secondary/35"
+                />
+            ) : (
+                <>
+                    <div
+                        aria-hidden="true"
+                        className="absolute inset-x-7 bottom-1 top-6 z-[1] translate-x-2 translate-y-3 rounded-[26px] bg-brand-secondary/[0.38]"
+                    />
+                    <div
+                        aria-hidden="true"
+                        className="absolute inset-x-4 bottom-3 top-3 z-[2] translate-x-1 translate-y-1.5 rounded-[26px] bg-brand-primary/55"
+                    />
+                </>
+            )}
+
+            <figure
+                className={
+                    compact
+                        ? 'relative z-10 aspect-[8/5] overflow-hidden rounded-[22px] border border-brand-nav-bg/80 bg-brand-nav-bg p-1.5 shadow-brand-floating'
+                        : 'relative z-10 aspect-[8/5] overflow-hidden rounded-[26px] border border-brand-nav-bg/80 bg-brand-nav-bg p-2 shadow-brand-floating'
+                }
+            >
+                <div className="relative h-full w-full overflow-hidden rounded-[17px] bg-brand-nav-bg sm:rounded-[20px]">
+                    {PRODUCT_TOUR_FEATURES.map((feature) => {
+                        const isActive = feature.id === activeId;
+
+                        return (
+                            <img
+                                key={feature.id}
+                                src={feature.image}
+                                alt={isActive ? feature.imageAlt : ''}
+                                width={feature.imageWidth}
+                                height={feature.imageHeight}
+                                loading="eager"
+                                fetchpriority={
+                                    feature.id ===
+                                    PRODUCT_TOUR_FEATURES[0].id
+                                        ? 'high'
+                                        : 'auto'
+                                }
+                                decoding="async"
+                                draggable="false"
+                                aria-hidden={isActive ? undefined : 'true'}
+                                className={`absolute inset-0 h-full w-full select-none object-contain transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transform-none motion-reduce:transition-none ${
+                                    isActive
+                                        ? 'z-10 translate-y-0 opacity-100'
+                                        : 'pointer-events-none z-0 translate-y-2 opacity-0'
+                                }`}
+                            />
+                        );
+                    })}
+                </div>
+            </figure>
+        </div>
+    );
+}
+
+function MobileFeatureSelector({
+    activeId,
+    onSelect,
+    onKeyDown,
+    registerTab,
+}) {
+    return (
+        <div
+            role="tablist"
+            aria-label="Funcionalidades de Estilus"
+            aria-orientation="horizontal"
+            className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3"
+        >
+            {PRODUCT_TOUR_FEATURES.map((feature, index) => {
+                const isActive = feature.id === activeId;
+
+                return (
+                    <button
+                        key={feature.id}
+                        ref={(node) =>
+                            registerTab('mobile', feature.id, node)
+                        }
+                        type="button"
+                        role="tab"
+                        id={tabId('mobile', feature.id)}
+                        aria-controls={mobilePanelId}
+                        aria-selected={isActive}
+                        tabIndex={isActive ? 0 : -1}
+                        className={`group relative flex min-h-[58px] min-w-0 items-center gap-1.5 rounded-brand-md border px-2 py-2.5 text-left text-sm font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg sm:gap-2.5 sm:px-3 motion-reduce:transition-none ${
+                            isActive
+                                ? 'border-brand-primary bg-brand-primary-soft text-brand-text shadow-brand-card'
+                                : 'border-brand-border bg-brand-surface text-brand-text-secondary hover:border-brand-primary-muted hover:text-brand-text'
+                        }`}
+                        onClick={() => onSelect(feature.id)}
+                        onKeyDown={(event) =>
+                            onKeyDown(event, 'mobile', index, true)
+                        }
+                    >
+                        <span
+                            className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-brand-sm ${
+                                isActive
+                                    ? 'bg-brand-nav-bg text-brand-primary'
+                                    : 'bg-brand-bg text-brand-primary'
+                            }`}
+                        >
+                            <FeatureIcon
+                                feature={feature}
+                                className="h-[18px] w-[18px]"
+                            />
+                        </span>
+                        <span className="min-w-0 flex-1 leading-4">
+                            {feature.category}
+                        </span>
+                        {isActive && (
+                            <span
+                                aria-hidden="true"
+                                className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-brand-primary"
+                            />
+                        )}
+                    </button>
+                );
+            })}
+        </div>
+    );
+}
+
+function MobileProductTour({
+    activeFeature,
+    activeId,
+    cta,
+    onSelect,
+    onKeyDown,
+    registerTab,
+}) {
+    return (
+        <div className="mt-10 xl:hidden">
+            <MobileFeatureSelector
+                activeId={activeId}
+                onSelect={onSelect}
+                onKeyDown={onKeyDown}
+                registerTab={registerTab}
+            />
+
+            <div
+                role="tabpanel"
+                id={mobilePanelId}
+                aria-labelledby={tabId('mobile', activeFeature.id)}
+                className="mt-7 outline-none sm:mt-9"
+            >
+                <ProductScreenshot activeId={activeId} compact />
+
+                <div
+                    key={activeFeature.id}
+                    className="product-tour-copy-enter mt-8 min-h-[274px] sm:mt-10 sm:min-h-[256px]"
+                >
+                    <div className="text-xs font-bold uppercase tracking-[0.16em] text-brand-secondary">
+                        <span>{activeFeature.category}</span>
+                    </div>
+
+                    <h3 className="mt-3 max-w-[36rem] text-[clamp(1.75rem,7vw,2.4rem)] leading-[1.02] text-brand-text">
+                        {activeFeature.title}
+                    </h3>
+                    <p className="mt-4 max-w-[42rem] text-[15px] leading-6 text-brand-text-secondary sm:text-base sm:leading-7">
+                        {activeFeature.description}
+                    </p>
+
+                    <FeatureBenefits benefits={activeFeature.benefits} />
+                </div>
+
+                {cta && (
+                    <FeatureAction
+                        href={cta.href}
+                        inertia={cta.inertia}
+                        className="group mt-8 inline-flex min-h-[52px] w-full items-center justify-center rounded-brand-pill bg-brand-primary px-8 text-base font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover hover:shadow-brand-floating focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg sm:w-auto motion-reduce:transform-none motion-reduce:transition-none"
+                    >
+                        <span>{cta.label}</span>
+                        <IconArrowRight
+                            aria-hidden="true"
+                            className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+                            stroke={2.3}
+                        />
+                    </FeatureAction>
+                )}
+            </div>
+        </div>
+    );
+}
+
+function DesktopProductTour({
+    activeFeature,
+    activeId,
+    cta,
+    onSelect,
+    onKeyDown,
+    registerTab,
+}) {
+    return (
+        <div className="relative mt-16 hidden xl:block">
+            <div className="relative z-10 grid grid-cols-[minmax(0,2fr)_minmax(340px,1fr)] overflow-hidden rounded-[30px] border border-brand-border bg-brand-surface shadow-brand-floating">
+                <div className="relative flex min-h-[650px] min-w-0 items-center bg-brand-bg p-5 2xl:p-6">
+                    <ProductScreenshot activeId={activeId} />
+                </div>
+
+                <aside className="flex min-h-[650px] min-w-0 flex-col border-l border-brand-border bg-brand-surface">
+                    <div
+                        role="group"
+                        aria-label="Funcionalidades de Estilus"
+                        className="flex-1"
+                    >
+                        {PRODUCT_TOUR_FEATURES.map((feature, index) => {
+                            const isActive = feature.id === activeId;
+
+                            return (
+                                <div
+                                    key={feature.id}
+                                    className={`border-b border-brand-border-subtle border-l-2 transition-colors duration-200 last:border-b-0 motion-reduce:transition-none ${
+                                        isActive
+                                            ? 'border-l-brand-primary bg-brand-primary/5'
+                                            : 'border-l-transparent bg-brand-surface'
+                                    }`}
+                                >
+                                    <button
+                                        ref={(node) =>
+                                            registerTab(
+                                                'desktop',
+                                                feature.id,
+                                                node,
+                                            )
+                                        }
+                                        type="button"
+                                        id={tabId('desktop', feature.id)}
+                                        aria-controls={panelId(
+                                            'desktop',
+                                            feature.id,
+                                        )}
+                                        aria-expanded={isActive}
+                                        className="group flex min-h-[64px] w-full items-center gap-3 px-4 py-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-secondary 2xl:px-5"
+                                        onClick={() =>
+                                            onSelect(feature.id)
+                                        }
+                                        onKeyDown={(event) =>
+                                            onKeyDown(
+                                                event,
+                                                'desktop',
+                                                index,
+                                                false,
+                                            )
+                                        }
+                                    >
+                                        <span
+                                            className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-brand-sm ${
+                                                isActive
+                                                    ? 'bg-brand-nav-bg text-brand-primary'
+                                                    : 'bg-brand-bg text-brand-primary'
+                                            }`}
+                                        >
+                                            <FeatureIcon
+                                                feature={feature}
+                                                className="h-[18px] w-[18px]"
+                                            />
+                                        </span>
+                                        <span
+                                            className={`min-w-0 flex-1 text-sm font-bold ${
+                                                isActive
+                                                    ? 'text-brand-text'
+                                                    : 'text-brand-text-secondary group-hover:text-brand-text'
+                                            }`}
+                                        >
+                                            {feature.category}
+                                        </span>
+                                        <IconChevronRight
+                                            aria-hidden="true"
+                                            className={`h-4 w-4 shrink-0 text-brand-primary transition-transform duration-200 motion-reduce:transition-none ${
+                                                isActive
+                                                    ? 'rotate-90'
+                                                    : ''
+                                            }`}
+                                            stroke={2}
+                                        />
+                                    </button>
+
+                                    <div
+                                        role="region"
+                                        id={panelId(
+                                            'desktop',
+                                            feature.id,
+                                        )}
+                                        aria-labelledby={tabId(
+                                            'desktop',
+                                            feature.id,
+                                        )}
+                                        hidden={!isActive}
+                                        className={
+                                            isActive
+                                                ? 'product-tour-copy-enter px-4 pb-5 2xl:px-5 2xl:pb-6'
+                                                : 'hidden'
+                                        }
+                                    >
+                                            <h3 className="text-[1.65rem] leading-[1.04] text-brand-text 2xl:text-[1.8rem]">
+                                                {feature.title}
+                                            </h3>
+                                            <p className="mt-3 text-[14px] leading-6 text-brand-text-secondary 2xl:text-[15px]">
+                                                {feature.description}
+                                            </p>
+                                            <FeatureBenefits
+                                                benefits={feature.benefits}
+                                                compact
+                                            />
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    {cta && (
+                        <div className="mt-auto border-t border-brand-border px-4 py-5 2xl:px-5">
+                            <FeatureAction
+                                href={cta.href}
+                                inertia={cta.inertia}
+                                className="group inline-flex min-h-[50px] w-full items-center justify-center rounded-brand-pill bg-brand-primary px-6 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover hover:shadow-brand-floating focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-surface motion-reduce:transform-none motion-reduce:transition-none"
+                            >
+                                <span>{cta.label}</span>
+                                <IconArrowRight
+                                    aria-hidden="true"
+                                    className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+                                    stroke={2.3}
+                                />
+                            </FeatureAction>
+                        </div>
+                    )}
+                </aside>
+            </div>
+        </div>
     );
 }
 
@@ -202,76 +488,93 @@ export default function FeaturesSection({
         inertia: false,
     },
 }) {
+    const [activeId, setActiveId] = useState(
+        PRODUCT_TOUR_FEATURES[0].id,
+    );
+    const tabRefs = useRef({
+        mobile: new Map(),
+        desktop: new Map(),
+    });
+    const activeFeature =
+        PRODUCT_TOUR_FEATURES.find((feature) => feature.id === activeId) ??
+        PRODUCT_TOUR_FEATURES[0];
+
+    const registerTab = (scope, featureId, node) => {
+        const scopedRefs = tabRefs.current[scope];
+        if (node) scopedRefs.set(featureId, node);
+        else scopedRefs.delete(featureId);
+    };
+
+    const selectFeature = (featureId) => {
+        if (featureId !== activeId) setActiveId(featureId);
+    };
+
+    const handleTabKeyDown = (event, scope, index, isMobileTabs) => {
+        let nextIndex = null;
+        const total = PRODUCT_TOUR_FEATURES.length;
+
+        if (event.key === 'Home') nextIndex = 0;
+        else if (event.key === 'End') nextIndex = total - 1;
+        else if (
+            event.key === 'ArrowRight' ||
+            (!isMobileTabs && event.key === 'ArrowDown')
+        )
+            nextIndex = (index + 1) % total;
+        else if (
+            event.key === 'ArrowLeft' ||
+            (!isMobileTabs && event.key === 'ArrowUp')
+        )
+            nextIndex = (index - 1 + total) % total;
+
+        if (nextIndex === null) return;
+
+        event.preventDefault();
+        const nextFeature = PRODUCT_TOUR_FEATURES[nextIndex];
+        setActiveId(nextFeature.id);
+        tabRefs.current[scope].get(nextFeature.id)?.focus();
+    };
+
     return (
         <section
             id="funcionalidades"
             aria-labelledby="software-features-heading"
-            className="relative isolate overflow-clip px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
+            className="relative isolate scroll-mt-20 overflow-clip px-6 py-20 sm:px-8 sm:py-24 md:pr-24 lg:py-28 lg:pl-10 xl:py-36 xl:pl-12 min-[1664px]:px-12"
         >
             <div className="relative z-10 mx-auto w-full max-w-[1440px]">
-                <div className="grid gap-y-10 xl:grid-cols-[minmax(360px,500px)_minmax(0,860px)] xl:items-center xl:justify-center xl:gap-x-12 2xl:gap-x-14">
-                    <div className="w-full max-w-xl xl:max-w-[500px]">
-                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-secondary">
-                            Todo en un solo lugar
-                        </p>
+                <header className="xl:grid xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] xl:items-end xl:gap-16 2xl:gap-20">
+                    <div className="max-w-[880px]">
                         <h2
                             id="software-features-heading"
-                            className="mt-4 max-w-[500px] text-3xl leading-[1.02] text-brand-text sm:text-4xl lg:text-5xl xl:text-[3.25rem]"
+                            className="text-[clamp(2.25rem,9vw,2.75rem)] leading-[0.98] text-brand-text sm:text-[clamp(2.75rem,6vw,4rem)] xl:text-[clamp(3.5rem,4.4vw,4.5rem)]"
                         >
-                            Estilus ordena por vos cada centimetro de tu barberia
+                            Todo lo que pasa en tu barbería, claro de un
+                            vistazo.
                         </h2>
-                        <p className="mt-7 max-w-[460px] text-lg font-medium leading-8 text-brand-text-secondary xl:text-[1.1875rem]">
-                            Gestiona tu equipo de barberos, carga cortes y
-                            servicios, registra gastos, sueldos, comisiones y
-                            mucho mas. Estilus reune todas tus operaciones en un
-                            solo lugar para que decidas en tu barberia con
-                            numeros claros, todo momento.
-                        </p>
-
-                        {cta && (
-                            <FeatureAction
-                                href={cta.href}
-                                inertia={cta.inertia}
-                                className="mt-8 inline-flex min-h-[52px] items-center justify-center rounded-brand-pill bg-brand-primary px-8 text-base font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover hover:shadow-brand-floating focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
-                            >
-                                <span>{cta.label}</span>
-                                <IconArrowRight
-                                    aria-hidden="true"
-                                    className="ml-2 h-4 w-4"
-                                    stroke={2.3}
-                                />
-                            </FeatureAction>
-                        )}
                     </div>
 
-                    <div className="relative isolate min-w-0 pb-20 pr-5 pt-20 sm:pr-9 sm:pt-24 xl:pr-0 xl:pt-20">
-                        <FeaturesOrganicBackground />
+                    <p className="mt-6 max-w-[38rem] text-[15px] leading-6 text-brand-text-secondary sm:text-base sm:leading-7 xl:mt-0 xl:pb-1 xl:text-lg xl:leading-8">
+                        Estilus reúne operación, equipo y finanzas para que
+                        tomes decisiones con información real, no con
+                        suposiciones.
+                    </p>
+                </header>
 
-                        <CardSwap
-                            width="100%"
-                            height="clamp(500px, 56vw, 540px)"
-                            cardDistance={12}
-                            verticalDistance={18}
-                            delay={6000}
-                            pauseOnHover
-                            skewAmount={1.2}
-                            easing="linear"
-                            labelledBy="software-features-heading"
-                            controlsLabel="Elegir una funcionalidad de Estilus"
-                            className="z-10 ml-0 mr-auto max-w-[860px]"
-                        >
-                            {SOFTWARE_FEATURES.map((feature, index) => (
-                                <SoftwareFeatureCard
-                                    key={feature.id}
-                                    data-swap-label={feature.eyebrow}
-                                    feature={feature}
-                                    index={index}
-                                    total={SOFTWARE_FEATURES.length}
-                                />
-                            ))}
-                        </CardSwap>
-                    </div>
-                </div>
+                <MobileProductTour
+                    activeFeature={activeFeature}
+                    activeId={activeId}
+                    cta={cta}
+                    onSelect={selectFeature}
+                    onKeyDown={handleTabKeyDown}
+                    registerTab={registerTab}
+                />
+                <DesktopProductTour
+                    activeFeature={activeFeature}
+                    activeId={activeId}
+                    cta={cta}
+                    onSelect={selectFeature}
+                    onKeyDown={handleTabKeyDown}
+                    registerTab={registerTab}
+                />
             </div>
         </section>
     );
