@@ -13,6 +13,19 @@ function HeroOrganicBackground() {
             <svg
                 aria-hidden="true"
                 focusable="false"
+                viewBox="0 0 390 1160"
+                preserveAspectRatio="none"
+                className="absolute inset-x-0 top-0 hidden h-[1144px] w-full sm:block md:hidden"
+            >
+                <path
+                    fill="#48D5FC"
+                    d="M470-180C430 80 420 300 410 480C400 570 250 580 120 660C40 730 60 1010 160 1080C260 1150 400 1100 470 990C520 850 530 300 470-180Z"
+                />
+            </svg>
+
+            <svg
+                aria-hidden="true"
+                focusable="false"
                 viewBox="0 0 768 1200"
                 preserveAspectRatio="none"
                 className="absolute inset-x-0 top-0 hidden h-[1216px] w-full md:block lg:hidden"
@@ -72,18 +85,18 @@ function ProductPreview() {
     return (
         <figure
             aria-label="Dashboard de Estilus en sus vistas de escritorio y mobile"
-            className="relative isolate mx-auto h-[clamp(220px,calc(30vw_+_114px),254px)] w-full max-w-[420px] sm:h-[500px] sm:max-w-[900px] md:h-[540px] md:isolation-auto lg:h-[700px] xl:h-[640px]"
+            className="relative isolate mx-auto h-[clamp(220px,calc(30vw_+_114px),254px)] w-full max-w-[420px] sm:h-[500px] sm:max-w-[900px] sm:isolation-auto md:h-[540px] lg:h-[700px] xl:h-[640px]"
         >
             <svg
                 aria-hidden="true"
                 focusable="false"
                 viewBox="0 0 480 280"
                 preserveAspectRatio="none"
-                className="pointer-events-none absolute left-1/2 top-[-22px] -z-10 h-[calc(100%+30px)] w-[120vw] max-w-none -translate-x-1/2 sm:top-[2%] sm:h-[calc(53.5vw_+_159px)] md:hidden"
+                className="pointer-events-none absolute left-1/2 top-[-22px] -z-10 h-[calc(100%+38px)] w-[120vw] max-w-none -translate-x-1/2 sm:hidden"
             >
                 <path
                     className="fill-brand-primary"
-                    d="M-18 80C28 22 116 8 196 18C276-2 392 20 474 67C520 94 510 166 466 207C416 254 322 270 238 257C150 278 52 252-4 208C-44 176-50 116-18 80Z"
+                    d="M-18 80C28 22 116 8 196 18C276-2 392 20 474 67C520 94 510 166 466 207C430 254 390 276 330 276C286 276 265 268 238 264C150 282 52 252-4 208C-44 176-50 116-18 80Z"
                 />
             </svg>
 
@@ -134,7 +147,7 @@ export default function HeroSection({
     return (
         <section
             id="inicio"
-            className="relative isolate -mt-[76px] flex min-h-[100svh] overflow-x-clip bg-brand-bg px-5 pb-10 pt-[110px] sm:px-8 sm:pb-12 sm:pt-[124px] md:overflow-x-visible lg:px-10 lg:pb-10 lg:pt-[116px] xl:px-12"
+            className="relative isolate -mt-[76px] flex min-h-[100svh] overflow-x-clip bg-brand-bg px-5 pb-10 pt-[110px] sm:overflow-x-visible sm:px-8 sm:pb-12 sm:pt-[124px] lg:px-10 lg:pb-10 lg:pt-[116px] xl:px-12"
         >
             <HeroOrganicBackground />
 

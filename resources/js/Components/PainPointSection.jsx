@@ -173,17 +173,31 @@ function MonthlyClosingScene() {
 
 function PainPointOrganicBackground() {
     return (
-        <svg
-            aria-hidden="true"
-            focusable="false"
-            viewBox="0 0 720 920"
-            className="pointer-events-none absolute bottom-[3%] right-[-52%] z-0 h-auto w-[112%] max-w-[580px] sm:right-[-30%] sm:w-[68%] lg:bottom-[4%] lg:right-[-16%] lg:w-[46%] xl:right-[-11%] xl:w-[32%] 2xl:right-[-9%] 2xl:w-[26%]"
-        >
-            <path
-                fill="#48D5FC"
-                d="M392 12C548-18 700 92 718 248C731 365 665 439 681 557C699 690 616 842 477 898C350 949 218 886 166 778C128 699 235 638 218 558C197 462 78 424 91 319C106 199 218 176 259 93C286 37 333 24 392 12Z"
-            />
-        </svg>
+        <>
+            <svg
+                aria-hidden="true"
+                focusable="false"
+                viewBox="0 0 720 920"
+                className="pointer-events-none absolute bottom-[3%] right-[-52%] z-0 h-auto w-[112%] max-w-[580px] sm:right-[-30%] sm:w-[68%] lg:hidden"
+            >
+                <path
+                    fill="#48D5FC"
+                    d="M392 12C548-18 700 92 718 248C731 365 665 439 681 557C699 690 616 842 477 898C350 949 218 886 166 778C128 699 235 638 218 558C197 462 78 424 91 319C106 199 218 176 259 93C286 37 333 24 392 12Z"
+                />
+            </svg>
+
+            <svg
+                aria-hidden="true"
+                focusable="false"
+                viewBox="0 0 520 900"
+                className="pointer-events-none absolute bottom-[2%] left-[clamp(-300px,calc(50vw_-_1053px),-150px)] z-0 hidden h-auto w-[430px] lg:block"
+            >
+                <path
+                    className="fill-brand-primary"
+                    d="M72 24C188-18 322 38 374 142C420 233 366 314 382 405C404 520 350 634 276 706C218 762 204 842 116 884C42 919-42 882-78 814C-118 738-62 666-74 574C-88 470-142 382-104 276C-72 188-30 62 72 24Z"
+                />
+            </svg>
+        </>
     );
 }
 
