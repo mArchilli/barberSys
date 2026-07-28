@@ -39,7 +39,7 @@ export default function WhatsAppButton({
     }, [hasScrolled]);
 
     return (
-        <div className="fixed bottom-5 right-5 z-50 flex max-w-[280px] flex-col items-end gap-3 sm:bottom-6 sm:right-6 sm:max-w-[320px]">
+        <div className="fixed bottom-4 right-4 z-50 flex max-w-[260px] flex-col items-end gap-2 md:bottom-6 md:right-6 md:max-w-[320px] md:gap-3">
             <div
                 className={[
                     'pointer-events-none relative rounded-[22px] border border-brand-border bg-brand-surface px-4 py-3 text-sm leading-6 text-brand-text shadow-brand-card transition-all duration-300',
@@ -59,13 +59,13 @@ export default function WhatsAppButton({
                 rel="noreferrer"
                 aria-label={label}
                 className={[
-                    'inline-flex h-14 w-14 items-center justify-center rounded-full border text-brand-on-primary shadow-brand-floating transition-all duration-300 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg motion-reduce:transform-none motion-reduce:transition-none sm:h-16 sm:w-16',
+                    'inline-flex h-14 w-14 items-center justify-center rounded-full border text-brand-on-primary shadow-brand-floating transition-all duration-300 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg motion-reduce:transform-none motion-reduce:transition-none md:h-16 md:w-16',
                     hasScrolled
                         ? 'border-brand-primary/20 bg-brand-primary hover:bg-brand-primary-hover'
                         : 'border-white/80 bg-brand-surface hover:bg-brand-surface-alt',
                 ].join(' ')}
             >
-                <IconBrandWhatsapp className="h-6 w-6 sm:h-7 sm:w-7" stroke={2.2} />
+                <IconBrandWhatsapp className="h-7 w-7" stroke={2.2} />
             </a>
         </div>
     );

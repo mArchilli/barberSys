@@ -179,6 +179,22 @@ const SoftwareFeatureCard = forwardRef(function SoftwareFeatureCard(
 
 SoftwareFeatureCard.displayName = 'SoftwareFeatureCard';
 
+function FeaturesOrganicBackground() {
+    return (
+        <svg
+            aria-hidden="true"
+            focusable="false"
+            viewBox="0 0 1120 380"
+            className="pointer-events-none absolute bottom-0 right-[-42%] z-0 h-auto w-[138%] max-w-[900px] sm:right-[-25%] sm:w-[112%] xl:-bottom-2 xl:right-[-22%] xl:w-[110%] 2xl:right-[-30%]"
+        >
+            <path
+                fill="#48D5FC"
+                d="M-48 210C55 92 205 55 351 91C468 120 526 188 651 169C785 149 905 38 1024 54C1153 72 1194 199 1090 281C996 355 842 309 715 323C553 341 407 369 254 331C99 292-103 294-48 210Z"
+            />
+        </svg>
+    );
+}
+
 export default function FeaturesSection({
     cta = {
         label: 'Probar Estilus',
@@ -190,9 +206,9 @@ export default function FeaturesSection({
         <section
             id="funcionalidades"
             aria-labelledby="software-features-heading"
-            className="relative z-10 px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
+            className="relative isolate overflow-clip px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
         >
-            <div className="relative mx-auto w-full max-w-[1440px]">
+            <div className="relative z-10 mx-auto w-full max-w-[1440px]">
                 <div className="grid gap-y-10 xl:grid-cols-[minmax(360px,500px)_minmax(0,860px)] xl:items-center xl:justify-center xl:gap-x-12 2xl:gap-x-14">
                     <div className="w-full max-w-xl xl:max-w-[500px]">
                         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-secondary">
@@ -228,7 +244,9 @@ export default function FeaturesSection({
                         )}
                     </div>
 
-                    <div className="relative min-w-0 pb-20 pr-5 pt-20 sm:pr-9 sm:pt-24 xl:pr-0 xl:pt-20">
+                    <div className="relative isolate min-w-0 pb-20 pr-5 pt-20 sm:pr-9 sm:pt-24 xl:pr-0 xl:pt-20">
+                        <FeaturesOrganicBackground />
+
                         <CardSwap
                             width="100%"
                             height="clamp(500px, 56vw, 540px)"
@@ -240,7 +258,7 @@ export default function FeaturesSection({
                             easing="linear"
                             labelledBy="software-features-heading"
                             controlsLabel="Elegir una funcionalidad de Estilus"
-                            className="ml-0 mr-auto max-w-[860px]"
+                            className="z-10 ml-0 mr-auto max-w-[860px]"
                         >
                             {SOFTWARE_FEATURES.map((feature, index) => (
                                 <SoftwareFeatureCard

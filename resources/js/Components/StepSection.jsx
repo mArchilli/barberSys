@@ -345,6 +345,48 @@ function TimelineStage({ step, index, activeIndex, registerStage }) {
     );
 }
 
+function StepOrganicBackgrounds() {
+    return (
+        <>
+            <svg
+                aria-hidden="true"
+                focusable="false"
+                viewBox="0 0 640 900"
+                className="pointer-events-none absolute left-[-17%] top-[18%] z-0 hidden h-auto w-[34%] max-w-[520px] xl:block 2xl:left-[-13%] 2xl:top-[17%] 2xl:w-[28%] 2xl:max-w-[580px]"
+            >
+                <path
+                    fill="#48D5FC"
+                    d="M-72 18C105-22 318 29 468 148C573 232 606 338 530 418C466 486 386 458 338 535C286 593 354 671 372 750C396 844 226 900 111 850C-28 784-103 166-72 18Z"
+                />
+            </svg>
+
+            <svg
+                aria-hidden="true"
+                focusable="false"
+                viewBox="0 0 760 440"
+                className="pointer-events-none absolute bottom-[7%] right-[-50%] z-0 h-auto w-[86%] max-w-[420px] md:bottom-[10%] md:right-[-5%] md:w-[55%] md:max-w-[480px] xl:hidden"
+            >
+                <path
+                    fill="#48D5FC"
+                    d="M62 66C178 4 353-9 482 42C576 80 602 149 698 163C796 178 817 265 754 325C694 382 587 372 503 355C420 338 361 405 267 422C163 442 59 397 35 327C14 267 91 233 120 188C153 137 20 105 62 66Z"
+                />
+            </svg>
+
+            <svg
+                aria-hidden="true"
+                focusable="false"
+                viewBox="0 0 900 360"
+                className="pointer-events-none absolute bottom-[12%] right-[-10%] z-0 hidden h-auto w-[34%] max-w-[580px] xl:block 2xl:right-[-8%]"
+            >
+                <path
+                    fill="#48D5FC"
+                    d="M-36 235C55 126 195 85 329 111C444 133 512 206 623 171C734 136 828 72 895 126C970 186 941 291 852 322C742 360 657 314 550 336C409 365 284 377 151 347C27 319-84 298-36 235Z"
+                />
+            </svg>
+        </>
+    );
+}
+
 export default function StepSection({
     cta = {
         label: 'Empezar ahora',
@@ -431,9 +473,11 @@ export default function StepSection({
         <section
             id="como-funciona"
             ref={sectionRef}
-            className="relative z-10 px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
+            className="relative isolate overflow-clip px-6 py-16 sm:px-8 sm:py-24 lg:px-10 lg:py-28 xl:px-12"
         >
-            <div className="mx-auto w-full max-w-[1180px]">
+            <StepOrganicBackgrounds />
+
+            <div className="relative z-10 mx-auto w-full max-w-[1180px]">
                 <div className="mx-auto max-w-3xl text-center">
                     <h2 className="text-3xl text-brand-text sm:text-4xl lg:text-5xl">
                         Asi es un dia con{' '}

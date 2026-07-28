@@ -171,13 +171,31 @@ function MonthlyClosingScene() {
     );
 }
 
+function PainPointOrganicBackground() {
+    return (
+        <svg
+            aria-hidden="true"
+            focusable="false"
+            viewBox="0 0 720 920"
+            className="pointer-events-none absolute bottom-[3%] right-[-52%] z-0 h-auto w-[112%] max-w-[580px] sm:right-[-30%] sm:w-[68%] lg:bottom-[4%] lg:right-[-16%] lg:w-[46%] xl:right-[-11%] xl:w-[32%] 2xl:right-[-9%] 2xl:w-[26%]"
+        >
+            <path
+                fill="#48D5FC"
+                d="M392 12C548-18 700 92 718 248C731 365 665 439 681 557C699 690 616 842 477 898C350 949 218 886 166 778C128 699 235 638 218 558C197 462 78 424 91 319C106 199 218 176 259 93C286 37 333 24 392 12Z"
+            />
+        </svg>
+    );
+}
+
 export default function PainPointSection() {
     return (
         <section
             id="pain-points"
             aria-labelledby="pain-points-heading"
-            className="relative z-10 px-6 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-32 xl:px-12 xl:py-36"
+            className="relative isolate overflow-clip px-6 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-32 xl:px-12 xl:py-36"
         >
+            <PainPointOrganicBackground />
+
             <div className="relative z-10 mx-auto w-full max-w-[1440px]">
                 <div className="grid min-w-0 items-center gap-14 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-10 xl:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] xl:gap-20">
                     <div className="min-w-0 max-w-[38rem] lg:max-w-[31rem]">
