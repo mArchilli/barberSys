@@ -11,15 +11,86 @@ import StepSection from '@/Components/StepSection';
 import WaveTransition from '@/Components/WaveTransition';
 import WhatsAppButton from '@/Components/WhatsAppButton';
 import { Head } from '@inertiajs/react';
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
+import { useEffect } from 'react';
 
 const links = [
-    { label: 'Funcionalidades', href: '#funcionalidades' },
-    { label: 'Cómo funciona', href: '#como-funciona' },
+    { label: 'Inicio', href: '#inicio' },
+    { label: 'El problema', href: '#pain-points' },
+    { label: '¿Cómo funciona?', href: '#funcionalidades' },
     { label: 'Precios', href: '#precios' },
-    { label: 'FAQ', href: '#faq' },
+    { label: 'Dudas', href: '#faq' },
 ];
 
+function SectionOrganicAccent() {
+    return (
+        <div
+            aria-hidden="true"
+            className="pointer-events-none relative z-0 hidden h-0 lg:block"
+        >
+            <div className="absolute right-0 top-0 h-[26rem] w-[23rem] -translate-y-[38%] overflow-hidden xl:h-[30rem] xl:w-[26rem] 2xl:h-[32rem] 2xl:w-[28rem]">
+                <svg
+                    viewBox="0 0 520 620"
+                    preserveAspectRatio="none"
+                    className="absolute -right-14 top-0 h-full w-full text-brand-primary xl:-right-12"
+                >
+                    <path
+                        fill="currentColor"
+                        d="M520 28C468 6 401 2 342 20C296 34 269 60 269 96C270 129 278 151 252 174C224 198 163 183 113 207C78 224 72 257 88 294C112 349 158 389 220 421C285 454 353 480 407 519C450 550 458 584 520 600V28Z"
+                    />
+                </svg>
+            </div>
+        </div>
+    );
+}
+
 export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSalesNumber }) {
+    useEffect(() => {
+        const desktopPointer = window.matchMedia(
+            '(min-width: 768px) and (pointer: fine)',
+        );
+        const reducedMotion = window.matchMedia(
+            '(prefers-reduced-motion: reduce)',
+        );
+        let lenis = null;
+
+        const syncSmoothScroll = () => {
+            const shouldUseSmoothScroll =
+                desktopPointer.matches && !reducedMotion.matches;
+
+            if (shouldUseSmoothScroll && !lenis) {
+                lenis = new Lenis({
+                    anchors: { offset: -96 },
+                    allowNestedScroll: true,
+                    autoRaf: true,
+                    autoToggle: true,
+                    lerp: 0.085,
+                    smoothWheel: true,
+                    stopInertiaOnNavigate: true,
+                    syncTouch: false,
+                    wheelMultiplier: 0.82,
+                });
+                return;
+            }
+
+            if (!shouldUseSmoothScroll && lenis) {
+                lenis.destroy();
+                lenis = null;
+            }
+        };
+
+        syncSmoothScroll();
+        desktopPointer.addEventListener('change', syncSmoothScroll);
+        reducedMotion.addEventListener('change', syncSmoothScroll);
+
+        return () => {
+            desktopPointer.removeEventListener('change', syncSmoothScroll);
+            reducedMotion.removeEventListener('change', syncSmoothScroll);
+            lenis?.destroy();
+        };
+    }, []);
+
     const ctaHref = auth.user
         ? route('dashboard')
         : canRegister
@@ -43,7 +114,10 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
             </Head>
 
             <div className="landing-theme min-h-screen bg-brand-bg text-brand-text">
-                <Navbar />
+                <Navbar
+                    loginHref={route('login')}
+                    registerHref={route('register')}
+                />
                 <HeroSection
                     primaryCta={{
                         label: primaryCtaLabel,
@@ -57,6 +131,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                     }}
                 />
                 <PainPointSection />
+                <SectionOrganicAccent />
                 <FeaturesSection
                     cta={{
                         label: 'Probar Estilus',
@@ -104,8 +179,8 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                     <CTASection
                         cta={{
                             label: 'Probar gratis',
-                            href: ctaHref,
-                            inertia: ctaHref !== '#',
+                            href: route('register'),
+                            inertia: true,
                         }}
                     />
                     <FAQSection
@@ -129,6 +204,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                     href={whatsappHref}
                     label="Abrir conversación de WhatsApp con Estilus"
                     suppressHintWithin="#funcionalidades"
+                    whiteAfter="#cta-final"
                 />
             </div>
         </>

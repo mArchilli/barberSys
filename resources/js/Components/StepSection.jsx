@@ -263,7 +263,7 @@ function StepOrganicBackgrounds() {
                 aria-hidden="true"
                 focusable="false"
                 viewBox="0 0 420 620"
-                className="pointer-events-none absolute left-[-12rem] top-[28%] z-0 h-auto w-[19rem] text-brand-primary opacity-[0.16] sm:left-[-11rem] sm:w-[23rem] xl:left-[-9rem] xl:w-[26rem]"
+                className="pointer-events-none absolute left-[-12rem] top-[28%] z-0 h-auto w-[19rem] text-brand-primary sm:left-[-11rem] sm:w-[23rem] xl:left-[-9rem] xl:w-[26rem]"
             >
                 <path
                     fill="currentColor"
@@ -275,7 +275,7 @@ function StepOrganicBackgrounds() {
                 aria-hidden="true"
                 focusable="false"
                 viewBox="0 0 560 360"
-                className="pointer-events-none absolute bottom-[9%] right-[-13rem] z-0 h-auto w-[24rem] text-brand-primary opacity-[0.12] sm:right-[-10rem] sm:w-[28rem] xl:right-[-8rem] xl:w-[32rem]"
+                className="pointer-events-none absolute bottom-[9%] right-[-13rem] z-0 h-auto w-[24rem] text-brand-primary sm:right-[-10rem] sm:w-[28rem] xl:right-[-8rem] xl:w-[32rem]"
             >
                 <path
                     fill="currentColor"

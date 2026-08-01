@@ -221,7 +221,7 @@ export default function PainPointSection() {
                                 Facturaste todo el mes.
                             </span>
                             <span className="mt-1 block text-brand-text">
-                                ¿Pero cuánto te quedo en el bolsillo?
+                                ¿Pero cuánto te quedó en el bolsillo?
                             </span>
                         </h2>
 

@@ -459,11 +459,12 @@ export default function CTASection({
 }) {
     return (
         <section
+            id="cta-final"
             aria-labelledby="estilus-cta-heading"
             className="px-6 pb-16 pt-8 sm:px-8 sm:pb-24 sm:pt-12 lg:px-10 lg:pb-28 lg:pt-24 xl:px-12 xl:pt-28"
         >
             <div className="mx-auto w-full max-w-[1440px]">
-                <div className="mx-auto max-w-4xl text-center">
+                <div className="relative z-10 mx-auto max-w-4xl text-center">
                     <h2
                         id="estilus-cta-heading"
                         className="text-[2.1rem] leading-[1.02] text-brand-nav-bg sm:text-5xl lg:text-[3.65rem]"
@@ -486,7 +487,7 @@ export default function CTASection({
 
                 <MobileDiagram />
 
-                <div className="relative mx-auto hidden h-[42rem] w-full max-w-[1200px] lg:-mt-12 lg:block xl:-mt-16">
+                <div className="pointer-events-none relative mx-auto hidden h-[42rem] w-full max-w-[1200px] lg:-mt-12 lg:block xl:-mt-16">
                     <div
                         role="img"
                         aria-label="Las áreas desordenadas de la barbería convergen en Estilus"

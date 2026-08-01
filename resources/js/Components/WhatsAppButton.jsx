@@ -5,10 +5,13 @@ export default function WhatsAppButton({
     href = 'https://wa.me/',
     label = 'Hablar por WhatsApp',
     suppressHintWithin = null,
+    whiteAfter = null,
 }) {
     const [hasScrolled, setHasScrolled] = useState(false);
     const [isHintVisible, setIsHintVisible] = useState(false);
     const [isHintSuppressed, setIsHintSuppressed] = useState(false);
+    const [hasReachedWhiteSection, setHasReachedWhiteSection] =
+        useState(false);
 
     useEffect(() => {
         const updateScrollState = () => {
@@ -61,6 +64,33 @@ export default function WhatsAppButton({
         return () => observer.disconnect();
     }, [suppressHintWithin]);
 
+    useEffect(() => {
+        if (!whiteAfter) return undefined;
+
+        const whiteSection = document.querySelector(whiteAfter);
+        if (!whiteSection) return undefined;
+
+        const updateButtonColor = () => {
+            setHasReachedWhiteSection(
+                whiteSection.getBoundingClientRect().top <=
+                    window.innerHeight,
+            );
+        };
+
+        updateButtonColor();
+        window.addEventListener('scroll', updateButtonColor, {
+            passive: true,
+        });
+        window.addEventListener('resize', updateButtonColor);
+
+        return () => {
+            window.removeEventListener('scroll', updateButtonColor);
+            window.removeEventListener('resize', updateButtonColor);
+        };
+    }, [whiteAfter]);
+
+    const useWhiteButton = !hasScrolled || hasReachedWhiteSection;
+
     return (
         <div
             className="fixed bottom-4 right-4 z-50 flex max-w-[260px] flex-col items-end gap-2 md:bottom-6 md:right-6 md:max-w-[320px] md:gap-3"
@@ -85,9 +115,9 @@ export default function WhatsAppButton({
                 aria-label={label}
                 className={[
                     'inline-flex h-14 w-14 items-center justify-center rounded-full border text-brand-on-primary shadow-brand-floating transition-all duration-300 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg motion-reduce:transform-none motion-reduce:transition-none md:h-16 md:w-16',
-                    hasScrolled
-                        ? 'border-brand-primary/20 bg-brand-primary hover:bg-brand-primary-hover'
-                        : 'border-white/80 bg-brand-surface hover:bg-brand-surface-alt',
+                    useWhiteButton
+                        ? 'border-white/80 bg-brand-surface hover:bg-brand-surface-alt'
+                        : 'border-brand-primary/20 bg-brand-primary hover:bg-brand-primary-hover',
                 ].join(' ')}
             >
                 <IconBrandWhatsapp className="h-7 w-7" stroke={2.2} />

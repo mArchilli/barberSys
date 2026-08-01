@@ -38,10 +38,10 @@ function BrandLogo({ brandName }) {
     return (
         <span className="inline-flex items-center gap-2.5 text-brand-text">
             <BrandMark
-                className="h-8 w-8"
+                className="h-7 w-7 sm:h-8 sm:w-8"
                 colorClassName="text-brand-text"
             />
-            <span className="font-display text-[1.35rem] font-extrabold tracking-[-0.03em]">
+            <span className="hidden font-display text-[1.35rem] font-extrabold tracking-[-0.03em] sm:inline">
                 {brandName}
             </span>
         </span>
@@ -51,6 +51,8 @@ function BrandLogo({ brandName }) {
 export default function Navbar({
     brandName = 'Estilus',
     homeHref = '#inicio',
+    loginHref = '/login',
+    registerHref = '/register',
 }) {
     return (
         <header className="relative z-[1001] h-[76px]">
@@ -64,6 +66,19 @@ export default function Navbar({
                 itemBg="#FFFFFF"
                 itemHoverBg="#48D5FC"
                 itemContentColor="#242726"
+                actions={[
+                    {
+                        label: 'Iniciar sesión',
+                        href: loginHref,
+                        ariaLabel: 'Ir a iniciar sesión',
+                    },
+                    {
+                        label: 'Probar gratis',
+                        href: registerHref,
+                        ariaLabel: 'Registrarse y probar gratis',
+                        primary: true,
+                    },
+                ]}
                 useFixedPosition
             />
         </header>

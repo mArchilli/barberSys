@@ -9,10 +9,10 @@ const navLinkClassName =
 
 const defaultLinks = [
     { label: 'Inicio', href: '#inicio' },
-    { label: 'Funcionalidades', href: '#funcionalidades' },
-    { label: 'Como funciona', href: '#como-funciona' },
+    { label: 'El problema', href: '#pain-points' },
+    { label: '¿Cómo funciona?', href: '#funcionalidades' },
     { label: 'Precios', href: '#precios' },
-    { label: 'FAQ', href: '#faq' },
+    { label: 'Dudas', href: '#faq' },
 ];
 
 export default function FooterSection({
@@ -37,21 +37,21 @@ export default function FooterSection({
                         </a>
 
                         <p className="mt-5 max-w-2xl font-display text-3xl font-extrabold leading-[1.04] tracking-[-0.03em] text-brand-bg sm:text-[2.4rem] lg:text-[2.8rem]">
-                            Gestion para tu barberia, con una salida mas prolija que la entrada.
+                            Gestión para tu barbería, con una salida más prolija que la entrada.
                         </p>
 
                         <p className="mt-5 max-w-xl text-base leading-8 text-brand-text-on-dark">
-                            Menos caos operativo, mas tiempo para hacer crecer el negocio.
+                            Menos caos operativo, más tiempo para hacer crecer el negocio.
                         </p>
                     </div>
 
                     <div className="grid gap-8 sm:grid-cols-2">
                         <div>
                             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-primary">
-                                Navegacion
+                                Navegación
                             </p>
                             <nav
-                                aria-label="Navegacion del footer"
+                                aria-label="Navegación del footer"
                                 className="mt-4 flex flex-col items-start gap-1"
                             >
                                 {links.map((item) => (
