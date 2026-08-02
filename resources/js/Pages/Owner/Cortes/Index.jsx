@@ -49,7 +49,7 @@ const CORTES_TOUR_STEPS = [
     },
 ];
 
-export default function Index({ servicios, mediosPago, cortesHoy, routes }) {
+export default function Index({ servicios, mediosPago, cortesHoy, routes, precarga = null }) {
     const { startTour } = usePageTour('owner_cortes', CORTES_TOUR_STEPS);
 
     return (
@@ -81,6 +81,7 @@ export default function Index({ servicios, mediosPago, cortesHoy, routes }) {
                         cortesHoy={cortesHoy}
                         routes={routes}
                         variant="owner"
+                        precarga={precarga}
                     />
                 </div>
             </div>

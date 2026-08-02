@@ -48,6 +48,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // o simulando el cron con `php artisan schedule:work`.
         $schedule->command('app:generar-gastos-mensuales')->monthlyOn(1, '00:00');
 
+        // Libera turnos pendientes vencidos (por plazo de espera o por hora
+        // ya pasada). Corre cada 30 minutos porque acá el timing importa: un
+        // turno vencido debe dejar de bloquear su slot y de figurar como
+        // pendiente en un plazo corto, no una vez al día.
+        $schedule->command('app:expirar-turnos-pendientes')->everyThirtyMinutes();
+
         // Reconciliación de facturas de Facturante pendientes de CAE (autorización
         // asíncrona de AFIP). Deshabilitado hasta reescribir FacturanteInvoicingService
         // con el WSDL real — y podría no hacer falta si Facturante ofrece webhooks

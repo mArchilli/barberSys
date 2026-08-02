@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
     IconBuildingStore,
+    IconCalendarEvent,
     IconChartPie,
     IconChevronDown,
     IconCreditCard,
@@ -27,7 +28,7 @@ const flyoutPanelClassName =
     'rounded-[24px] border border-brand-border bg-brand-surface-alt/70 p-2 shadow-brand-card backdrop-blur-sm';
 
 export default function DashNavbar() {
-    const { auth, currentBarberia, ownerBarberiaCount, miRendimientoVisible } = usePage().props;
+    const { auth, currentBarberia, ownerBarberiaCount, miRendimientoVisible, pendingTurnosCount } = usePage().props;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
@@ -66,6 +67,13 @@ export default function DashNavbar() {
                 label: 'Medios de pago',
                 icon: IconCreditCard,
                 active: route().current('owner.barberias.medios-pago.*'),
+            },
+            {
+                href: route('owner.barberias.turnos.index', { barberia: currentBarberia.id }),
+                label: 'Turnos',
+                icon: IconCalendarEvent,
+                active: route().current('owner.barberias.turnos.*'),
+                badge: pendingTurnosCount > 0 ? pendingTurnosCount : null,
             },
             {
                 href: route('owner.barberias.clientes.index', { barberia: currentBarberia.id }),
@@ -237,7 +245,7 @@ export default function DashNavbar() {
                     }`}
                 >
                     <div className={`${flyoutPanelClassName} grid gap-2`}>
-                        {dashboardActions.map(({ href, label, icon: Icon, active }) => (
+                        {dashboardActions.map(({ href, label, icon: Icon, active, badge }) => (
                             <Link
                                 key={label}
                                 href={href}
@@ -251,6 +259,11 @@ export default function DashNavbar() {
                             >
                                 <Icon size={18} stroke={1.9} />
                                 <span>{label}</span>
+                                {badge && (
+                                    <span className="ml-auto inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-brand-warning px-1.5 text-[11px] font-bold text-brand-on-primary">
+                                        {badge}
+                                    </span>
+                                )}
                             </Link>
                         ))}
                     </div>
@@ -258,7 +271,7 @@ export default function DashNavbar() {
 
                 <div className="hidden md:flex md:flex-col md:gap-3 xl:flex-row xl:items-center xl:justify-between">
                     <div className="flex flex-wrap gap-2">
-                        {dashboardActions.map(({ href, label, icon: Icon, active }) => (
+                        {dashboardActions.map(({ href, label, icon: Icon, active, badge }) => (
                             <Link
                                 key={label}
                                 href={href}
@@ -273,6 +286,11 @@ export default function DashNavbar() {
                             >
                                 <Icon size={19} stroke={1.9} />
                                 <span>{label}</span>
+                                {badge && (
+                                    <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-brand-warning px-1.5 text-[11px] font-bold text-brand-on-primary">
+                                        {badge}
+                                    </span>
+                                )}
                             </Link>
                         ))}
                     </div>

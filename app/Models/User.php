@@ -72,6 +72,18 @@ class User extends Authenticatable
         return $this->hasOne(Subscription::class, 'owner_id');
     }
 
+    /** Disponibilidad semanal (solo para role=barber) */
+    public function disponibilidad(): HasMany
+    {
+        return $this->hasMany(BarberoDisponibilidad::class);
+    }
+
+    /** Excepciones puntuales por fecha (solo para role=barber) */
+    public function excepciones(): HasMany
+    {
+        return $this->hasMany(BarberoExcepcion::class);
+    }
+
     // --- Helpers de rol ---
 
     public function isAdmin(): bool

@@ -47,6 +47,7 @@ class CorteController extends Controller
             'servicios' => $servicios,
             'mediosPago' => $mediosPago,
             'cortesHoy' => $cortesHoy,
+            'precarga' => $this->resolvePrecarga($request),
             'routes' => [
                 'store' => $user->isBarber()
                     ? route('barber.cortes.store')
@@ -56,6 +57,24 @@ class CorteController extends Controller
                     : route('owner.barberias.clientes.search', $barberia->id),
             ],
         ]);
+    }
+
+    // Precarga opcional que llega al redirigir desde el calendario de turnos
+    // al completar uno (ver TurnoController::update / BarberTurnoController::update).
+    // Solo sirve para prellenar el formulario: el submit real sigue
+    // revalidando servicio_id/cliente_id contra la barbería en store().
+    private function resolvePrecarga(Request $request): ?array
+    {
+        if (! $request->filled('servicio_id') && ! $request->filled('cliente_nombre')) {
+            return null;
+        }
+
+        return [
+            'servicio_id' => $request->filled('servicio_id') ? (int) $request->input('servicio_id') : null,
+            'cliente_id' => $request->filled('cliente_id') ? (int) $request->input('cliente_id') : null,
+            'cliente_nombre' => $request->input('cliente_nombre'),
+            'cliente_telefono' => $request->input('cliente_telefono'),
+        ];
     }
 
     public function store(StoreCorteRequest $request, ?Barberia $barberia = null)

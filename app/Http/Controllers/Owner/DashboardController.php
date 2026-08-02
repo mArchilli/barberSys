@@ -249,6 +249,7 @@ class DashboardController extends Controller
             ],
             'actividadReciente' => $actividadReciente,
             'alertas' => $alertas,
+            'publicTurnoUrl' => $barberia->publicTurnoUrl(),
         ]);
     }
 

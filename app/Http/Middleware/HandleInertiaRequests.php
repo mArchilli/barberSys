@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Barberia;
 use App\Models\Corte;
 use App\Models\Survey;
+use App\Models\Turno;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -39,6 +40,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'flash' => [
                 'success' => $request->session()->get('success'),
+                'warning' => $request->session()->get('warning'),
                 'newBarbero' => $request->session()->get('newBarbero'),
                 'resetPassword' => $request->session()->get('resetPassword'),
                 'surveyReward' => $request->session()->get('surveyReward'),
@@ -93,6 +95,31 @@ class HandleInertiaRequests extends Middleware
                     'trial_days_left' => $subscription->trialDaysLeft(),
                     'has_preapproval' => $subscription->hasPreapproval(),
                 ];
+            },
+            // Contador de turnos pendientes para el badge del link "Turnos" del
+            // nav (owner y barber): visible sin entrar a la pantalla. Owner se
+            // scopea a la barbería actual (mismo criterio que miRendimientoVisible,
+            // null fuera del grupo anidado); barber, a sus propios turnos.
+            // Lazy: solo se evalúa cuando el nav lo consume.
+            'pendingTurnosCount' => function () use ($request) {
+                $user = $request->user();
+                if (! $user) {
+                    return null;
+                }
+
+                if ($user->isOwner()) {
+                    $barberia = $request->route('barberia');
+
+                    return $barberia instanceof Barberia
+                        ? Turno::where('barberia_id', $barberia->id)->where('status', 'pendiente')->count()
+                        : null;
+                }
+
+                if ($user->isBarber()) {
+                    return Turno::where('barbero_id', $user->id)->where('status', 'pendiente')->count();
+                }
+
+                return null;
             },
             // Tours de onboarding ya vistos por el usuario (clave por tour), para
             // que usePageTour() sepa si debe disparar el tour automáticamente.

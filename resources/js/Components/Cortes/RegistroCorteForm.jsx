@@ -30,7 +30,7 @@ function SectionBlock({ title, description, children, dataTour }) {
     );
 }
 
-export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, routes, variant = 'default' }) {
+export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, routes, variant = 'default', precarga = null }) {
     const { flash, auth, currentBarberia } = usePage().props;
     const faltaServicios = servicios.length === 0;
     const faltaMediosPago = mediosPago.length === 0;
@@ -39,16 +39,20 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
     const totalHoy = cortesHoy.reduce((sum, corte) => sum + Number(corte.price), 0);
     const isOwnerVariant = variant === 'owner';
 
+    const servicioPrecargado = precarga?.servicio_id
+        ? servicios.find((item) => String(item.id) === String(precarga.servicio_id))
+        : null;
+
     const { data, setData, post, processing, errors, reset } = useForm({
-        servicio_id: '',
-        cliente_id: '',
-        cliente_nombre: '',
+        servicio_id: servicioPrecargado ? String(servicioPrecargado.id) : '',
+        cliente_id: precarga?.cliente_id ? String(precarga.cliente_id) : '',
+        cliente_nombre: precarga?.cliente_nombre ?? '',
         medio_pago_id: '',
-        price: '',
+        price: servicioPrecargado ? String(servicioPrecargado.price) : '',
         performed_at: today(),
     });
 
-    const [clienteQuery, setClienteQuery] = useState('');
+    const [clienteQuery, setClienteQuery] = useState(precarga?.cliente_nombre ?? '');
     const [clienteResults, setClienteResults] = useState([]);
     const [showResults, setShowResults] = useState(false);
     const searchTimeout = useRef(null);
@@ -131,6 +135,12 @@ export default function RegistroCorteForm({ servicios, mediosPago, cortesHoy, ro
                     {flash?.success && (
                         <div className="mb-6 rounded-[24px] border border-brand-success/20 bg-brand-success-soft px-5 py-4 text-sm text-brand-success shadow-brand-card">
                             {flash.success}
+                        </div>
+                    )}
+
+                    {precarga && !faltaCatalogo && (
+                        <div className="mb-6 rounded-[24px] bg-brand-primary-soft px-5 py-4 text-sm text-brand-primary-soft-text shadow-brand-card">
+                            Datos precargados desde el turno completado. Revisalos antes de guardar.
                         </div>
                     )}
 

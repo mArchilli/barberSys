@@ -22,6 +22,13 @@ use Illuminate\Support\Facades\Auth;
  *   {
  *       static::addGlobalScope(new BelongsToBarberiaScope);
  *   }
+ *
+ * Sin usuario autenticado (Auth::user() === null, ej. PublicTurnoController)
+ * el scope cae en la misma rama que admin: no filtra nada. Es intencional y
+ * seguro solo porque el único controller que corre sin auth sobre modelos
+ * scopeados filtra cada query explícitamente por barberia_id (resuelta por
+ * public_slug en la URL, no por input del cliente) — ver el comentario en
+ * PublicTurnoController y la regla documentada en CLAUDE.md.
  */
 class BelongsToBarberiaScope implements Scope
 {
@@ -29,6 +36,8 @@ class BelongsToBarberiaScope implements Scope
     {
         $user = Auth::user();
 
+        // Sin usuario autenticado, no hay "tenant actual" que inferir del
+        // request: no filtrar acá. Ver docblock de la clase.
         if (! $user || $user->isAdmin()) {
             return;
         }

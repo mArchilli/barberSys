@@ -10,11 +10,13 @@ use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionContro
 use App\Http\Controllers\Admin\SupportController as AdminSupportController;
 use App\Http\Controllers\Admin\SurveyController as AdminSurveyController;
 use App\Http\Controllers\Barber\DashboardController as BarberDashboard;
+use App\Http\Controllers\BarberTurnoController;
 use App\Http\Controllers\CorteController;
 use App\Http\Controllers\Owner\BarberiaController;
 use App\Http\Controllers\Owner\BarberoController;
 use App\Http\Controllers\Owner\CajaController;
 use App\Http\Controllers\Owner\ClienteController;
+use App\Http\Controllers\Owner\ConfiguracionTurnosController;
 use App\Http\Controllers\Owner\ConsolidadoController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
 use App\Http\Controllers\Owner\FinanzasController;
@@ -25,8 +27,10 @@ use App\Http\Controllers\Owner\MiRendimientoController;
 use App\Http\Controllers\Owner\ServicioController;
 use App\Http\Controllers\Owner\SubscriptionController as OwnerSubscriptionController;
 use App\Http\Controllers\Owner\SupportController as OwnerSupportController;
+use App\Http\Controllers\Owner\TurnoController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Public\PublicTurnoController;
 use App\Http\Controllers\SurveyResponseController;
 use App\Http\Controllers\TourController;
 use App\Http\Controllers\Webhooks\MercadoPagoWebhookController;
@@ -58,6 +62,20 @@ Route::get('/dashboard', function () {
         default => abort(403),
     };
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// --- Reserva pública de turnos (sin auth) — accesible por el public_slug de
+// cada barbería, pensada para compartir en redes/WhatsApp. Sin usuario
+// autenticado, BelongsToBarberiaScope no filtra nada (ver comentario en la
+// clase); PublicTurnoController filtra cada query explícitamente por la
+// barbería resuelta acá por public_slug, así que no hace falta bypass.
+Route::prefix('turno')
+    ->name('public.turno.')
+    ->controller(PublicTurnoController::class)
+    ->group(function () {
+        Route::get('/{barberia:public_slug}', 'index')->name('index');
+        Route::get('/{barberia:public_slug}/slots', 'slots')->middleware('throttle:10,1')->name('slots');
+        Route::post('/{barberia:public_slug}', 'store')->middleware('throttle:10,1')->name('store');
+    });
 
 // --- Rutas owner ---
 
@@ -126,6 +144,38 @@ Route::prefix('owner')
                 ])->except(['destroy', 'show']);
                 Route::patch('medios-pago/{medioPago}/deactivate', [MedioPagoController::class, 'deactivate'])->name('medios-pago.deactivate');
 
+                // La configuración (horarios, excepciones, disponibilidad) se
+                // registra ANTES que el calendario a propósito: el calendario
+                // define `PATCH /turnos/{turno}` con un wildcard, y Laravel
+                // matchea rutas por orden de registro — si fuera al revés,
+                // `PATCH /turnos/configuracion` caería en ese wildcard
+                // (intentando bindear un Turno con id "configuracion" y
+                // devolviendo 404) en vez de llegar a este grupo.
+                Route::prefix('turnos/configuracion')
+                    ->name('turnos.configuracion.')
+                    ->controller(ConfiguracionTurnosController::class)
+                    ->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::patch('/', 'updateGeneral')->name('update');
+                        Route::put('/horarios', 'updateHorarios')->name('horarios.update');
+                        Route::post('/excepciones', 'storeExcepcion')->name('excepciones.store');
+                        Route::delete('/excepciones/{excepcion}', 'destroyExcepcion')->name('excepciones.destroy');
+                        Route::put('/barberos/{barbero}/disponibilidad', 'updateDisponibilidadBarbero')->name('barberos.disponibilidad.update');
+                    });
+
+                // Calendario de turnos (uso diario): carga manual, cambio de
+                // estado y filtro por barbero.
+                Route::prefix('turnos')
+                    ->name('turnos.')
+                    ->controller(TurnoController::class)
+                    ->group(function () {
+                        Route::get('/', 'index')->name('index');
+                        Route::get('/slots', 'slots')->name('slots');
+                        Route::post('/', 'store')->name('store');
+                        Route::patch('/{turno}', 'update')->name('update');
+                        Route::patch('/{turno}/confirmar', 'confirmar')->name('confirmar');
+                    });
+
                 Route::get('clientes/search', [ClienteController::class, 'search'])->name('clientes.search');
                 Route::resource('clientes', ClienteController::class)->except(['destroy', 'show', 'create']);
                 Route::patch('clientes/{cliente}/deactivate', [ClienteController::class, 'deactivate'])->name('clientes.deactivate');
@@ -157,6 +207,9 @@ Route::prefix('barber')
 
         Route::get('/cortes', [CorteController::class, 'index'])->name('cortes.index');
         Route::post('/cortes', [CorteController::class, 'store'])->name('cortes.store');
+
+        Route::get('/turnos', [BarberTurnoController::class, 'index'])->name('turnos.index');
+        Route::patch('/turnos/{turno}', [BarberTurnoController::class, 'update'])->name('turnos.update');
 
         Route::get('/clientes/search', [ClienteController::class, 'search'])->name('clientes.search');
     });

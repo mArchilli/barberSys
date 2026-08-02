@@ -1,6 +1,7 @@
 import QuickCutCard from '@/Components/Dashboard/QuickCutCard';
 import RankingList from '@/Components/RankingList';
 import TourRestartButton from '@/Components/TourRestartButton';
+import PublicLinkBanner from '@/Components/Turnos/PublicLinkBanner';
 import usePageTour from '@/Hooks/usePageTour';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
@@ -489,6 +490,7 @@ export default function Dashboard({
     actividadReciente,
     alertas,
     quickCut,
+    publicTurnoUrl,
 }) {
     const { currentBarberia } = usePage().props;
     const dashboardUrl = route('owner.barberias.dashboard', currentBarberia.id);
@@ -523,6 +525,8 @@ export default function Dashboard({
 
             <div className="w-full min-w-0 max-w-full pb-12">
                 <div className="mx-auto grid w-full min-w-0 max-w-[1720px] gap-6 px-2 sm:px-3 lg:px-4">
+                    <PublicLinkBanner url={publicTurnoUrl} />
+
                     {! currentBarberia?.active && (
                         <div className="flex items-center gap-3 rounded-brand-md border border-brand-border bg-brand-surface-alt px-4 py-3 text-sm text-brand-text-secondary">
                             <IconLockSquareRounded size={20} className="shrink-0" stroke={1.75} />

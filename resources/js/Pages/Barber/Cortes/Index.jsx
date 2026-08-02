@@ -42,7 +42,7 @@ const CORTES_TOUR_STEPS = [
     },
 ];
 
-export default function Index({ servicios, mediosPago, cortesHoy, routes }) {
+export default function Index({ servicios, mediosPago, cortesHoy, routes, precarga = null }) {
     const { startTour } = usePageTour('barber_cortes', CORTES_TOUR_STEPS);
 
     return (
@@ -68,6 +68,7 @@ export default function Index({ servicios, mediosPago, cortesHoy, routes }) {
                     mediosPago={mediosPago}
                     cortesHoy={cortesHoy}
                     routes={routes}
+                    precarga={precarga}
                 />
             </div>
         </BarberLayout>

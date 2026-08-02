@@ -7,18 +7,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Servicio extends Model
+class BarberiaTurnoExcepcion extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['barberia_id', 'name', 'price', 'duration_minutes', 'active'];
+    // Eloquent pluraliza "Excepcion" en inglés ("excepcions"); hay que fijar
+    // el nombre real de la tabla a mano.
+    protected $table = 'barberia_turno_excepciones';
+
+    protected $fillable = ['barberia_id', 'date', 'enabled'];
 
     protected function casts(): array
     {
         return [
-            'price'            => 'decimal:2',
-            'duration_minutes' => 'integer',
-            'active'           => 'boolean',
+            'date'    => 'date:Y-m-d',
+            'enabled' => 'boolean',
         ];
     }
 
