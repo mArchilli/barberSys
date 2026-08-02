@@ -53,9 +53,8 @@ class BarberoController extends Controller
     /**
      * Ficha de un barbero puntual: histórico de facturación/cortes propios y sus
      * rankings de servicios/clientes. Es gestión básica de personal, disponible en
-     * TODOS los planes (a diferencia del ranking comparativo ENTRE barberos del
-     * Dashboard, que sí está gateado a Plan 2+ vía
-     * subscription->hasFeature('ranking_barberos') — no confundir ambas cosas).
+     * todos los planes — igual que el ranking comparativo ENTRE barberos del
+     * Dashboard, que no está restringido por plan.
      */
     public function show(Barberia $barberia, User $barbero): Response
     {

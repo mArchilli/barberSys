@@ -78,7 +78,6 @@ class DashboardTest extends TestCase
             ->where('kpis.cortes', 3)
             ->where('kpis.ticketPromedio', 1166.67)
             ->where('kpis.hoy', 3000)
-            ->where('rankingBarberosEnabled', true)
             ->has('porBarbero', 1)
             ->where('porBarbero.0.name', $data['barbero']->name)
             ->where('porBarbero.0.total', 3500)

@@ -19,12 +19,13 @@ class PlanSeeder extends Seeder
                 'annual_price'  => 15000.00,
                 'is_custom'     => false,
                 'active'        => true,
-                'features'      => null,
+                'features'      => ['ranking_barberos' => true],
                 'included_items' => [
                     'Registro de servicios prestados',
                     'Catálogo de servicios y medios de pago',
                     'Módulo financiero: sueldos y gastos',
                     'Métricas básicas de facturación',
+                    'Ranking de productividad por barbero',
                 ],
             ],
             [

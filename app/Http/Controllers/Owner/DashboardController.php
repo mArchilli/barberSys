@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Barberia;
 use App\Models\Corte;
 use App\Models\GastoRegistro;
+use App\Models\MedioPago;
+use App\Models\Servicio;
 use App\Models\User;
 use App\Services\BarberPerformanceService;
 use App\Services\ComisionCalculator;
@@ -56,17 +58,13 @@ class DashboardController extends Controller
             ->where('active', true)
             ->count();
 
-        $rankingBarberosEnabled = $barberia->owner->subscription?->hasFeature('ranking_barberos') ?? false;
-
-        $porBarbero = $rankingBarberosEnabled
-            ? $baseQuery()
-                ->join('users', 'users.id', '=', 'cortes.barbero_id')
-                ->selectRaw('users.id as id, users.name as name, SUM(cortes.price) as total, COUNT(*) as cantidad')
-                ->groupBy('users.id', 'users.name')
-                ->orderByDesc('total')
-                ->limit(5)
-                ->get()
-            : collect();
+        $porBarbero = $baseQuery()
+            ->join('users', 'users.id', '=', 'cortes.barbero_id')
+            ->selectRaw('users.id as id, users.name as name, SUM(cortes.price) as total, COUNT(*) as cantidad')
+            ->groupBy('users.id', 'users.name')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
 
         $porServicio = $baseQuery()
             ->join('servicios', 'servicios.id', '=', 'cortes.servicio_id')
@@ -194,8 +192,24 @@ class DashboardController extends Controller
             ];
         }
 
+        $quickCut = [
+            'servicios' => Servicio::where('barberia_id', $barberia->id)
+                ->where('active', true)
+                ->orderBy('name')
+                ->get(['id', 'name', 'price']),
+            'mediosPago' => MedioPago::where('barberia_id', $barberia->id)
+                ->where('active', true)
+                ->orderBy('name')
+                ->get(['id', 'name']),
+            'routes' => [
+                'store' => route('owner.barberias.cortes.store', $barberia->id),
+                'search' => route('owner.barberias.clientes.search', $barberia->id),
+            ],
+        ];
+
         return Inertia::render('Owner/Barberias/Dashboard', [
             'miRendimiento' => $miRendimiento,
+            'quickCut' => $quickCut,
             'period' => [
                 'mode' => $range->mode,
                 'start' => $start->toDateString(),
@@ -215,7 +229,6 @@ class DashboardController extends Controller
                 ? $this->buildHourlyEvolution($barberia, $start)
                 : $this->buildEvolution($barberia, $start, $end),
             'porMedioPago' => $this->mapFilas($porMedioPago, $totalFacturado),
-            'rankingBarberosEnabled' => $rankingBarberosEnabled,
             'porBarbero' => $this->mapFilas($porBarbero, $totalFacturado),
             'porServicio' => $this->mapFilas($porServicio, $totalFacturado),
             'cierreCaja' => [

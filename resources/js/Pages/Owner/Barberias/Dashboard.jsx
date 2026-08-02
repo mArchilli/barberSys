@@ -1,3 +1,4 @@
+import QuickCutCard from '@/Components/Dashboard/QuickCutCard';
 import RankingList from '@/Components/RankingList';
 import TourRestartButton from '@/Components/TourRestartButton';
 import usePageTour from '@/Hooks/usePageTour';
@@ -13,7 +14,6 @@ import {
     IconEye,
     IconEyeOff,
     IconInfoCircle,
-    IconLock,
     IconLockSquareRounded,
     IconReceipt2,
     IconReportMoney,
@@ -481,7 +481,6 @@ export default function Dashboard({
     kpis,
     evolucionFacturacion,
     porMedioPago,
-    rankingBarberosEnabled,
     porBarbero,
     porServicio,
     cierreCaja,
@@ -489,6 +488,7 @@ export default function Dashboard({
     miRendimiento,
     actividadReciente,
     alertas,
+    quickCut,
 }) {
     const { currentBarberia } = usePage().props;
     const dashboardUrl = route('owner.barberias.dashboard', currentBarberia.id);
@@ -579,6 +579,10 @@ export default function Dashboard({
                         </dl>
                     </section>
 
+                    <section className="min-w-0" aria-label="Carga rápida">
+                        <QuickCutCard servicios={quickCut.servicios} mediosPago={quickCut.mediosPago} routes={quickCut.routes} />
+                    </section>
+
                     <section className="min-w-0" aria-label="Facturación y pagos">
                         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
                             <article className="flex min-w-0 flex-col rounded-[28px] border border-brand-border bg-brand-surface p-5 shadow-brand-card sm:p-6">
@@ -624,21 +628,11 @@ export default function Dashboard({
                         <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-2">
                             <article className="min-w-0 space-y-3">
                                 <h3 className="font-display text-lg font-bold text-brand-text">Ranking de barberos</h3>
-                                {rankingBarberosEnabled ? (
-                                    <RankingList
-                                        items={porBarbero}
-                                        emptyLabel="Todavía no hay cortes cargados en este período."
-                                        avatars
-                                    />
-                                ) : (
-                                    <div className="flex flex-col items-center gap-2 rounded-brand-md border border-dashed border-brand-border bg-brand-surface-alt p-6 text-center">
-                                        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-primary-soft text-brand-primary-soft-text">
-                                            <IconLock size={20} stroke={1.75} />
-                                        </span>
-                                        <p className="text-sm font-semibold text-brand-text">Disponible desde el plan Crecimiento</p>
-                                        <p className="max-w-sm text-xs text-brand-text-secondary">Descubrí qué barbero factura más y tomá mejores decisiones sobre tu equipo.</p>
-                                    </div>
-                                )}
+                                <RankingList
+                                    items={porBarbero}
+                                    emptyLabel="Todavía no hay cortes cargados en este período."
+                                    avatars
+                                />
                             </article>
 
                             <article data-tour="owner-dashboard-servicios" className="min-w-0 space-y-3">

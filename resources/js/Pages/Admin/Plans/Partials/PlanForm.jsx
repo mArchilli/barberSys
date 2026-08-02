@@ -204,8 +204,7 @@ export default function PlanForm({ data, setData, errors, processing, knownFeatu
                 <div className="mt-2 rounded-brand-sm border border-brand-border-subtle bg-brand-surface-alt p-3 text-xs text-brand-text-secondary">
                     <span className="font-semibold text-brand-text">Ojo: </span>
                     este texto es solo descriptivo — no gatea ninguna funcionalidad. Si un ítem menciona algo controlado por un feature
-                    flag (ej. el ranking de productividad), activá también el flag correspondiente arriba, en Features, o el plan va a
-                    prometer algo que todavía no cumple.
+                    flag, activá también el flag correspondiente arriba, en Features, o el plan va a prometer algo que todavía no cumple.
                 </div>
 
                 <div className="mt-3 space-y-2">
