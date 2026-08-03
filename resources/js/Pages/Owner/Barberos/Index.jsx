@@ -1,3 +1,4 @@
+import Pagination from '@/Components/Pagination';
 import TourRestartButton from '@/Components/TourRestartButton';
 import usePageTour from '@/Hooks/usePageTour';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
@@ -8,7 +9,7 @@ import {
     IconUserX,
     IconUsers,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function initials(name) {
     return name
@@ -100,29 +101,47 @@ const BARBEROS_TOUR_STEPS = [
     },
 ];
 
-export default function Index({ barberos, planLimit }) {
+export default function Index({ barberos, filters, stats, planLimit }) {
     const { flash, currentBarberia } = usePage().props;
     const credentialFlash = flash.newBarbero || flash.resetPassword;
     const [showCredential, setShowCredential] = useState(Boolean(credentialFlash));
-    const [busqueda, setBusqueda] = useState('');
+    const [busqueda, setBusqueda] = useState(filters.search ?? '');
+    const isFirstRender = useRef(true);
     const { startTour } = usePageTour('owner_barberos', BARBEROS_TOUR_STEPS);
 
     const barbId = currentBarberia?.id;
     const atLimit = planLimit.max !== null && planLimit.totalOwner >= planLimit.max;
     const progresoPlan = planLimit.max !== null ? Math.min(100, (planLimit.totalOwner / planLimit.max) * 100) : 0;
     const cuposDisponibles = planLimit.max === null ? 'Sin limite' : Math.max(planLimit.max - planLimit.totalOwner, 0);
-    const conSueldoFijo = barberos.filter((barbero) => barbero.salary_type === 'fixed').length;
-    const aComision = barberos.length - conSueldoFijo;
+    const aComision = stats.total - stats.conSueldoFijo;
 
-    const barberosFiltrados = barberos.filter((barbero) => {
-        const termino = busqueda.toLowerCase();
+    // Buscador server-side (antes filtraba en el cliente sobre el array
+    // completo — dejó de tener sentido al paginar: solo vería la página
+    // actual, no todo el equipo).
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
 
-        return [
-            barbero.name,
-            barbero.email,
-            barbero.phone || '',
-        ].some((value) => value.toLowerCase().includes(termino));
-    });
+        const timeout = setTimeout(() => {
+            router.get(
+                route('owner.barberias.barberos.index', { barberia: barbId }),
+                { search: busqueda },
+                { preserveState: true, replace: true }
+            );
+        }, 350);
+
+        return () => clearTimeout(timeout);
+    }, [busqueda]);
+
+    function goToPage(page) {
+        router.get(
+            route('owner.barberias.barberos.index', { barberia: barbId }),
+            { search: busqueda, page },
+            { preserveState: true, preserveScroll: true }
+        );
+    }
 
     function handleDeactivate(barbero) {
         if (! confirm(`Dar de baja a "${barbero.name}"? Su cuenta dejara de estar activa.`)) return;
@@ -204,17 +223,17 @@ export default function Index({ barberos, planLimit }) {
                                             Equipo activo
                                         </p>
                                         <p className="mt-3 truncate font-display text-4xl font-extrabold tracking-[-0.04em] text-brand-text sm:text-[3.25rem]">
-                                            {barberos.length}
+                                            {stats.total}
                                         </p>
                                         <p className="mt-2 text-sm text-brand-text-secondary">
-                                            {barberos.length === 1 ? 'Barbero activo' : 'Barberos activos'} en esta barberia.
+                                            {stats.total === 1 ? 'Barbero activo' : 'Barberos activos'} en esta barberia.
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                                <MetricTile label="Sueldo fijo" value={conSueldoFijo} />
+                                <MetricTile label="Sueldo fijo" value={stats.conSueldoFijo} />
                                 <MetricTile label="A comision" value={aComision} />
                                 <MetricTile
                                     label="Cupos disponibles"
@@ -297,13 +316,13 @@ export default function Index({ barberos, planLimit }) {
                                 </h3>
                                 <p className="text-sm text-brand-text-secondary">
                                     {busqueda
-                                        ? `${barberosFiltrados.length} resultado${barberosFiltrados.length === 1 ? '' : 's'} para "${busqueda}".`
+                                        ? `${barberos.total} resultado${barberos.total === 1 ? '' : 's'} para "${busqueda}".`
                                         : 'Entra al perfil de cada barbero, edita sus datos o dalo de baja cuando lo necesites.'}
                                 </p>
                             </div>
                         </div>
 
-                        {barberosFiltrados.length === 0 ? (
+                        {barberos.data.length === 0 ? (
                             <div className="rounded-[28px] border border-dashed border-brand-border bg-brand-surface-alt p-10 text-center shadow-brand-card">
                                 <h4 className="font-display text-xl font-bold text-brand-text">
                                     {busqueda ? 'No encontramos ese barbero' : 'Todavia no tienes barberos activos'}
@@ -324,7 +343,7 @@ export default function Index({ barberos, planLimit }) {
                             </div>
                         ) : (
                             <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
-                                {barberosFiltrados.map((barbero) => (
+                                {barberos.data.map((barbero) => (
                                     <article
                                         key={barbero.id}
                                         className="rounded-[28px] border border-brand-border bg-brand-surface p-6 shadow-brand-card transition hover:-translate-y-0.5 hover:shadow-brand-card-hover sm:p-7"
@@ -420,6 +439,8 @@ export default function Index({ barberos, planLimit }) {
                                 ))}
                             </div>
                         )}
+
+                        <Pagination meta={barberos} onPageChange={goToPage} />
                     </section>
                 </div>
             </div>

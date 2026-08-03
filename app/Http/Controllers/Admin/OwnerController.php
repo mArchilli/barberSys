@@ -38,7 +38,8 @@ class OwnerController extends Controller
             ->with(['subscription.plan'])
             ->withCount('barberias')
             ->orderBy('name')
-            ->get();
+            ->paginate(20)
+            ->withQueryString();
 
         // Total de barberos por owner, contado a través de sus barberías
         // (User no tiene BelongsToBarberiaScope, así que esto no requiere bypass).
@@ -48,17 +49,19 @@ class OwnerController extends Controller
             ->groupBy('barberias.owner_id')
             ->pluck('total', 'owner_id');
 
+        $owners->through(fn (User $owner) => [
+            'id'                  => $owner->id,
+            'name'                => $owner->name,
+            'email'               => $owner->email,
+            'plan'                => $owner->subscription?->plan?->name,
+            'subscription_status' => $owner->subscription?->status,
+            'barberias_count'     => $owner->barberias_count,
+            'barberos_count'      => (int) ($barberoCounts[$owner->id] ?? 0),
+            'created_at'          => $owner->created_at->toDateString(),
+        ]);
+
         return Inertia::render('Admin/Owners/Index', [
-            'owners' => $owners->map(fn (User $owner) => [
-                'id'                  => $owner->id,
-                'name'                => $owner->name,
-                'email'               => $owner->email,
-                'plan'                => $owner->subscription?->plan?->name,
-                'subscription_status' => $owner->subscription?->status,
-                'barberias_count'     => $owner->barberias_count,
-                'barberos_count'      => (int) ($barberoCounts[$owner->id] ?? 0),
-                'created_at'          => $owner->created_at->toDateString(),
-            ]),
+            'owners' => $owners,
             'filters' => [
                 'search' => $search,
                 'status' => $status,

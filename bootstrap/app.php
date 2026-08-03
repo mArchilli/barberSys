@@ -5,6 +5,7 @@ use App\Http\Middleware\CheckBarberiaOwnership;
 use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\ForcePasswordChange;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\LogSlowRequests;
 use App\Models\SystemErrorLog;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Console\Scheduling\Schedule;
@@ -22,11 +23,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(append: [
+        // LogSlowRequests solo en local: cuenta queries/tiempo de DB por
+        // request (ver App\Support\QueryProfiler) y warnea al canal
+        // 'performance' por encima del umbral. env('APP_ENV') en vez de
+        // app()->environment() porque acá el framework todavía no terminó
+        // de bootstrapear la config.
+        $middleware->web(append: array_filter([
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
             ForcePasswordChange::class,
-        ]);
+            env('APP_ENV') === 'local' ? LogSlowRequests::class : null,
+        ]));
 
         $middleware->alias([
             'role' => CheckRole::class,

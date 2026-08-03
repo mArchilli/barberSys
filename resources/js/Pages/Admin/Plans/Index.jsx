@@ -1,5 +1,6 @@
+import Pagination from '@/Components/Pagination';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { IconPlus } from '@tabler/icons-react';
 
 function formatMoney(value) {
@@ -12,6 +13,10 @@ function formatLimit(value) {
 
 export default function Index({ plans }) {
     const { flash } = usePage().props;
+
+    function goToPage(page) {
+        router.get(route('admin.plans.index'), { page }, { preserveState: true, preserveScroll: true });
+    }
 
     return (
         <AdminLayout
@@ -41,13 +46,13 @@ export default function Index({ plans }) {
                         </div>
                     )}
 
-                    {plans.length === 0 ? (
+                    {plans.data.length === 0 ? (
                         <div className="rounded-brand-md border border-brand-border bg-brand-surface p-8 text-center text-brand-text-secondary shadow-brand-card">
                             Todavía no cargaste ningún plan.
                         </div>
                     ) : (
                         <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                            {plans.map((p) => (
+                            {plans.data.map((p) => (
                                 <li key={p.id}>
                                     <Link
                                         href={route('admin.plans.edit', p.id)}
@@ -108,6 +113,8 @@ export default function Index({ plans }) {
                             ))}
                         </ul>
                     )}
+
+                    <Pagination meta={plans} onPageChange={goToPage} />
                 </div>
             </div>
         </AdminLayout>

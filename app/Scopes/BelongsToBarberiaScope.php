@@ -43,7 +43,16 @@ class BelongsToBarberiaScope implements Scope
         }
 
         if ($user->isOwner()) {
-            $barberiaIds = $user->barberias()->pluck('id');
+            // Acceso como propiedad (no ->barberias()) a propósito: usa el
+            // cacheo nativo de relaciones de Eloquent, así que solo dispara la
+            // query la primera vez que el scope se aplica en este request —
+            // el resto de las veces reusa la colección ya cargada en $user.
+            // Seguro porque Auth::user() es la misma instancia durante todo
+            // el ciclo de vida del request (confirmado: ningún flujo actual
+            // crea/desactiva una barbería y lee datos scopeados en el mismo
+            // request después — ver comentario en RegisteredUserController
+            // ::store(), el único lugar que hace ambas cosas).
+            $barberiaIds = $user->barberias->pluck('id');
             $builder->whereIn($model->qualifyColumn('barberia_id'), $barberiaIds);
             return;
         }

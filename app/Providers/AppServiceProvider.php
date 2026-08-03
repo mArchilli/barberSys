@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Services\Invoicing\FacturanteInvoicingService;
 use App\Services\Invoicing\InvoicingServiceInterface;
 use App\Services\Invoicing\NullInvoicingService;
+use App\Support\QueryProfiler;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
                 ? new FacturanteInvoicingService
                 : new NullInvoicingService;
         });
+
+        $this->app->singleton(QueryProfiler::class);
     }
 
     /**
@@ -31,5 +34,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
+
+        // Registrado una única vez por proceso (ver QueryProfiler::listen).
+        // Importa especialmente para app:auditar-performance, que despacha
+        // varios requests in-process dentro del mismo comando artisan.
+        if ($this->app->environment('local')) {
+            $this->app->make(QueryProfiler::class)->listen();
+        }
     }
 }

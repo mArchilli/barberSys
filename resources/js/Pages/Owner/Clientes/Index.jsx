@@ -1,9 +1,10 @@
+import Pagination from '@/Components/Pagination';
 import TourRestartButton from '@/Components/TourRestartButton';
 import usePageTour from '@/Hooks/usePageTour';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { IconEdit, IconSearch, IconToggleLeft, IconUsers } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function MetricTile({ label, value, tone = 'default' }) {
     const toneClassName = tone === 'primary'
@@ -79,22 +80,42 @@ const CLIENTES_TOUR_STEPS = [
     },
 ];
 
-export default function Index({ clientes }) {
+export default function Index({ clientes, filters, stats }) {
     const { flash, currentBarberia } = usePage().props;
     const barbId = currentBarberia?.id;
-    const [busqueda, setBusqueda] = useState('');
+    const [busqueda, setBusqueda] = useState(filters.search ?? '');
+    const isFirstRender = useRef(true);
     const { startTour } = usePageTour('owner_clientes', CLIENTES_TOUR_STEPS);
 
-    const terminoBusqueda = busqueda.trim().toLowerCase();
-    const clientesFiltrados = clientes.filter((cliente) => (
-        cliente.name.toLowerCase().includes(terminoBusqueda) ||
-        cliente.phone?.toLowerCase().includes(terminoBusqueda) ||
-        cliente.email?.toLowerCase().includes(terminoBusqueda)
-    ));
+    // Buscador server-side (antes filtraba en el cliente sobre el array
+    // completo — dejó de tener sentido al paginar: solo vería la página
+    // actual, no toda la cartera).
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
 
-    const activos = clientes.filter((cliente) => cliente.active).length;
-    const inactivos = clientes.length - activos;
-    const conContacto = clientes.filter((cliente) => cliente.phone || cliente.email).length;
+        const timeout = setTimeout(() => {
+            router.get(
+                route('owner.barberias.clientes.index', { barberia: barbId }),
+                { search: busqueda },
+                { preserveState: true, replace: true }
+            );
+        }, 350);
+
+        return () => clearTimeout(timeout);
+    }, [busqueda]);
+
+    function goToPage(page) {
+        router.get(
+            route('owner.barberias.clientes.index', { barberia: barbId }),
+            { search: busqueda, page },
+            { preserveState: true, preserveScroll: true }
+        );
+    }
+
+    const inactivos = stats.total - stats.activos;
 
     function handleDeactivate(cliente) {
         if (!confirm(`Desactivar a "${cliente.name}"? Dejara de aparecer disponible para nuevos cortes.`)) return;
@@ -142,19 +163,19 @@ export default function Index({ clientes }) {
                                             Cartera activa
                                         </p>
                                         <p className="mt-3 truncate font-display text-4xl font-extrabold tracking-[-0.04em] text-brand-text sm:text-[3.25rem]">
-                                            {clientes.length}
+                                            {stats.total}
                                         </p>
                                         <p className="mt-2 text-sm text-brand-text-secondary">
-                                            {clientes.length === 1 ? 'Cliente registrado' : 'Clientes registrados'} en esta barberia.
+                                            {stats.total === 1 ? 'Cliente registrado' : 'Clientes registrados'} en esta barberia.
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                                <MetricTile label="Activos" value={activos} tone="primary" />
+                                <MetricTile label="Activos" value={stats.activos} tone="primary" />
                                 <MetricTile label="Inactivos" value={inactivos} tone={inactivos > 0 ? 'danger' : 'default'} />
-                                <MetricTile label="Con contacto" value={conContacto} />
+                                <MetricTile label="Con contacto" value={stats.conContacto} />
                             </div>
                         </section>
 
@@ -209,13 +230,13 @@ export default function Index({ clientes }) {
                                 </h3>
                                 <p className="text-sm text-brand-text-secondary">
                                     {busqueda
-                                        ? `${clientesFiltrados.length} resultado${clientesFiltrados.length === 1 ? '' : 's'} para "${busqueda}".`
+                                        ? `${clientes.total} resultado${clientes.total === 1 ? '' : 's'} para "${busqueda}".`
                                         : 'Edita datos de contacto o desactiva clientes cuando ya no deban aparecer al registrar cortes.'}
                                 </p>
                             </div>
                         </div>
 
-                        {clientesFiltrados.length === 0 ? (
+                        {clientes.data.length === 0 ? (
                             <div className="rounded-[28px] border border-dashed border-brand-border bg-brand-surface-alt p-10 text-center shadow-brand-card">
                                 <h4 className="font-display text-xl font-bold text-brand-text">
                                     {busqueda ? 'No encontramos ese cliente' : 'Todavia no hay clientes registrados'}
@@ -228,7 +249,7 @@ export default function Index({ clientes }) {
                             </div>
                         ) : (
                             <div className="grid gap-6 md:grid-cols-2 2xl:grid-cols-3">
-                                {clientesFiltrados.map((cliente) => (
+                                {clientes.data.map((cliente) => (
                                     <article
                                         key={cliente.id}
                                         className={`rounded-[28px] border p-6 shadow-brand-card transition hover:-translate-y-0.5 hover:shadow-brand-card-hover sm:p-7 ${
@@ -318,6 +339,8 @@ export default function Index({ clientes }) {
                                 ))}
                             </div>
                         )}
+
+                        <Pagination meta={clientes} onPageChange={goToPage} />
                     </section>
                 </div>
             </div>

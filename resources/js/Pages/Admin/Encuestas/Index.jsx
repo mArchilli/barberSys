@@ -1,5 +1,6 @@
+import Pagination from '@/Components/Pagination';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { IconPlus } from '@tabler/icons-react';
 
 const audienceLabel = {
@@ -22,6 +23,10 @@ function StatusBadge({ active }) {
 
 export default function Index({ surveys }) {
     const { flash } = usePage().props;
+
+    function goToPage(page) {
+        router.get(route('admin.surveys.index'), { page }, { preserveState: true, preserveScroll: true });
+    }
 
     return (
         <AdminLayout
@@ -48,7 +53,7 @@ export default function Index({ surveys }) {
                         </div>
                     )}
 
-                    {surveys.length === 0 ? (
+                    {surveys.data.length === 0 ? (
                         <div className="rounded-brand-md border border-brand-border bg-brand-surface p-8 text-center text-brand-text-secondary shadow-brand-card">
                             Todavía no creaste ninguna encuesta.
                         </div>
@@ -66,7 +71,7 @@ export default function Index({ surveys }) {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-brand-border">
-                                    {surveys.map((survey) => (
+                                    {surveys.data.map((survey) => (
                                         <tr key={survey.id}>
                                             <td className="px-5 py-3 font-semibold text-brand-text">{survey.title}</td>
                                             <td className="px-5 py-3 text-brand-text-secondary">
@@ -103,6 +108,8 @@ export default function Index({ surveys }) {
                             </table>
                         </div>
                     )}
+
+                    <Pagination meta={surveys} onPageChange={goToPage} />
                 </div>
             </div>
         </AdminLayout>

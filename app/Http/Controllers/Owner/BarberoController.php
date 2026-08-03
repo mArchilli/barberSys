@@ -9,6 +9,7 @@ use App\Models\Barberia;
 use App\Models\User;
 use App\Services\BarberPerformanceService;
 use App\Services\PlanLimitService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -21,31 +22,54 @@ class BarberoController extends Controller
         private BarberPerformanceService $barberPerformanceService,
     ) {}
 
-    public function index(Barberia $barberia): Response
+    public function index(Request $request, Barberia $barberia): Response
     {
         $owner = Auth::user();
+        $search = trim((string) $request->query('search', ''));
 
-        $barberos = User::where('barberia_id', $barberia->id)
+        $activosQuery = User::where('barberia_id', $barberia->id)
             ->where('role', 'barber')
-            ->where('active', true)
+            ->where('active', true);
+
+        $barberos = (clone $activosQuery)
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
+                });
+            })
             ->orderBy('name')
-            ->get()
-            ->map(fn (User $b) => [
-                'id'             => $b->id,
-                'name'           => $b->name,
-                'email'          => $b->email,
-                'phone'          => $b->phone,
-                'salary_type'    => $b->salary_type,
-                'salary_amount'  => $b->salary_amount,
-                'commission_pct' => $b->commission_pct,
-            ]);
+            ->paginate(15)
+            ->withQueryString();
+
+        $barberos->through(fn (User $b) => [
+            'id'             => $b->id,
+            'name'           => $b->name,
+            'email'          => $b->email,
+            'phone'          => $b->phone,
+            'salary_type'    => $b->salary_type,
+            'salary_amount'  => $b->salary_amount,
+            'commission_pct' => $b->commission_pct,
+        ]);
+
+        // Sobre TODOS los barberos activos de la barbería, no sobre la
+        // página actual — antes se calculaban en el frontend a partir del
+        // array completo, que dejó de existir al paginar.
+        $inBarberiaTotal = (clone $activosQuery)->count();
+        $conSueldoFijo = (clone $activosQuery)->where('salary_type', 'fixed')->count();
 
         return Inertia::render('Owner/Barberos/Index', [
             'barberos'  => $barberos,
+            'filters' => ['search' => $search],
+            'stats' => [
+                'total' => $inBarberiaTotal,
+                'conSueldoFijo' => $conSueldoFijo,
+            ],
             'planLimit' => [
                 'max'        => $this->planLimitService->maxBarberos($owner),
                 'totalOwner' => $this->planLimitService->currentBarberos($owner),
-                'inBarberia' => $barberos->count(),
+                'inBarberia' => $inBarberiaTotal,
             ],
         ]);
     }

@@ -20,22 +20,24 @@ class PlanController extends Controller
             $query->where('status', 'active');
         }])
             ->orderBy('id')
-            ->get();
+            ->paginate(10);
+
+        $plans->through(fn (Plan $plan) => [
+            'id'                       => $plan->id,
+            'name'                     => $plan->name,
+            'slug'                     => $plan->slug,
+            'max_barberias'            => $plan->max_barberias,
+            'max_barberos'             => $plan->max_barberos,
+            'price'                    => $plan->price,
+            'annual_price'             => $plan->annual_price,
+            'is_custom'                => $plan->is_custom,
+            'active'                   => $plan->active,
+            'active_subscribers_count' => $plan->active_subscribers_count,
+            'included_items'           => $plan->included_items ?? [],
+        ]);
 
         return Inertia::render('Admin/Plans/Index', [
-            'plans' => $plans->map(fn (Plan $plan) => [
-                'id'                       => $plan->id,
-                'name'                     => $plan->name,
-                'slug'                     => $plan->slug,
-                'max_barberias'            => $plan->max_barberias,
-                'max_barberos'             => $plan->max_barberos,
-                'price'                    => $plan->price,
-                'annual_price'             => $plan->annual_price,
-                'is_custom'                => $plan->is_custom,
-                'active'                   => $plan->active,
-                'active_subscribers_count' => $plan->active_subscribers_count,
-                'included_items'           => $plan->included_items ?? [],
-            ]),
+            'plans' => $plans,
         ]);
     }
 

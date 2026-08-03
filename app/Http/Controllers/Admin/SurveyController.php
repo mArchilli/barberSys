@@ -20,18 +20,20 @@ class SurveyController extends Controller
         $surveys = Survey::withCount([
             'responses',
             'responses as completed_responses_count' => fn ($query) => $query->where('status', 'completed'),
-        ])->orderByDesc('id')->get();
+        ])->orderByDesc('id')->paginate(15);
+
+        $surveys->through(fn (Survey $survey) => [
+            'id' => $survey->id,
+            'title' => $survey->title,
+            'target_audience' => $survey->target_audience,
+            'active' => $survey->active,
+            'reward_type' => $survey->reward_type,
+            'responses_count' => $survey->responses_count,
+            'completed_responses_count' => $survey->completed_responses_count,
+        ]);
 
         return Inertia::render('Admin/Encuestas/Index', [
-            'surveys' => $surveys->map(fn (Survey $survey) => [
-                'id' => $survey->id,
-                'title' => $survey->title,
-                'target_audience' => $survey->target_audience,
-                'active' => $survey->active,
-                'reward_type' => $survey->reward_type,
-                'responses_count' => $survey->responses_count,
-                'completed_responses_count' => $survey->completed_responses_count,
-            ]),
+            'surveys' => $surveys,
         ]);
     }
 
@@ -163,6 +165,10 @@ class SurveyController extends Controller
             ];
         }
 
+        // No es un listado navegable (es parte de un reporte agregado), así
+        // que un límite fijo alcanza — no hace falta paginación real acá.
+        // Las últimas 100 respuestas de texto son representativas para un
+        // admin que está revisando feedback cualitativo.
         return [
             'id' => $question->id,
             'type' => 'text',
@@ -170,6 +176,7 @@ class SurveyController extends Controller
             'answers' => $question->answers()
                 ->whereNotNull('text_value')
                 ->latest('id')
+                ->limit(100)
                 ->pluck('text_value'),
         ];
     }
