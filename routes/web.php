@@ -51,7 +51,18 @@ Route::get('/', function () {
         ]),
         'whatsappSalesNumber' => config('services.whatsapp.sales_number'),
     ]);
-});
+})->name('home');
+
+Route::get('/planes', function () {
+    return Inertia::render('PricingDetails', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'plans' => Plan::where('active', true)->orderBy('id')->get([
+            'id', 'name', 'slug', 'price', 'annual_price', 'is_custom', 'max_barberias', 'max_barberos', 'included_items',
+        ]),
+        'whatsappSalesNumber' => config('services.whatsapp.sales_number'),
+    ]);
+})->name('pricing.details');
 
 // Redirige /dashboard al landing del rol correspondiente
 Route::get('/dashboard', function () {

@@ -17,6 +17,7 @@ const defaultLinks = [
 
 export default function FooterSection({
     brandName = 'Estilus',
+    homeHref = '#inicio',
     links = defaultLinks,
     whatsappHref = 'https://wa.me/',
     instagramHref = '#',
@@ -27,7 +28,7 @@ export default function FooterSection({
                 <div className="grid gap-10 lg:grid-cols-[minmax(0,1.18fr)_minmax(0,0.82fr)] lg:items-start lg:gap-14">
                     <div className="max-w-3xl">
                         <a
-                            href="#inicio"
+                            href={homeHref}
                             className="inline-flex items-center gap-3 rounded-brand-pill text-brand-bg transition-colors duration-200 hover:text-brand-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-nav-bg motion-reduce:transition-none"
                         >
                             <BrandMark className="h-10 w-10 text-brand-bg" />

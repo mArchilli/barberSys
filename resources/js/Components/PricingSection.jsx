@@ -1098,12 +1098,23 @@ export default function PricingSection({
                     ))}
                 </div>
 
-                <div className="mt-8 flex justify-center md:mt-10">
+                <div className="mt-8 flex flex-col items-center md:mt-10">
                     <p className="max-w-3xl text-center text-sm leading-6 text-brand-text-secondary md:text-base">
                         Todos los planes incluyen onboarding guiado y acceso desde
                         celular o compu. Si tu operación necesita algo más grande,
                         armamos una configuración a medida para tu cadena.
                     </p>
+                    <Link
+                        href={route('pricing.details')}
+                        className="group mt-5 inline-flex min-h-[48px] items-center justify-center rounded-brand-pill border border-brand-nav-bg bg-brand-nav-bg px-6 text-sm font-semibold text-brand-text-on-dark shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-text focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                    >
+                        <span>Ver planes en detalle</span>
+                        <IconArrowRight
+                            aria-hidden="true"
+                            className="ml-2 h-4 w-4 text-brand-primary transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+                            stroke={2.3}
+                        />
+                    </Link>
                 </div>
             </div>
         </section>
