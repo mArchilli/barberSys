@@ -1,3 +1,4 @@
+import Pagination from '@/Components/Pagination';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
@@ -46,11 +47,16 @@ export default function Index({ owners, filters, statusOptions, plans }) {
         }
 
         const timeout = setTimeout(() => {
+            // Sin 'page' a propósito: cambiar un filtro vuelve a la página 1.
             router.get(route('admin.owners.index'), { search, status, plan }, { preserveState: true, replace: true });
         }, 350);
 
         return () => clearTimeout(timeout);
     }, [search, status, plan]);
+
+    function goToPage(page) {
+        router.get(route('admin.owners.index'), { search, status, plan, page }, { preserveState: true, preserveScroll: true });
+    }
 
     return (
         <AdminLayout
@@ -110,13 +116,13 @@ export default function Index({ owners, filters, statusOptions, plans }) {
                         </div>
                     </div>
 
-                    {owners.length === 0 ? (
+                    {owners.data.length === 0 ? (
                         <div className="rounded-brand-md border border-brand-border bg-brand-surface p-8 text-center text-brand-text-secondary shadow-brand-card">
                             No se encontraron owners con esos filtros.
                         </div>
                     ) : (
                         <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                            {owners.map((o) => (
+                            {owners.data.map((o) => (
                                 <li key={o.id}>
                                     <Link
                                         href={route('admin.owners.show', o.id)}
@@ -145,6 +151,8 @@ export default function Index({ owners, filters, statusOptions, plans }) {
                             ))}
                         </ul>
                     )}
+
+                    <Pagination meta={owners} onPageChange={goToPage} />
                 </div>
             </div>
         </AdminLayout>

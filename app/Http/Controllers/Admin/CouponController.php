@@ -15,19 +15,21 @@ class CouponController extends Controller
 {
     public function index(): Response
     {
-        $coupons = Coupon::orderByDesc('id')->get();
+        $coupons = Coupon::orderByDesc('id')->paginate(15);
+
+        $coupons->through(fn (Coupon $coupon) => [
+            'id'               => $coupon->id,
+            'code'             => $coupon->code,
+            'type'             => $coupon->type,
+            'value'            => $coupon->value,
+            'max_uses'         => $coupon->max_uses,
+            'used_count'       => $coupon->used_count,
+            'expires_at'       => $coupon->expires_at?->toDateString(),
+            'active'           => $coupon->active,
+        ]);
 
         return Inertia::render('Admin/Cupones/Index', [
-            'coupons' => $coupons->map(fn (Coupon $coupon) => [
-                'id'               => $coupon->id,
-                'code'             => $coupon->code,
-                'type'             => $coupon->type,
-                'value'            => $coupon->value,
-                'max_uses'         => $coupon->max_uses,
-                'used_count'       => $coupon->used_count,
-                'expires_at'       => $coupon->expires_at?->toDateString(),
-                'active'           => $coupon->active,
-            ]),
+            'coupons' => $coupons,
         ]);
     }
 

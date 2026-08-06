@@ -1,5 +1,6 @@
+import Pagination from '@/Components/Pagination';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { IconPlus } from '@tabler/icons-react';
 
 function formatValue(type, value) {
@@ -31,6 +32,10 @@ function StatusBadge({ active }) {
 export default function Index({ coupons }) {
     const { flash } = usePage().props;
 
+    function goToPage(page) {
+        router.get(route('admin.coupons.index'), { page }, { preserveState: true, preserveScroll: true });
+    }
+
     return (
         <AdminLayout
             header={
@@ -59,7 +64,7 @@ export default function Index({ coupons }) {
                         </div>
                     )}
 
-                    {coupons.length === 0 ? (
+                    {coupons.data.length === 0 ? (
                         <div className="rounded-brand-md border border-brand-border bg-brand-surface p-8 text-center text-brand-text-secondary shadow-brand-card">
                             Todavía no cargaste ningún cupón.
                         </div>
@@ -78,7 +83,7 @@ export default function Index({ coupons }) {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-brand-border">
-                                    {coupons.map((c) => (
+                                    {coupons.data.map((c) => (
                                         <tr key={c.id}>
                                             <td className="px-5 py-3 font-semibold text-brand-text">{c.code}</td>
                                             <td className="px-5 py-3 text-brand-text-secondary">
@@ -106,6 +111,8 @@ export default function Index({ coupons }) {
                             </table>
                         </div>
                     )}
+
+                    <Pagination meta={coupons} onPageChange={goToPage} />
                 </div>
             </div>
         </AdminLayout>

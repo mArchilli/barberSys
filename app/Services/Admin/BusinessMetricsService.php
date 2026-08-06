@@ -9,7 +9,6 @@ use App\Models\Servicio;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Scopes\BelongsToBarberiaScope;
-use App\Services\PlanLimitService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -24,10 +23,6 @@ use Illuminate\Support\Collection;
  */
 class BusinessMetricsService
 {
-    public function __construct(private readonly PlanLimitService $planLimitService)
-    {
-    }
-
     public function activeClientsCount(): int
     {
         return Subscription::where('status', 'active')->count();
@@ -115,32 +110,48 @@ class BusinessMetricsService
     {
         $since = Carbon::now()->subDays($days);
 
+        $recentOwnerIds = User::where('role', 'owner')
+            ->where('created_at', '>=', $since)
+            ->pluck('id');
+
+        if ($recentOwnerIds->isEmpty()) {
+            return collect();
+        }
+
         // Bypass documentado del BelongsToBarberiaScope (excepción admin, ver CLAUDE.md).
-        // Primer registro cargado por owner, across todas sus barberías, en una sola
-        // query agregada (MIN + GROUP BY) por señal, evitando N+1 owner por owner.
+        // Primer registro cargado por owner, en una sola query agregada
+        // (MIN + GROUP BY) por señal — filtrada por barberias.owner_id IN
+        // (los owners del rango) ANTES de agregar, para que el MIN/GROUP BY
+        // corra solo sobre sus barberías, no sobre toda la tabla cortes/
+        // servicios/medios_pago (irrelevante para el resultado y, con el
+        // dataset creciendo, cada vez más caro de barrer entero).
         $firstServicios = Servicio::withoutGlobalScope(BelongsToBarberiaScope::class)
             ->join('barberias', 'barberias.id', '=', 'servicios.barberia_id')
+            ->whereIn('barberias.owner_id', $recentOwnerIds)
             ->selectRaw('barberias.owner_id as owner_id, MIN(servicios.created_at) as first_at')
             ->groupBy('barberias.owner_id');
 
         $firstMediosPago = MedioPago::withoutGlobalScope(BelongsToBarberiaScope::class)
             ->join('barberias', 'barberias.id', '=', 'medios_pago.barberia_id')
+            ->whereIn('barberias.owner_id', $recentOwnerIds)
             ->selectRaw('barberias.owner_id as owner_id, MIN(medios_pago.created_at) as first_at')
             ->groupBy('barberias.owner_id');
 
         $firstCortes = Corte::withoutGlobalScope(BelongsToBarberiaScope::class)
             ->join('barberias', 'barberias.id', '=', 'cortes.barberia_id')
+            ->whereIn('barberias.owner_id', $recentOwnerIds)
             ->selectRaw('barberias.owner_id as owner_id, MIN(cortes.created_at) as first_at')
             ->groupBy('barberias.owner_id');
 
         // User no tiene BelongsToBarberiaScope (ver comentario en OwnerController::index).
         $firstBarberos = User::where('role', 'barber')
             ->join('barberias', 'barberias.id', '=', 'users.barberia_id')
+            ->whereIn('barberias.owner_id', $recentOwnerIds)
             ->selectRaw('barberias.owner_id as owner_id, MIN(users.created_at) as first_at')
             ->groupBy('barberias.owner_id');
 
         return User::where('users.role', 'owner')
-            ->where('users.created_at', '>=', $since)
+            ->whereIn('users.id', $recentOwnerIds)
             ->leftJoinSub($firstServicios, 'first_servicios', 'first_servicios.owner_id', '=', 'users.id')
             ->leftJoinSub($firstMediosPago, 'first_medios_pago', 'first_medios_pago.owner_id', '=', 'users.id')
             ->leftJoinSub($firstBarberos, 'first_barberos', 'first_barberos.owner_id', '=', 'users.id')
@@ -171,15 +182,32 @@ class BusinessMetricsService
 
     public function ownersNearPlanLimit(float $threshold = 0.8): Collection
     {
-        return User::where('role', 'owner')
+        $owners = User::where('role', 'owner')
             ->whereHas('subscription')
             ->with('subscription.plan')
-            ->get()
-            ->map(function (User $owner) {
-                $maxBarberias = $this->planLimitService->maxBarberias($owner);
-                $maxBarberos = $this->planLimitService->maxBarberos($owner);
-                $currentBarberias = $this->planLimitService->currentBarberias($owner);
-                $currentBarberos = $this->planLimitService->currentBarberos($owner);
+            ->withCount(['barberias' => fn ($q) => $q->where('active', true)])
+            ->get();
+
+        // Barberos activos por owner en una única consulta agregada (mismo
+        // patrón que ya usa Admin\OwnerController::index): User no tiene
+        // owner_id directo, se llega vía barberias.owner_id.
+        $barberoCounts = User::where('role', 'barber')
+            ->where('users.active', true)
+            ->join('barberias', 'barberias.id', '=', 'users.barberia_id')
+            ->selectRaw('barberias.owner_id as owner_id, count(*) as total')
+            ->groupBy('barberias.owner_id')
+            ->pluck('total', 'owner_id');
+
+        return $owners
+            ->map(function (User $owner) use ($barberoCounts) {
+                // subscription.plan ya viene eager loaded arriba: llamar a
+                // estos métodos del modelo NO dispara queries nuevas (a
+                // diferencia de PlanLimitService::maxBarberias/maxBarberos,
+                // que re-consultaban la suscripción desde cero por owner).
+                $maxBarberias = $owner->subscription->maxBarberias();
+                $maxBarberos = $owner->subscription->maxBarberos();
+                $currentBarberias = $owner->barberias_count;
+                $currentBarberos = (int) ($barberoCounts[$owner->id] ?? 0);
 
                 $barberiasRatio = $maxBarberias ? $currentBarberias / $maxBarberias : 0;
                 $barberosRatio = $maxBarberos ? $currentBarberos / $maxBarberos : 0;

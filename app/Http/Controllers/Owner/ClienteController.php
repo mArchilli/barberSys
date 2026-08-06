@@ -16,14 +16,37 @@ class ClienteController extends Controller
 {
     use ResolvesBarberiaContext;
 
-    public function index(Barberia $barberia): Response
+    public function index(Request $request, Barberia $barberia): Response
     {
+        $search = trim((string) $request->query('search', ''));
+
         $clientes = Cliente::where('barberia_id', $barberia->id)
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
             ->orderBy('name')
-            ->get(['id', 'name', 'phone', 'email', 'active']);
+            ->paginate(20, ['id', 'name', 'phone', 'email', 'active'])
+            ->withQueryString();
+
+        // Contadores sobre TODA la cartera de la barbería, no sobre la página
+        // actual — antes se calculaban en el frontend a partir del array
+        // completo, que dejó de existir al paginar.
+        $stats = [
+            'total' => Cliente::where('barberia_id', $barberia->id)->count(),
+            'activos' => Cliente::where('barberia_id', $barberia->id)->where('active', true)->count(),
+            'conContacto' => Cliente::where('barberia_id', $barberia->id)
+                ->where(fn ($q) => $q->whereNotNull('phone')->orWhereNotNull('email'))
+                ->count(),
+        ];
 
         return Inertia::render('Owner/Clientes/Index', [
             'clientes' => $clientes,
+            'filters' => ['search' => $search],
+            'stats' => $stats,
         ]);
     }
 

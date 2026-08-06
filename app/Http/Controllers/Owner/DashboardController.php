@@ -12,7 +12,6 @@ use App\Models\MedioPago;
 use App\Models\Servicio;
 use App\Models\User;
 use App\Services\BarberPerformanceService;
-use App\Services\ComisionCalculator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -26,7 +25,7 @@ class DashboardController extends Controller
 
     public function __construct(private BarberPerformanceService $barberPerformanceService) {}
 
-    public function index(Request $request, Barberia $barberia, ComisionCalculator $comisionCalculator): Response
+    public function index(Request $request, Barberia $barberia): Response
     {
         $hoy = Carbon::today();
         $range = $this->resolvePeriodRange($request);
@@ -98,8 +97,28 @@ class DashboardController extends Controller
             })
             ->get();
 
-        $totalSueldos = (float) $barberosDelMes
-            ->sum(fn ($barbero) => $comisionCalculator->calcular($barbero, $mesGestion, $finMesGestion));
+        // Facturado por barbero del mes en una sola query agregada (en vez de
+        // llamar a ComisionCalculator::calcular() por barbero, que hace un
+        // SUM(price) individual por cada comisionista) — mismo criterio que
+        // BusinessMetricsService::ownersNearPlanLimit(). ComisionCalculator
+        // sigue intacto: se sigue usando tal cual donde corresponde calcular
+        // el sueldo de UN barbero puntual (MiRendimientoController, etc.).
+        $facturadoPorBarberoComision = Corte::where('barberia_id', $barberia->id)
+            ->whereDate('performed_at', '>=', $mesGestion->toDateString())
+            ->whereDate('performed_at', '<=', $finMesGestion->toDateString())
+            ->selectRaw('barbero_id, SUM(price) as total')
+            ->groupBy('barbero_id')
+            ->pluck('total', 'barbero_id');
+
+        $totalSueldos = (float) $barberosDelMes->sum(function ($barbero) use ($facturadoPorBarberoComision) {
+            if ($barbero->salary_type === 'fixed') {
+                return (float) $barbero->salary_amount;
+            }
+
+            $facturado = (float) ($facturadoPorBarberoComision[$barbero->id] ?? 0);
+
+            return round($facturado * ((float) $barbero->commission_pct / 100), 2);
+        });
 
         $totalGastos = (float) GastoRegistro::where('barberia_id', $barberia->id)
             ->where('month', $mesGestion->toDateString())

@@ -42,6 +42,14 @@ class RegisteredUserController extends Controller
         ]);
 
         try {
+            // Crea la barbería y autentica (Auth::login) en el mismo request, sin
+            // ninguna lectura scopeada entre medio — por eso es seguro con el
+            // cacheo por-request de BelongsToBarberiaScope (User::barberias se
+            // cachea en la instancia de $user durante todo el ciclo de vida del
+            // request). Si en el futuro se agrega una lectura scopeada ACÁ DENTRO
+            // (antes del redirect), va a devolver el estado previo a esta
+            // barbería recién creada — revisar el cacheo del scope antes de asumir
+            // datos frescos.
             DB::transaction(function () use ($request, $couponService) {
                 $user = User::create([
                     'name'     => $request->name,

@@ -123,6 +123,16 @@ return [
             'handler' => NullHandler::class,
         ],
 
+        // Warnings de App\Http\Middleware\LogSlowRequests (solo local) — aparte
+        // de laravel.log para poder revisar picos de queries/tiempo por request
+        // sin ruido de otros logs.
+        'performance' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/performance.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
+        ],
+
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],

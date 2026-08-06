@@ -3,10 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Barberia;
+use App\Models\CajaCierre;
 use App\Models\Cliente;
 use App\Models\Gasto;
 use App\Models\MedioPago;
 use App\Models\Servicio;
+use App\Models\Turno;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -151,6 +153,58 @@ class TenantIsolationTest extends TestCase
             ->component('Owner/Servicios/Index')
             ->has('servicios', 1)
             ->where('servicios.0.name', 'Corte de B')
+        );
+    }
+
+    // Turno tiene BelongsToBarberiaScope igual que Servicio/Cliente/Gasto —
+    // mismo patrón que test_owner_no_puede_editar_servicio_de_otro_owner...:
+    // el scope filtra el route model binding de {turno} antes de que el
+    // controller llegue a su propio abort_if(), por eso 404 y no 403.
+    public function test_owner_no_puede_actualizar_turno_de_otro_owner_aunque_use_su_propia_barberia_en_la_url(): void
+    {
+        [, $barberiaA] = $this->ownerConBarberia();
+        [$ownerB, $barberiaB] = $this->ownerConBarberia();
+
+        $servicioDeA = Servicio::factory()->create(['barberia_id' => $barberiaA->id]);
+        $turnoDeA = Turno::factory()->create([
+            'barberia_id' => $barberiaA->id,
+            'servicio_id' => $servicioDeA->id,
+            'status' => 'pendiente',
+        ]);
+
+        $this->actingAs($ownerB)
+            ->patch(route('owner.barberias.turnos.update', [$barberiaB, $turnoDeA]), [
+                'status' => 'confirmado',
+            ])
+            ->assertNotFound();
+
+        $this->assertSame('pendiente', $turnoDeA->fresh()->status);
+    }
+
+    // CajaCierre no tiene un route param propio ({barberia} alcanza para
+    // resolver "la caja de hoy" server-side) — acá la fuga a probar es de
+    // datos, no de route model binding: que el cierre de A no aparezca al
+    // consultar la caja de B para el mismo día.
+    public function test_caja_de_un_owner_no_muestra_el_cierre_de_otro_owner_del_mismo_dia(): void
+    {
+        [$ownerA, $barberiaA] = $this->ownerConBarberia();
+        [$ownerB, $barberiaB] = $this->ownerConBarberia();
+
+        CajaCierre::create([
+            'barberia_id' => $barberiaA->id,
+            'day' => now()->toDateString(),
+            'closed_by' => $ownerA->id,
+            'closed_at' => now(),
+        ]);
+
+        $response = $this->actingAs($ownerB)
+            ->get(route('owner.barberias.caja.index', $barberiaB));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Owner/Caja/Index')
+            ->where('cerrado', false)
+            ->where('cierre', null)
         );
     }
 }
