@@ -295,7 +295,7 @@ export default function BubbleMenu({
                     href={homeHref}
                     aria-label={logoAriaLabel}
                     onClick={() => closeMenu()}
-                    className="bubble-menu-logo pointer-events-auto inline-flex h-12 items-center justify-center gap-2 rounded-full px-3 text-brand-text shadow-brand-floating transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none sm:h-16 sm:px-6"
+                    className="bubble-menu-logo pointer-events-auto inline-flex h-[52px] items-center justify-center gap-2 rounded-full px-3.5 text-brand-text shadow-brand-floating transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none sm:h-16 sm:px-6"
                     style={{
                         backgroundColor: menuBg,
                         color: menuContentColor,
@@ -323,7 +323,7 @@ export default function BubbleMenu({
                             aria-label={action.ariaLabel || action.label}
                             onClick={() => closeMenu()}
                             className={[
-                                'inline-flex h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-2.5 text-[11px] font-bold shadow-brand-floating transition-all duration-200',
+                                'inline-flex h-[52px] shrink-0 items-center justify-center whitespace-nowrap rounded-full px-3 text-xs font-bold shadow-brand-floating transition-all duration-200',
                                 'hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none',
                                 'sm:h-16 sm:px-5 sm:text-sm',
                                 action.primary
@@ -339,7 +339,7 @@ export default function BubbleMenu({
                 <button
                     ref={menuButtonRef}
                     type="button"
-                    className="pointer-events-auto inline-flex h-12 w-12 cursor-pointer items-center justify-center rounded-full border-0 p-0 shadow-brand-floating transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none sm:h-16 sm:w-16"
+                    className="pointer-events-auto inline-flex h-[52px] w-[52px] cursor-pointer items-center justify-center rounded-full border-0 p-0 shadow-brand-floating transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none sm:h-16 sm:w-16"
                     onClick={handleToggle}
                     aria-label={isMenuOpen ? 'Cerrar menú' : menuAriaLabel}
                     aria-controls="bubble-menu-items"

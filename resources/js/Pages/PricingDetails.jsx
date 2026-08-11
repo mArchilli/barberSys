@@ -10,7 +10,7 @@ function PricingBrandLogo() {
     return (
         <span className="inline-flex items-center gap-2.5 text-brand-text">
             <BrandMark
-                className="h-7 w-7 sm:h-8 sm:w-8"
+                className="h-[30px] w-[30px] sm:h-8 sm:w-8"
                 colorClassName="text-brand-text"
             />
             <span className="hidden font-display text-[1.35rem] font-extrabold tracking-[-0.03em] sm:inline">

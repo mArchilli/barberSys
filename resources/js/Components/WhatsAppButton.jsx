@@ -114,13 +114,16 @@ export default function WhatsAppButton({
                 rel="noreferrer"
                 aria-label={label}
                 className={[
-                    'inline-flex h-14 w-14 items-center justify-center rounded-full border text-brand-on-primary shadow-brand-floating transition-all duration-300 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg motion-reduce:transform-none motion-reduce:transition-none md:h-16 md:w-16',
+                    'inline-flex h-[60px] w-[60px] items-center justify-center rounded-full border text-brand-on-primary shadow-brand-floating transition-all duration-300 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg motion-reduce:transform-none motion-reduce:transition-none md:h-16 md:w-16',
                     useWhiteButton
                         ? 'border-white/80 bg-brand-surface hover:bg-brand-surface-alt'
                         : 'border-brand-primary/20 bg-brand-primary hover:bg-brand-primary-hover',
                 ].join(' ')}
             >
-                <IconBrandWhatsapp className="h-7 w-7" stroke={2.2} />
+                <IconBrandWhatsapp
+                    className="h-[30px] w-[30px] md:h-7 md:w-7"
+                    stroke={2.2}
+                />
             </a>
         </div>
     );
