@@ -1,27 +1,26 @@
 import { Link } from '@inertiajs/react';
+import WaveTransition from '@/Components/WaveTransition';
 import {
     IconAdjustmentsHorizontal,
     IconArrowRight,
     IconBuildingStore,
     IconCheck,
+    IconCurrencyDollar,
     IconDeviceMobile,
     IconHeadset,
     IconMinus,
-    IconSparkles,
     IconUsers,
 } from '@tabler/icons-react';
 import { Fragment, useMemo, useState } from 'react';
 
 const PLAN_GUIDANCE = {
     'plan-1': {
-        eyebrow: 'Para ordenar la base',
         summary:
             'Una barbería, un equipo chico y la información esencial para dejar de manejarte a ciegas.',
         decision:
             'Elegilo si tenés una sola sucursal y querés ordenar la operación sin sumar complejidad.',
     },
     'plan-2': {
-        eyebrow: 'Para crecer con control',
         summary:
             'Más capacidad de equipo y una mirada consolidada para una operación que empieza a expandirse.',
         decision:
@@ -29,14 +28,12 @@ const PLAN_GUIDANCE = {
         featured: true,
     },
     'plan-3': {
-        eyebrow: 'Para una operación en expansión',
         summary:
             'Más sucursales, barberos sin límite y detalle financiero para decidir con una visión completa.',
         decision:
             'Elegilo si administrás varias sucursales y necesitás entender el neto de cada una y del total.',
     },
     'plan-4': {
-        eyebrow: 'Para una forma de trabajo propia',
         summary:
             'Una configuración definida alrededor de tus procesos, tu estructura y el volumen de tu cadena.',
         decision:
@@ -65,12 +62,6 @@ const comparisonGroups = [
     {
         title: 'Capacidad y contratación',
         rows: [
-            {
-                label: 'Pensado para',
-                value: (plan) =>
-                    PLAN_GUIDANCE[plan.slug]?.eyebrow ?? 'Plan activo',
-                plain: true,
-            },
             {
                 label: 'Sucursales activas',
                 value: formatBarberias,
@@ -135,7 +126,7 @@ const comparisonGroups = [
                 value: (plan) =>
                     findIncludedItem(plan, /panel consolidado/i) ||
                     (plan.max_barberias === 1
-                        ? 'No aplica con una sucursal'
+                        ? 'No incluido (este plan es una sola sucursal)'
                         : false),
             },
             {
@@ -233,7 +224,7 @@ function BillingCycleToggle({ cycle, onChange }) {
             />
             {[
                 { value: 'monthly', label: 'Mensual' },
-                { value: 'annual', label: 'Anual · ahorrá' },
+                { value: 'annual', label: 'Anual (ahorrá 2 meses)' },
             ].map((option) => (
                 <button
                     key={option.value}
@@ -414,14 +405,12 @@ function DecisionCards({ plans, cta, whatsappSalesNumber }) {
         >
             <div className="mx-auto w-full max-w-[1440px]">
                 <div className="max-w-3xl">
-                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-secondary">
-                        Una decisión más simple
-                    </p>
                     <h2
                         id="como-elegir-title"
-                        className="mt-3 text-[2rem] leading-[1.03] text-brand-text md:text-5xl"
+                        className="text-[2.5rem] leading-[0.98] text-brand-text sm:text-5xl md:text-6xl lg:text-[4rem]"
                     >
-                        ¿Cuál se parece más a tu barbería hoy?
+                        ¿Cuál se parece más a tu{' '}
+                        <span className="text-brand-primary">barbería</span> hoy?
                     </h2>
                     <p className="mt-4 text-[15px] leading-7 text-brand-text-secondary md:text-lg">
                         Elegí por la estructura que necesitás ahora. Cuando tu
@@ -430,30 +419,21 @@ function DecisionCards({ plans, cta, whatsappSalesNumber }) {
                 </div>
 
                 <div className="mt-9 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-                    {plans.map((plan, index) => {
+                    {plans.map((plan) => {
                         const guidance = PLAN_GUIDANCE[plan.slug] ?? {};
 
                         return (
                             <article
                                 key={plan.id}
-                                className={`relative flex min-h-[390px] flex-col overflow-hidden rounded-brand-xl border p-6 shadow-brand-card transition-transform duration-200 hover:-translate-y-1 motion-reduce:transform-none motion-reduce:transition-none ${plan.is_custom ? 'border-brand-nav-bg bg-brand-nav-bg text-brand-text-on-dark' : guidance.featured ? 'border-brand-primary bg-brand-primary/20' : 'border-brand-border bg-brand-surface'}`}
+                                className={`relative flex min-h-[390px] flex-col overflow-hidden rounded-brand-xl border p-6 shadow-brand-card transition-transform duration-200 hover:-translate-y-1 motion-reduce:transform-none motion-reduce:transition-none ${plan.is_custom ? 'border-brand-nav-bg bg-brand-nav-bg text-brand-text-on-dark' : guidance.featured ? 'border-brand-primary bg-brand-primary shadow-brand-floating' : 'border-brand-border bg-brand-surface'}`}
                             >
-                                <span
-                                    aria-hidden="true"
-                                    className={`absolute right-5 top-4 font-display text-6xl font-extrabold ${plan.is_custom ? 'text-white/[0.06]' : 'text-brand-nav-bg/[0.06]'}`}
-                                >
-                                    0{index + 1}
-                                </span>
-                                <p className={`relative text-xs font-bold uppercase tracking-[0.16em] ${plan.is_custom ? 'text-brand-primary' : 'text-brand-secondary'}`}>
-                                    {guidance.eyebrow ?? 'Plan Estilus'}
-                                </p>
-                                <h3 className={`relative mt-4 text-3xl ${plan.is_custom ? 'text-brand-surface' : 'text-brand-text'}`}>
+                                <h3 className={`relative text-3xl ${plan.is_custom ? 'text-brand-surface' : 'text-brand-text'}`}>
                                     {plan.name}
                                 </h3>
-                                <p className={`relative mt-4 text-sm leading-6 ${plan.is_custom ? 'text-brand-text-on-dark' : 'text-brand-text-secondary'}`}>
+                                <p className={`relative mt-4 text-sm leading-6 ${plan.is_custom ? 'text-brand-text-on-dark' : guidance.featured ? 'text-brand-text/80' : 'text-brand-text-secondary'}`}>
                                     {guidance.summary}
                                 </p>
-                                <div className={`relative mt-5 border-t pt-5 ${plan.is_custom ? 'border-white/10' : 'border-brand-border-subtle'}`}>
+                                <div className={`relative mt-5 border-t pt-5 ${plan.is_custom ? 'border-white/10' : guidance.featured ? 'border-brand-text/15' : 'border-brand-border-subtle'}`}>
                                     <p className={`text-sm font-semibold leading-6 ${plan.is_custom ? 'text-brand-surface' : 'text-brand-text'}`}>
                                         {guidance.decision}
                                     </p>
@@ -487,95 +467,117 @@ function CustomPlanCallout({ plan, whatsappSalesNumber }) {
             Icon: IconAdjustmentsHorizontal,
             title: 'Tu circuito de trabajo',
             text: 'Relevamos cómo se mueve hoy la información y definimos la configuración alrededor de ese proceso.',
+            shape: '44% 56% 63% 37% / 47% 39% 61% 53%',
+            position:
+                'mr-auto w-[94%] lg:absolute lg:left-[2%] lg:top-0 lg:w-[82%]',
+            blobClassName: '-rotate-6',
         },
         {
             Icon: IconBuildingStore,
             title: 'Tu estructura real',
             text: 'Contemplamos la cantidad de sucursales, equipos y responsables que participan en la operación.',
+            shape: '57% 43% 38% 62% / 42% 55% 45% 58%',
+            position:
+                'ml-auto w-[92%] flex-row-reverse text-right lg:absolute lg:right-[1%] lg:top-[35%] lg:w-[78%]',
+            blobClassName: 'rotate-6',
         },
         {
             Icon: IconHeadset,
             title: 'Acompañamiento cercano',
             text: 'Acordamos reportes, permisos y soporte según lo que tu cadena necesita para trabajar con claridad.',
+            shape: '38% 62% 54% 46% / 60% 40% 58% 42%',
+            position:
+                'ml-[6%] w-[92%] lg:absolute lg:bottom-0 lg:left-[10%] lg:ml-0 lg:w-[82%]',
+            blobClassName: '-rotate-3',
         },
     ];
 
     return (
-        <section
-            id="cadena"
-            aria-labelledby="cadena-title"
-            className="px-5 pb-16 md:px-8 md:pb-24 lg:px-10 xl:px-12"
-        >
-            <div className="relative mx-auto w-full max-w-[1440px] overflow-hidden rounded-brand-xl bg-brand-nav-bg px-6 py-10 text-brand-text-on-dark shadow-brand-floating sm:px-9 md:py-14 lg:px-14 lg:py-16">
-                <div
-                    aria-hidden="true"
-                    className="absolute -right-16 -top-20 h-72 w-72 rounded-[44%_56%_63%_37%/47%_39%_61%_53%] bg-brand-primary opacity-95 lg:h-96 lg:w-96"
-                />
-                <div
-                    aria-hidden="true"
-                    className="absolute -bottom-24 right-[22%] h-52 w-52 rounded-full border-[32px] border-white/[0.04]"
-                />
-
-                <div className="relative grid gap-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end lg:gap-16">
-                    <div>
-                        <span className="inline-flex items-center gap-2 rounded-brand-pill border border-white/15 bg-white/[0.06] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-brand-primary">
-                            <IconSparkles aria-hidden="true" className="h-4 w-4" stroke={2} />
-                            Plan {plan.name}
-                        </span>
-                        <h2
-                            id="cadena-title"
-                            className="mt-5 max-w-3xl text-[2.1rem] leading-[1.02] text-brand-surface md:text-5xl lg:text-[3.4rem]"
-                        >
-                            Tu forma de trabajar no tiene que entrar a la fuerza en
-                            un plan estándar.
-                        </h2>
-                        <p className="mt-5 max-w-2xl text-base leading-8 text-brand-text-on-dark md:text-lg">
-                            Si tu barbería tiene una manera particular de trabajar,
-                            podemos armar una configuración a medida para esa forma
-                            de trabajo. Primero entendemos tu operación y después
-                            definimos juntos el alcance, la capacidad y el
-                            acompañamiento que realmente necesitás.
-                        </p>
-                        <a
-                            href={whatsappHref}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="group mt-7 inline-flex min-h-[52px] items-center justify-center rounded-brand-pill bg-brand-primary px-7 text-sm font-semibold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-nav-bg motion-reduce:transform-none motion-reduce:transition-none"
-                        >
-                            Contarnos cómo trabajan
-                            <IconArrowRight
-                                aria-hidden="true"
-                                className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
-                                stroke={2.3}
-                            />
-                        </a>
-                    </div>
-
-                    <div className="grid gap-3">
-                        {points.map(({ Icon, title, text }) => (
-                            <article
-                                key={title}
-                                className="rounded-brand-lg border border-white/10 bg-white/[0.06] p-5 backdrop-blur-sm"
+        <>
+            <WaveTransition
+                fromClassName="text-brand-bg"
+                toClassName="bg-brand-nav-bg"
+            />
+            <section
+                id="cadena"
+                aria-labelledby="cadena-title"
+                className="bg-brand-nav-bg px-5 pb-16 pt-8 text-brand-text-on-dark md:px-8 md:pb-24 md:pt-12 lg:px-10 lg:pb-28 lg:pt-16 xl:px-12"
+            >
+                <div className="relative mx-auto w-full max-w-[1440px]">
+                    <div className="grid gap-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end lg:gap-16">
+                        <div>
+                            <h2
+                                id="cadena-title"
+                                className="max-w-3xl text-[2.6rem] leading-[0.98] text-brand-surface sm:text-5xl md:text-6xl lg:text-[4rem]"
                             >
-                                <div className="flex items-start gap-4">
-                                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-brand-md bg-brand-primary text-brand-on-primary">
-                                        <Icon aria-hidden="true" className="h-5 w-5" stroke={2.1} />
-                                    </span>
-                                    <div>
-                                        <h3 className="text-lg text-brand-surface">
-                                            {title}
-                                        </h3>
-                                        <p className="mt-1 text-sm leading-6 text-brand-text-on-dark">
-                                            {text}
-                                        </p>
-                                    </div>
-                                </div>
-                            </article>
-                        ))}
+                                Tu forma de trabajar no tiene que{' '}
+                                <span className="text-brand-primary">
+                                    entrar a la fuerza
+                                </span>{' '}
+                                en un plan estándar.
+                            </h2>
+                            <p className="mt-5 max-w-2xl text-base leading-8 text-brand-text-on-dark md:text-lg">
+                                Si tu barbería tiene una manera particular de trabajar,
+                                podemos armar una configuración a medida para esa forma
+                                de trabajo. Primero entendemos tu operación y después
+                                definimos juntos el alcance, la capacidad y el
+                                acompañamiento que realmente necesitás.
+                            </p>
+                            <a
+                                href={whatsappHref}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="group mt-7 inline-flex min-h-[52px] items-center justify-center rounded-brand-pill bg-brand-primary px-7 text-sm font-semibold text-brand-on-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-nav-bg motion-reduce:transform-none motion-reduce:transition-none"
+                            >
+                                Contanos cómo trabajás
+                                <IconArrowRight
+                                    aria-hidden="true"
+                                    className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+                                    stroke={2.3}
+                                />
+                            </a>
+                        </div>
+
+                        <div className="relative flex min-h-[440px] flex-col justify-between gap-9 sm:min-h-[470px] lg:block lg:min-h-[520px]">
+                            {points.map(
+                                ({
+                                    Icon,
+                                    title,
+                                    text,
+                                    shape,
+                                    position,
+                                    blobClassName,
+                                }) => (
+                                    <article
+                                        key={title}
+                                        className={`flex items-center gap-5 lg:gap-7 ${position}`}
+                                    >
+                                        <span
+                                            className={`flex h-20 w-20 shrink-0 items-center justify-center bg-brand-primary text-brand-on-primary sm:h-24 sm:w-24 lg:h-28 lg:w-28 ${blobClassName}`}
+                                            style={{ borderRadius: shape }}
+                                        >
+                                            <Icon
+                                                aria-hidden="true"
+                                                className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10"
+                                                stroke={1.8}
+                                            />
+                                        </span>
+                                        <div>
+                                            <h3 className="text-xl text-brand-surface lg:text-2xl">
+                                                {title}
+                                            </h3>
+                                            <p className="mt-2 text-sm leading-6 text-brand-text-on-dark lg:text-[15px]">
+                                                {text}
+                                            </p>
+                                        </div>
+                                    </article>
+                                ),
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </>
     );
 }
 
@@ -600,20 +602,16 @@ export default function PricingDetailSection({
             <section className="relative overflow-hidden px-5 pb-16 pt-16 md:px-8 md:pb-24 md:pt-24 lg:px-10 lg:pb-28 lg:pt-28 xl:px-12">
                 <div
                     aria-hidden="true"
-                    className="absolute -right-28 top-0 h-[28rem] w-[28rem] rounded-[42%_58%_36%_64%/50%_35%_65%_50%] bg-brand-primary/90 md:-right-16 md:-top-16 md:h-[36rem] md:w-[36rem]"
-                />
-                <div
-                    aria-hidden="true"
-                    className="absolute -left-20 bottom-6 h-48 w-48 rounded-full border-[28px] border-brand-nav-bg/[0.04] md:h-64 md:w-64"
-                />
+                    className="absolute -right-48 top-0 h-[28rem] w-[28rem] md:-right-10 md:-top-10 md:h-[36rem] md:w-[36rem]"
+                >
+                    <div className="h-full w-full rounded-[42%_58%_36%_64%/50%_35%_65%_50%] bg-brand-primary/90 md:scale-[0.84]" />
+                </div>
                 <div className="relative mx-auto w-full max-w-[1440px]">
                     <div className="max-w-4xl">
-                        <span className="inline-flex items-center gap-2 rounded-brand-pill border border-brand-border bg-brand-surface/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-brand-secondary shadow-brand-card backdrop-blur-sm">
-                            <IconSparkles aria-hidden="true" className="h-4 w-4" stroke={2} />
-                            Comparativa de planes
-                        </span>
-                        <h1 className="mt-6 text-balance text-[2.65rem] leading-[0.98] text-brand-text sm:text-6xl lg:text-[5rem]">
-                            Elegí con claridad el plan que acompaña tu barbería.
+                        <h1 className="text-balance text-[2.65rem] leading-[0.98] text-brand-text sm:text-6xl lg:text-[5rem]">
+                            Elegí con{' '}
+                            <span className="text-brand-primary">claridad</span> el
+                            plan que acompaña tu barbería.
                         </h1>
                         <p className="mt-6 max-w-3xl text-base leading-8 text-brand-text-secondary md:text-xl md:leading-9">
                             Mirá capacidad, herramientas y nivel de acompañamiento
@@ -622,7 +620,10 @@ export default function PricingDetailSection({
                         </p>
                         <div className="mt-7 flex flex-wrap gap-2.5">
                             {[
-                                { Icon: IconSparkles, label: '14 días gratis' },
+                                {
+                                    Icon: IconCurrencyDollar,
+                                    label: '14 días gratis',
+                                },
                                 { Icon: IconUsers, label: 'Onboarding guiado' },
                                 { Icon: IconDeviceMobile, label: 'Celular o compu' },
                             ].map(({ Icon, label }) => (
@@ -647,14 +648,14 @@ export default function PricingDetailSection({
                 <div className="mx-auto w-full max-w-[1440px]">
                     <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                         <div className="max-w-3xl">
-                            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-secondary">
-                                Todo a la vista
-                            </p>
                             <h2
                                 id="comparativa-title"
-                                className="mt-3 text-[2rem] leading-[1.03] text-brand-text md:text-5xl"
+                                className="text-[2rem] leading-[1.03] text-brand-text md:text-5xl"
                             >
-                                Compará cada diferencia
+                                Compará cada{' '}
+                                <span className="text-brand-primary">
+                                    diferencia
+                                </span>
                             </h2>
                             <p className="mt-4 text-[15px] leading-7 text-brand-text-secondary md:text-lg">
                                 Los límites de barberos son totales para toda tu
@@ -692,27 +693,31 @@ export default function PricingDetailSection({
                 whatsappSalesNumber={whatsappSalesNumber}
             />
 
-            <section className="px-5 pb-16 md:px-8 md:pb-24 lg:px-10 xl:px-12">
-                <div className="mx-auto flex w-full max-w-[1440px] flex-col items-start justify-between gap-6 rounded-brand-xl bg-brand-primary px-6 py-9 shadow-brand-card sm:px-9 md:flex-row md:items-center lg:px-12 lg:py-11">
+            <WaveTransition
+                fromClassName={customPlan ? 'text-brand-nav-bg' : 'text-brand-bg'}
+                toClassName="bg-brand-primary"
+                flip
+            />
+            <section className="bg-brand-primary px-5 pb-16 pt-8 md:px-8 md:pb-24 md:pt-12 lg:px-10 lg:pb-28 lg:pt-16 xl:px-12">
+                <div className="mx-auto flex w-full max-w-[1440px] flex-col items-start justify-between gap-6 md:flex-row md:items-center">
                     <div className="max-w-3xl">
-                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-secondary">
-                            Podés empezar sin riesgo
-                        </p>
-                        <h2 className="mt-2 text-3xl text-brand-nav-bg md:text-4xl">
-                            Probá Estilus gratis durante 14 días.
+                        <h2 className="text-3xl text-brand-nav-bg md:text-4xl">
+                            Empezá sin riesgo, probá Estilus gratis durante 14
+                            días y después decidís.
                         </h2>
                         <p className="mt-3 text-sm leading-6 text-brand-text/75 md:text-base">
-                            Conocé el flujo completo antes de elegir el plan definitivo.
+                            De esta manera vos conocés el flujo completo antes de
+                            gastar y elegir el plan definitivo.
                         </p>
                     </div>
                     <Link
                         href={cta.href}
-                        className="group inline-flex min-h-[52px] shrink-0 items-center justify-center rounded-brand-pill bg-brand-nav-bg px-7 text-sm font-semibold text-brand-text-on-dark shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-text focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-nav-bg focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary motion-reduce:transform-none motion-reduce:transition-none"
+                        className="group inline-flex min-h-[52px] shrink-0 items-center justify-center rounded-brand-pill bg-brand-nav-bg px-7 py-3 text-center text-sm font-semibold text-brand-text-on-dark shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-text focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-nav-bg focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary motion-reduce:transform-none motion-reduce:transition-none md:h-36 md:w-36 md:flex-col md:rounded-brand-lg md:p-5"
                     >
                         {cta.label}
                         <IconArrowRight
                             aria-hidden="true"
-                            className="ml-2 h-4 w-4 text-brand-primary transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+                            className="ml-2 h-4 w-4 text-brand-primary transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none md:ml-0 md:mt-3 md:h-5 md:w-5"
                             stroke={2.3}
                         />
                     </Link>

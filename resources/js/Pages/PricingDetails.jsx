@@ -125,8 +125,9 @@ export default function PricingDetails({
                     whatsappSalesNumber={whatsappSalesNumber}
                 />
                 <WaveTransition
-                    fromClassName="text-brand-bg"
+                    fromClassName="text-brand-primary"
                     toClassName="bg-brand-nav-bg"
+                    flip
                 />
                 <FooterSection
                     homeHref={homeHref}
