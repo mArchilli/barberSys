@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import {
     IconArrowRight,
+    IconArrowUpRight,
     IconCheck,
 } from '@tabler/icons-react';
 import {
@@ -1106,12 +1107,12 @@ export default function PricingSection({
                     </p>
                     <Link
                         href={route('pricing.details')}
-                        className="group mt-5 inline-flex min-h-[48px] items-center justify-center rounded-brand-pill border border-brand-nav-bg bg-brand-nav-bg px-6 text-sm font-semibold text-brand-text-on-dark shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-text focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+                        className="group mt-5 inline-flex min-h-[48px] items-center justify-center rounded-brand-pill border border-brand-primary bg-brand-primary px-6 text-sm font-semibold text-brand-on-primary transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-primary-hover hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
                     >
                         <span>Ver planes en detalle</span>
-                        <IconArrowRight
+                        <IconArrowUpRight
                             aria-hidden="true"
-                            className="ml-2 h-4 w-4 text-brand-primary transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+                            className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transform-none motion-reduce:transition-none"
                             stroke={2.3}
                         />
                     </Link>

@@ -45,6 +45,28 @@ function SectionOrganicAccent() {
     );
 }
 
+function FeatureStepOrganicAccent() {
+    return (
+        <div
+            aria-hidden="true"
+            className="pointer-events-none relative z-0 h-0"
+        >
+            <div className="absolute inset-x-0 -top-10 h-64 overflow-hidden sm:-top-12 sm:h-80 lg:-top-20 lg:h-[30rem] xl:h-[31rem] 2xl:h-[32rem]">
+                <svg
+                    viewBox="0 0 560 620"
+                    preserveAspectRatio="none"
+                    className="absolute right-[-6rem] top-0 h-64 w-56 text-brand-primary sm:right-[-8rem] sm:h-80 sm:w-80 lg:right-[-5rem] lg:h-[30rem] lg:w-[31rem] xl:right-[-4rem] xl:h-[31rem] xl:w-[33rem] 2xl:h-[32rem] 2xl:w-[35rem]"
+                >
+                    <path
+                        fill="currentColor"
+                        d="M560 18C482 34 392 52 316 82C229 116 151 156 126 207C105 250 119 287 159 318C187 340 231 349 248 378C264 405 246 427 232 452C214 487 225 523 260 548C320 590 432 602 560 616V18Z"
+                    />
+                </svg>
+            </div>
+        </div>
+    );
+}
+
 export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSalesNumber }) {
     useEffect(() => {
         const desktopPointer = window.matchMedia(
@@ -139,6 +161,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                         inertia: ctaHref !== '#',
                     }}
                 />
+                <FeatureStepOrganicAccent />
                 <StepSection
                     cta={{
                         label: 'Empezar ahora',

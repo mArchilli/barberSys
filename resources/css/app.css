@@ -58,6 +58,16 @@
         --brand-nav-text-rgb: 200 208 210;
     }
 
+    ::selection {
+        background-color: #48D5FC;
+        color: #242726;
+    }
+
+    ::-moz-selection {
+        background-color: #48D5FC;
+        color: #242726;
+    }
+
     html {
         scroll-behavior: smooth;
         scrollbar-width: thin;
