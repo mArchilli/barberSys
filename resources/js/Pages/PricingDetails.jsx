@@ -1,24 +1,9 @@
-import BrandMark from '@/Components/BrandMark';
 import BubbleMenu from '@/Components/BubbleMenu';
 import FooterSection from '@/Components/FooterSection';
 import PricingDetailSection from '@/Components/PricingDetailSection';
 import WaveTransition from '@/Components/WaveTransition';
 import WhatsAppButton from '@/Components/WhatsAppButton';
 import { Head } from '@inertiajs/react';
-
-function PricingBrandLogo() {
-    return (
-        <span className="inline-flex items-center gap-2.5 text-brand-text">
-            <BrandMark
-                className="h-[30px] w-[30px] sm:h-8 sm:w-8"
-                colorClassName="text-brand-text"
-            />
-            <span className="hidden font-display text-[1.35rem] font-extrabold tracking-[-0.03em] sm:inline">
-                Estilus
-            </span>
-        </span>
-    );
-}
 
 export default function PricingDetails({
     auth,
@@ -90,7 +75,7 @@ export default function PricingDetails({
             <div className="landing-theme min-h-screen bg-brand-bg text-brand-text">
                 <header className="relative z-[1001] h-[76px]">
                     <BubbleMenu
-                        logo={<PricingBrandLogo />}
+                        logo="/images/estilus-barber-logo.png"
                         homeHref={homeHref}
                         logoAriaLabel="Estilus - Volver al inicio"
                         items={pageLinks}

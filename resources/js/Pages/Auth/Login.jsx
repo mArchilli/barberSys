@@ -3,11 +3,16 @@ import AuthTextInput from '@/Components/AuthTextInput';
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import PasswordInput from '@/Components/PasswordInput';
+import WhatsAppButton from '@/Components/WhatsAppButton';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { IconArrowRight } from '@tabler/icons-react';
 
-export default function Login({ status, canResetPassword }) {
+export default function Login({
+    status,
+    canResetPassword,
+    whatsappSalesNumber,
+}) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -21,17 +26,23 @@ export default function Login({ status, canResetPassword }) {
             onFinish: () => reset('password'),
         });
     };
+    const whatsappHref =
+        `https://wa.me/${whatsappSalesNumber ?? ''}?text=` +
+        encodeURIComponent(
+            'Hola Estilus, necesito ayuda para ingresar a mi cuenta.',
+        );
 
     return (
-        <GuestLayout>
-            <Head title="Iniciar sesión" />
+        <>
+            <GuestLayout organicBackground>
+                <Head title="Iniciar sesión" />
 
             <div className="mb-7 text-center">
-                <h1 className="font-display text-2xl font-extrabold tracking-[-0.03em] text-brand-text">
+                <h1 className="font-display text-3xl font-extrabold tracking-[-0.03em] text-brand-text sm:text-4xl">
                     Bienvenido de nuevo
                 </h1>
                 <p className="mt-2 text-sm leading-6 text-brand-text-secondary">
-                    Ingresá a tu cuenta para seguir controlando tu barbería.
+                    Ingresá a tu cuenta y mantené todo en orden.
                 </p>
             </div>
 
@@ -43,7 +54,11 @@ export default function Login({ status, canResetPassword }) {
 
             <form onSubmit={submit} className="space-y-4">
                 <div>
-                    <AuthLabel htmlFor="email" value="Email" />
+                    <AuthLabel
+                        htmlFor="email"
+                        value="Email"
+                        className="font-display"
+                    />
                     <AuthTextInput
                         id="email"
                         type="email"
@@ -59,7 +74,11 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div>
-                    <AuthLabel htmlFor="password" value="Contraseña" />
+                    <AuthLabel
+                        htmlFor="password"
+                        value="Contraseña"
+                        className="font-display"
+                    />
                     <PasswordInput
                         id="password"
                         name="password"
@@ -97,7 +116,7 @@ export default function Login({ status, canResetPassword }) {
                 <button
                     type="submit"
                     disabled={processing}
-                    className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-brand-pill bg-brand-primary px-6 text-sm font-bold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 motion-reduce:transition-none motion-reduce:hover:transform-none"
+                    className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-brand-pill bg-brand-nav-bg px-6 text-sm font-bold text-brand-text-on-dark shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-text focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 motion-reduce:transition-none motion-reduce:hover:transform-none"
                 >
                     <span>{processing ? 'Ingresando…' : 'Iniciar sesión'}</span>
                     <IconArrowRight className="h-4 w-4" stroke={2.4} />
@@ -107,12 +126,17 @@ export default function Login({ status, canResetPassword }) {
                     ¿No tenés cuenta?{' '}
                     <Link
                         href={route('register')}
-                        className="font-semibold text-brand-link hover:text-brand-link-hover"
+                        className="pricing-wavy-underline login-wavy-underline font-semibold text-brand-link hover:text-brand-link-hover"
                     >
                         Creá una gratis
                     </Link>
                 </p>
-            </form>
-        </GuestLayout>
+                </form>
+            </GuestLayout>
+            <WhatsAppButton
+                href={whatsappHref}
+                label="Consultar por WhatsApp sobre el inicio de sesión"
+            />
+        </>
     );
 }

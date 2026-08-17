@@ -5,6 +5,7 @@ import PasswordInput from '@/Components/PasswordInput';
 import PasswordRequirements, {
     PASSWORD_REGEX,
 } from '@/Components/PasswordRequirements';
+import WhatsAppButton from '@/Components/WhatsAppButton';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { IconArrowLeft, IconArrowRight, IconCheck, IconX } from '@tabler/icons-react';
@@ -68,7 +69,7 @@ function StepIndicator({ step }) {
     );
 }
 
-export default function Register({ plans }) {
+export default function Register({ plans, whatsappSalesNumber }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -80,6 +81,11 @@ export default function Register({ plans }) {
     });
 
     const [step, setStep] = useState(1);
+    const whatsappHref =
+        `https://wa.me/${whatsappSalesNumber ?? ''}?text=` +
+        encodeURIComponent(
+            'Hola Estilus, necesito ayuda para crear mi cuenta.',
+        );
     const [stepErrors, setStepErrors] = useState({});
     const [couponStatus, setCouponStatus] = useState('idle');
     const [couponMessage, setCouponMessage] = useState('');
@@ -196,8 +202,9 @@ export default function Register({ plans }) {
     };
 
     return (
-        <GuestLayout maxWidth="sm:max-w-7xl">
-            <Head title="Crear cuenta" />
+        <>
+            <GuestLayout maxWidth="sm:max-w-7xl">
+                <Head title="Crear cuenta" />
 
             <div className="mb-6 text-center">
                 <h1 className="font-display text-2xl font-extrabold tracking-[-0.03em] text-brand-text">
@@ -434,7 +441,12 @@ export default function Register({ plans }) {
                         </button>
                     )}
                 </div>
-            </form>
-        </GuestLayout>
+                </form>
+            </GuestLayout>
+            <WhatsAppButton
+                href={whatsappHref}
+                label="Consultar por WhatsApp sobre el registro"
+            />
+        </>
     );
 }

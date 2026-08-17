@@ -27,6 +27,7 @@ class RegisteredUserController extends Controller
             'plans' => Plan::where('active', true)->get([
                 'id', 'name', 'slug', 'max_barberias', 'max_barberos', 'price', 'is_custom', 'included_items',
             ]),
+            'whatsappSalesNumber' => config('services.whatsapp.sales_number'),
         ]);
     }
 

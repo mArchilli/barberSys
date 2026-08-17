@@ -1,4 +1,3 @@
-import BrandMark from '@/Components/BrandMark';
 import BubbleMenu from '@/Components/BubbleMenu';
 
 const menuItems = [
@@ -34,20 +33,6 @@ const menuItems = [
     },
 ];
 
-function BrandLogo({ brandName }) {
-    return (
-        <span className="inline-flex items-center gap-2.5 text-brand-text">
-            <BrandMark
-                className="h-[30px] w-[30px] sm:h-8 sm:w-8"
-                colorClassName="text-brand-text"
-            />
-            <span className="hidden font-display text-[1.35rem] font-extrabold tracking-[-0.03em] sm:inline">
-                {brandName}
-            </span>
-        </span>
-    );
-}
-
 export default function Navbar({
     brandName = 'Estilus',
     homeHref = '#inicio',
@@ -57,7 +42,7 @@ export default function Navbar({
     return (
         <header className="relative z-[1001] h-[76px]">
             <BubbleMenu
-                logo={<BrandLogo brandName={brandName} />}
+                logo="/images/estilus-barber-logo.png"
                 homeHref={homeHref}
                 logoAriaLabel={`${brandName} - Ir al inicio`}
                 items={menuItems}

@@ -305,7 +305,7 @@ export default function BubbleMenu({
                         <img
                             src={logo}
                             alt=""
-                            className="block h-8 w-auto object-contain"
+                            className="block h-7 w-auto object-contain sm:h-9"
                         />
                     ) : (
                         logo

@@ -34,6 +34,11 @@
     background-size: 10px 8px;
 }
 
+.login-wavy-underline {
+    padding-bottom: 0.32em;
+    background-position: left calc(100% + 1px);
+}
+
 @media (prefers-reduced-motion: reduce) {
     .hero-product-reveal {
         animation: none;
