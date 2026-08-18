@@ -68,15 +68,13 @@ export default function GuestLayout({
 
                     <Link
                         href="/"
-                        className="absolute left-4 top-[96px] inline-flex min-h-[52px] items-center justify-center gap-1.5 rounded-brand-sm border border-brand-primary bg-brand-primary px-5 text-center text-sm font-semibold text-brand-on-primary shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-primary-hover hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none sm:left-6 sm:top-[130px] lg:left-10 lg:top-8 lg:h-[108px] lg:w-[108px] lg:flex-col lg:gap-0 lg:rounded-brand-md lg:p-3 lg:text-[13px]"
+                        aria-label="Volver al sitio"
+                        className="absolute left-4 top-[88px] inline-flex h-12 w-12 items-center justify-center text-brand-text transition-all duration-200 hover:-translate-x-1 hover:text-brand-link focus:outline-none focus-visible:rounded-brand-sm focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-4 motion-reduce:transform-none motion-reduce:transition-none sm:left-[400px] sm:top-8 lg:left-10 lg:top-8"
                     >
                         <IconArrowLeft
-                            className="h-4 w-4 lg:order-2 lg:mt-2 lg:h-6 lg:w-6"
+                            className="h-10 w-10 lg:h-12 lg:w-12"
                             stroke={2.2}
                         />
-                        <span className="lg:order-1 lg:whitespace-nowrap">
-                            Volver al sitio
-                        </span>
                     </Link>
                 </>
             ) : (
