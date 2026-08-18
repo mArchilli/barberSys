@@ -15,57 +15,205 @@ import { useEffect, useState } from 'react';
 const STEPS = ['Tus datos', 'Tu plan', 'Tu barbería'];
 
 const primaryButtonClass =
-    'inline-flex min-h-[46px] items-center justify-center gap-2 rounded-brand-pill bg-brand-primary px-6 text-sm font-bold text-brand-on-primary shadow-brand-cta transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 motion-reduce:transition-none motion-reduce:hover:transform-none';
+    'inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-brand-pill bg-brand-nav-bg px-7 text-base font-bold text-brand-text-on-dark shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-text focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none';
 
 const secondaryButtonClass =
-    'inline-flex min-h-[46px] items-center justify-center gap-2 rounded-brand-pill border border-brand-border bg-brand-surface px-6 text-sm font-bold text-brand-text transition-colors duration-200 hover:border-brand-primary-muted hover:bg-brand-surface-alt focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transition-none';
+    'inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-brand-pill border border-brand-border bg-brand-surface px-7 text-base font-bold text-brand-text shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-primary-muted hover:bg-brand-surface-alt focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none';
+
+const authLabelClass = 'mb-2 font-display text-base';
+const authInputClass = 'min-h-[52px] px-5 py-3 text-base';
+const passwordInputClass = 'min-h-[52px] px-5 py-3 pr-12 text-base';
+
+const STEP_NODES = [
+    {
+        label: STEPS[0],
+        desktopPosition: 'left-[20%] top-[3%]',
+        mobilePosition: 'left-0 top-3',
+        rotation: '-rotate-2',
+        shape: '43% 57% 48% 52% / 56% 44% 56% 44%',
+    },
+    {
+        label: STEPS[1],
+        desktopPosition: 'right-0 top-[37%]',
+        mobilePosition: 'left-1/2 top-0 -translate-x-1/2',
+        rotation: 'rotate-2',
+        shape: '58% 42% 55% 45% / 44% 57% 43% 56%',
+    },
+    {
+        label: STEPS[2],
+        desktopPosition: 'bottom-[2%] right-0',
+        mobilePosition: 'right-0 top-3',
+        rotation: '-rotate-1',
+        shape: '48% 52% 39% 61% / 57% 43% 58% 42%',
+    },
+];
+
+const DESKTOP_STEP_ARROWS = [
+    'M215 102 C258 101 275 122 302 145 C329 167 362 151 392 174 C410 188 418 200 425 215',
+    'M440 320 C442 341 445 350 430 364 C418 376 429 388 427 400 C425 413 433 425 440 438',
+];
+
+const MOBILE_STEP_ARROWS = [
+    'M80 45 C101 25 122 62 140 45',
+    'M220 45 C240 63 260 26 280 45',
+];
+
+function StepArrowField({ step, compact = false }) {
+    const markerId = compact
+        ? 'register-step-arrow-mobile'
+        : 'register-step-arrow-desktop';
+    const activeMarkerId = `${markerId}-active`;
+    const mutedMarkerId = `${markerId}-muted`;
+    const paths = compact ? MOBILE_STEP_ARROWS : DESKTOP_STEP_ARROWS;
+    const viewBox = compact ? '0 0 360 96' : '0 0 520 560';
+
+    return (
+        <svg
+            aria-hidden="true"
+            viewBox={viewBox}
+            preserveAspectRatio="none"
+            className="pointer-events-none absolute inset-0 z-10 h-full w-full overflow-visible"
+        >
+            <defs>
+                <marker
+                    id={activeMarkerId}
+                    markerWidth="11"
+                    markerHeight="11"
+                    refX="9"
+                    refY="5.5"
+                    orient="auto"
+                    markerUnits="userSpaceOnUse"
+                >
+                    <path
+                        d="M1 1L9 5.5L1 10"
+                        fill="none"
+                        className="stroke-brand-nav-bg"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    />
+                </marker>
+                <marker
+                    id={mutedMarkerId}
+                    markerWidth="11"
+                    markerHeight="11"
+                    refX="9"
+                    refY="5.5"
+                    orient="auto"
+                    markerUnits="userSpaceOnUse"
+                >
+                    <path
+                        d="M1 1L9 5.5L1 10"
+                        fill="none"
+                        className="stroke-brand-nav-bg opacity-25"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    />
+                </marker>
+            </defs>
+
+            {paths.slice(0, Math.min(step, paths.length)).map((path, index) => {
+                const isReached = step > index + 1;
+
+                return (
+                    <path
+                        key={path}
+                        d={path}
+                        pathLength="1"
+                        fill="none"
+                        className={`register-step-arrow transition-colors duration-300 ${
+                            isReached
+                                ? 'stroke-brand-nav-bg'
+                                : 'stroke-brand-nav-bg/25'
+                        }`}
+                        strokeWidth={compact ? 2.5 : 3}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        markerEnd={`url(#${
+                            isReached ? activeMarkerId : mutedMarkerId
+                        })`}
+                        vectorEffect="non-scaling-stroke"
+                    />
+                );
+            })}
+        </svg>
+    );
+}
+
+function StepNode({ node, number, step, compact = false }) {
+    const isActive = step === number;
+    const isDone = step > number;
+
+    return (
+        <li
+            aria-current={isActive ? 'step' : undefined}
+            className={`absolute z-20 flex flex-col items-center justify-center border-2 text-center transition-all duration-300 ${
+                compact
+                    ? `h-[4.5rem] w-20 px-2 ${node.mobilePosition}`
+                    : `h-28 w-40 px-5 ${node.desktopPosition}`
+            } ${node.rotation} bg-brand-primary text-brand-on-primary ${
+                isActive
+                    ? 'scale-[1.06] border-brand-nav-bg shadow-brand-floating'
+                    : isDone
+                      ? 'border-brand-nav-bg shadow-brand-card'
+                      : 'border-brand-nav-bg/35 shadow-none'
+            }`}
+            style={{ borderRadius: node.shape }}
+        >
+            <span
+                className={`font-display font-extrabold leading-none ${
+                    compact ? 'text-2xl' : 'text-4xl'
+                }`}
+            >
+                {number}
+            </span>
+            <span
+                className={`mt-1 font-semibold leading-tight ${
+                    compact ? 'text-[0.625rem]' : 'text-sm'
+                }`}
+            >
+                {node.label}
+            </span>
+        </li>
+    );
+}
 
 function StepIndicator({ step }) {
     return (
-        <div className="mb-8 flex items-center">
-            {STEPS.map((label, index) => {
-                const num = index + 1;
-                const isActive = step === num;
-                const isDone = step > num;
+        <aside
+            aria-label="Progreso del registro"
+            className="relative mb-8 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mb-0 lg:min-h-[35rem] lg:translate-x-6 lg:self-stretch xl:translate-x-10 2xl:translate-x-14"
+        >
+            <div className="relative h-24 w-full lg:hidden">
+                <StepArrowField step={step} compact />
+                <ol className="absolute inset-0">
+                    {STEP_NODES.map((node, index) => (
+                        <StepNode
+                            key={`mobile-${node.label}`}
+                            node={node}
+                            number={index + 1}
+                            step={step}
+                            compact
+                        />
+                    ))}
+                </ol>
+            </div>
 
-                return (
-                    <div key={label} className="flex flex-1 items-center last:flex-none">
-                        <div className="flex flex-col items-center gap-2">
-                            <div
-                                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors duration-200 ${
-                                    isActive
-                                        ? 'bg-brand-primary text-brand-on-primary shadow-brand-cta'
-                                        : isDone
-                                          ? 'bg-brand-primary-soft text-brand-primary-soft-text'
-                                          : 'bg-brand-surface-alt text-brand-text-secondary'
-                                }`}
-                            >
-                                {isDone ? (
-                                    <IconCheck className="h-4 w-4" stroke={2.6} />
-                                ) : (
-                                    num
-                                )}
-                            </div>
-                            <span
-                                className={`hidden text-xs font-semibold sm:block ${
-                                    isActive ? 'text-brand-text' : 'text-brand-text-secondary'
-                                }`}
-                            >
-                                {label}
-                            </span>
-                        </div>
-
-                        {num !== STEPS.length && (
-                            <div
-                                className={`mx-2 h-0.5 flex-1 rounded-full transition-colors duration-200 ${
-                                    isDone ? 'bg-brand-primary' : 'bg-brand-border-subtle'
-                                }`}
-                            />
-                        )}
-                    </div>
-                );
-            })}
-        </div>
+            <div className="relative hidden h-full min-h-[35rem] w-full lg:block">
+                <StepArrowField step={step} />
+                <ol className="absolute inset-0">
+                    {STEP_NODES.map((node, index) => (
+                        <StepNode
+                            key={`desktop-${node.label}`}
+                            node={node}
+                            number={index + 1}
+                            step={step}
+                        />
+                    ))}
+                </ol>
+            </div>
+        </aside>
     );
 }
 
@@ -203,30 +351,37 @@ export default function Register({ plans, whatsappSalesNumber }) {
 
     return (
         <>
-            <GuestLayout maxWidth="sm:max-w-7xl">
+            <GuestLayout registerBackground maxWidth="sm:max-w-[1440px]">
                 <Head title="Crear cuenta" />
 
-            <div className="mb-6 text-center">
-                <h1 className="font-display text-2xl font-extrabold tracking-[-0.03em] text-brand-text">
-                    Creá tu cuenta en Pelito
-                </h1>
-                <p className="mt-2 text-sm leading-6 text-brand-text-secondary">
-                    Ordená tu barbería en minutos. Empezás con 14 días de prueba gratis.
-                </p>
-            </div>
+                <div className="mx-auto grid w-full max-w-[30rem] lg:max-w-none lg:grid-cols-[minmax(0,30rem)_minmax(16rem,1fr)] lg:grid-rows-[auto_1fr] lg:gap-x-20 xl:gap-x-32">
+                    <div className="mb-8 text-center lg:col-start-1 lg:row-start-1">
+                        <h1 className="font-display text-4xl font-extrabold tracking-[-0.03em] text-brand-text sm:text-[2.625rem]">
+                            Creá tu cuenta en Estilus Barber
+                        </h1>
+                        <p className="mt-3 text-base leading-7 text-brand-text-secondary">
+                            ¿Todavía dudás? Tenés 14 días de prueba gratis.
+                        </p>
+                    </div>
 
-            <StepIndicator step={step} />
+                    <StepIndicator step={step} />
 
-            <form
-                onSubmit={submit}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter' && step < 3) e.preventDefault();
-                }}
-            >
+                    <form
+                        onSubmit={submit}
+                        className="lg:col-start-1 lg:row-start-2"
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && step < 3)
+                                e.preventDefault();
+                        }}
+                    >
                 {step === 1 && (
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         <div>
-                            <AuthLabel htmlFor="name" value="Nombre" />
+                            <AuthLabel
+                                htmlFor="name"
+                                value="Nombre"
+                                className={authLabelClass}
+                            />
                             <AuthTextInput
                                 id="name"
                                 name="name"
@@ -235,13 +390,18 @@ export default function Register({ plans, whatsappSalesNumber }) {
                                 isFocused={true}
                                 error={!!errorFor('name')}
                                 placeholder="Tu nombre completo"
+                                className={authInputClass}
                                 onChange={(e) => setField('name', e.target.value)}
                             />
-                            <InputError message={errorFor('name')} className="mt-1.5" />
+                            <InputError message={errorFor('name')} className="mt-2" />
                         </div>
 
                         <div>
-                            <AuthLabel htmlFor="email" value="Email" />
+                            <AuthLabel
+                                htmlFor="email"
+                                value="Email"
+                                className={authLabelClass}
+                            />
                             <AuthTextInput
                                 id="email"
                                 type="email"
@@ -250,13 +410,18 @@ export default function Register({ plans, whatsappSalesNumber }) {
                                 autoComplete="username"
                                 error={!!errorFor('email')}
                                 placeholder="tu@email.com"
+                                className={authInputClass}
                                 onChange={(e) => setField('email', e.target.value)}
                             />
-                            <InputError message={errorFor('email')} className="mt-1.5" />
+                            <InputError message={errorFor('email')} className="mt-2" />
                         </div>
 
                         <div>
-                            <AuthLabel htmlFor="password" value="Contraseña" />
+                            <AuthLabel
+                                htmlFor="password"
+                                value="Contraseña"
+                                className={authLabelClass}
+                            />
                             <PasswordInput
                                 id="password"
                                 name="password"
@@ -264,16 +429,18 @@ export default function Register({ plans, whatsappSalesNumber }) {
                                 autoComplete="new-password"
                                 error={!!errorFor('password')}
                                 placeholder="••••••••"
+                                className={passwordInputClass}
                                 onChange={(e) => setField('password', e.target.value)}
                             />
                             <PasswordRequirements password={data.password} />
-                            <InputError message={errorFor('password')} className="mt-1.5" />
+                            <InputError message={errorFor('password')} className="mt-2" />
                         </div>
 
                         <div>
                             <AuthLabel
                                 htmlFor="password_confirmation"
                                 value="Confirmar contraseña"
+                                className={authLabelClass}
                             />
                             <PasswordInput
                                 id="password_confirmation"
@@ -282,13 +449,14 @@ export default function Register({ plans, whatsappSalesNumber }) {
                                 autoComplete="new-password"
                                 error={!!errorFor('password_confirmation')}
                                 placeholder="••••••••"
+                                className={passwordInputClass}
                                 onChange={(e) =>
                                     setField('password_confirmation', e.target.value)
                                 }
                             />
                             <InputError
                                 message={errorFor('password_confirmation')}
-                                className="mt-1.5"
+                                className="mt-2"
                             />
                         </div>
                     </div>
@@ -296,13 +464,13 @@ export default function Register({ plans, whatsappSalesNumber }) {
 
                 {step === 2 && (
                     <div>
-                        <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="grid gap-4 sm:grid-cols-2">
                             {plans.map((plan) => {
                                 const selected = data.plan_id === plan.id;
                                 return (
                                     <label
                                         key={plan.id}
-                                        className={`relative flex cursor-pointer flex-col rounded-brand-lg border-2 p-5 text-left transition-all duration-150 ${
+                                        className={`relative flex cursor-pointer flex-col rounded-brand-lg border-2 p-6 text-left transition-all duration-150 ${
                                             selected
                                                 ? 'border-brand-primary bg-brand-primary-soft shadow-brand-card'
                                                 : 'border-brand-border bg-brand-surface hover:border-brand-primary-muted'
@@ -321,18 +489,18 @@ export default function Register({ plans, whatsappSalesNumber }) {
                                                 <IconCheck className="h-3 w-3" stroke={3} />
                                             </span>
                                         )}
-                                        <span className="text-sm font-bold text-brand-text">
+                                        <span className="text-base font-bold text-brand-text">
                                             {plan.name}
                                         </span>
-                                        <span className="mt-3 font-display text-2xl font-extrabold tracking-[-0.04em] text-brand-text">
+                                        <span className="mt-3 font-display text-3xl font-extrabold tracking-[-0.04em] text-brand-text">
                                             {formatPrice(plan)}
                                             {!plan.is_custom && (
-                                                <span className="ml-1 text-sm font-medium text-brand-text-secondary">
+                                                <span className="ml-1 text-base font-medium text-brand-text-secondary">
                                                     /mes
                                                 </span>
                                             )}
                                         </span>
-                                        <span className="mt-3 text-xs leading-5 text-brand-text-secondary">
+                                        <span className="mt-3 text-sm leading-6 text-brand-text-secondary">
                                             {formatLimit(plan.max_barberias)} barbería
                                             {plan.max_barberias !== 1 ? 's' : ''} ·{' '}
                                             {formatLimit(plan.max_barberos)} barbero
@@ -344,7 +512,7 @@ export default function Register({ plans, whatsappSalesNumber }) {
                                                 {plan.included_items.map((item, i) => (
                                                     <li
                                                         key={i}
-                                                        className="flex items-start gap-1.5 text-xs leading-5 text-brand-text-secondary"
+                                                        className="flex items-start gap-2 text-sm leading-6 text-brand-text-secondary"
                                                     >
                                                         <IconCheck
                                                             className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-primary"
@@ -361,14 +529,19 @@ export default function Register({ plans, whatsappSalesNumber }) {
                         </div>
                         <InputError message={errorFor('plan_id')} className="mt-3" />
 
-                        <div className="mt-6">
-                            <AuthLabel htmlFor="coupon_code" value="Código de cupón (opcional)" />
+                        <div className="mt-8">
+                            <AuthLabel
+                                htmlFor="coupon_code"
+                                value="Código de cupón (opcional)"
+                                className={authLabelClass}
+                            />
                             <AuthTextInput
                                 id="coupon_code"
                                 name="coupon_code"
                                 value={data.coupon_code}
                                 error={couponStatus === 'invalid'}
                                 placeholder="Ej: BIENVENIDA20"
+                                className={authInputClass}
                                 onChange={(e) => setField('coupon_code', e.target.value.toUpperCase())}
                             />
                             {couponStatus === 'checking' && (
@@ -386,15 +559,19 @@ export default function Register({ plans, whatsappSalesNumber }) {
                                     {couponMessage}
                                 </p>
                             )}
-                            <InputError message={errors.coupon_code} className="mt-1.5" />
+                            <InputError message={errors.coupon_code} className="mt-2" />
                         </div>
                     </div>
                 )}
 
                 {step === 3 && (
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         <div>
-                            <AuthLabel htmlFor="barberia_name" value="Nombre de tu barbería" />
+                            <AuthLabel
+                                htmlFor="barberia_name"
+                                value="Nombre de tu barbería"
+                                className={authLabelClass}
+                            />
                             <AuthTextInput
                                 id="barberia_name"
                                 name="barberia_name"
@@ -402,23 +579,24 @@ export default function Register({ plans, whatsappSalesNumber }) {
                                 isFocused={true}
                                 error={!!errorFor('barberia_name')}
                                 placeholder="Ej: Barbería Central"
+                                className={authInputClass}
                                 onChange={(e) => setField('barberia_name', e.target.value)}
                             />
-                            <InputError message={errorFor('barberia_name')} className="mt-1.5" />
+                            <InputError message={errorFor('barberia_name')} className="mt-2" />
                         </div>
                     </div>
                 )}
 
-                <div className="mt-8 flex items-center justify-between gap-3">
+                <div className="mt-10 flex items-center justify-between gap-4">
                     {step > 1 ? (
                         <button type="button" onClick={goBack} className={secondaryButtonClass}>
-                            <IconArrowLeft className="h-4 w-4" stroke={2.4} />
+                            <IconArrowLeft className="h-5 w-5" stroke={2.4} />
                             <span>Anterior</span>
                         </button>
                     ) : (
                         <Link
                             href={route('login')}
-                            className="text-sm text-brand-text-secondary underline hover:text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
+                            className="text-base font-semibold text-brand-link underline hover:text-brand-link-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
                         >
                             ¿Ya tenés cuenta?
                         </Link>
@@ -427,7 +605,7 @@ export default function Register({ plans, whatsappSalesNumber }) {
                     {step < 3 ? (
                         <button type="button" onClick={goNext} className={primaryButtonClass}>
                             <span>Siguiente</span>
-                            <IconArrowRight className="h-4 w-4" stroke={2.4} />
+                            <IconArrowRight className="h-5 w-5" stroke={2.4} />
                         </button>
                     ) : (
                         <button
@@ -437,11 +615,12 @@ export default function Register({ plans, whatsappSalesNumber }) {
                             className={primaryButtonClass}
                         >
                             <span>{processing ? 'Creando cuenta…' : 'Crear cuenta'}</span>
-                            <IconArrowRight className="h-4 w-4" stroke={2.4} />
+                            <IconArrowRight className="h-5 w-5" stroke={2.4} />
                         </button>
                     )}
                 </div>
-                </form>
+                    </form>
+                </div>
             </GuestLayout>
             <WhatsAppButton
                 href={whatsappHref}
