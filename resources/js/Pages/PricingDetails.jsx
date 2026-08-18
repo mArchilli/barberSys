@@ -76,6 +76,7 @@ export default function PricingDetails({
                 <header className="relative z-[1001] h-[76px]">
                     <BubbleMenu
                         logo="/images/estilus-barber-logo.png"
+                        mobileLogo="/images/estilus-barber-isologo.png"
                         homeHref={homeHref}
                         logoAriaLabel="Estilus - Volver al inicio"
                         items={pageLinks}

@@ -7,12 +7,17 @@ import PasswordRequirements, {
 } from '@/Components/PasswordRequirements';
 import WhatsAppButton from '@/Components/WhatsAppButton';
 import GuestLayout from '@/Layouts/GuestLayout';
+import { PLAN_GUIDANCE } from '@/planGuidance';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { IconArrowLeft, IconArrowRight, IconCheck, IconX } from '@tabler/icons-react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-const STEPS = ['Tus datos', 'Tu plan', 'Tu barbería'];
+const STEPS = [
+    'Completá tus datos',
+    'Elegí tu plan (todos tienen 14 días gratis)',
+    'Configurá tu barbería dentro del sistema',
+];
 
 const primaryButtonClass =
     'inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-brand-pill bg-brand-nav-bg px-7 text-base font-bold text-brand-text-on-dark shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-text focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none';
@@ -48,24 +53,191 @@ const STEP_NODES = [
     },
 ];
 
-const DESKTOP_STEP_ARROWS = [
-    'M215 102 C258 101 275 122 302 145 C329 167 362 151 392 174 C410 188 418 200 425 215',
-    'M440 320 C442 341 445 350 430 364 C418 376 429 388 427 400 C425 413 433 425 440 438',
-];
-
 const MOBILE_STEP_ARROWS = [
     'M80 45 C101 25 122 62 140 45',
     'M220 45 C240 63 260 26 280 45',
 ];
 
-function StepArrowField({ step, compact = false }) {
+const DESKTOP_ANCHORS = {
+    1: [
+        {
+            key: 'one-to-two-start',
+            className: 'right-[-2px] top-[44%] -translate-y-1/2',
+        },
+    ],
+    2: [
+        {
+            key: 'one-to-two-end',
+            className: 'left-[-2px] top-[44%] -translate-y-1/2',
+        },
+        {
+            key: 'two-to-three-start',
+            className: 'bottom-[-2px] left-[45%] -translate-x-1/2',
+        },
+    ],
+    3: [
+        {
+            key: 'two-to-three-end',
+            className: 'left-[48%] top-[-2px] -translate-x-1/2',
+        },
+    ],
+};
+
+const EMPTY_DESKTOP_ARROW_GEOMETRY = {
+    width: 1,
+    height: 1,
+    paths: [],
+};
+
+const roundCoordinate = (value) => Math.round(value * 10) / 10;
+
+function getAnchorPoint(anchor, canvasRect) {
+    const rect = anchor.getBoundingClientRect();
+
+    return {
+        x: roundCoordinate(rect.left - canvasRect.left + rect.width / 2),
+        y: roundCoordinate(rect.top - canvasRect.top + rect.height / 2),
+    };
+}
+
+function createDesktopArrowPaths(anchorRefs, canvasRect) {
+    const firstStart = getAnchorPoint(
+        anchorRefs['one-to-two-start'],
+        canvasRect,
+    );
+    const firstEnd = getAnchorPoint(
+        anchorRefs['one-to-two-end'],
+        canvasRect,
+    );
+    const secondStart = getAnchorPoint(
+        anchorRefs['two-to-three-start'],
+        canvasRect,
+    );
+    const secondEnd = getAnchorPoint(
+        anchorRefs['two-to-three-end'],
+        canvasRect,
+    );
+    const firstDx = firstEnd.x - firstStart.x;
+    const firstDy = firstEnd.y - firstStart.y;
+    const secondDy = secondEnd.y - secondStart.y;
+
+    return [
+        [
+            `M${firstStart.x} ${firstStart.y}`,
+            `C${roundCoordinate(firstStart.x + firstDx * 0.3)} ${firstStart.y}`,
+            `${roundCoordinate(firstEnd.x - firstDx * 0.3)} ${roundCoordinate(firstEnd.y - firstDy * 0.15)}`,
+            `${firstEnd.x} ${firstEnd.y}`,
+        ].join(' '),
+        [
+            `M${secondStart.x} ${secondStart.y}`,
+            `C${secondStart.x} ${roundCoordinate(secondStart.y + secondDy * 0.33)}`,
+            `${secondEnd.x} ${roundCoordinate(secondEnd.y - secondDy * 0.33)}`,
+            `${secondEnd.x} ${secondEnd.y}`,
+        ].join(' '),
+    ];
+}
+
+function useDesktopArrowGeometry(canvasRef, anchorRefs, step) {
+    const [geometry, setGeometry] = useState(EMPTY_DESKTOP_ARROW_GEOMETRY);
+
+    useLayoutEffect(() => {
+        const canvas = canvasRef.current;
+        const anchors = anchorRefs.current;
+        const requiredAnchors = [
+            anchors['one-to-two-start'],
+            anchors['one-to-two-end'],
+            anchors['two-to-three-start'],
+            anchors['two-to-three-end'],
+        ];
+
+        if (!canvas || requiredAnchors.some((anchor) => !anchor)) {
+            return undefined;
+        }
+
+        let animationFrame = null;
+
+        const measure = () => {
+            const canvasRect = canvas.getBoundingClientRect();
+            const nextGeometry = {
+                width: roundCoordinate(canvasRect.width),
+                height: roundCoordinate(canvasRect.height),
+                paths: createDesktopArrowPaths(anchors, canvasRect),
+            };
+
+            setGeometry((currentGeometry) => {
+                if (
+                    currentGeometry.width === nextGeometry.width &&
+                    currentGeometry.height === nextGeometry.height &&
+                    currentGeometry.paths.every(
+                        (path, index) => path === nextGeometry.paths[index],
+                    )
+                ) {
+                    return currentGeometry;
+                }
+
+                return nextGeometry;
+            });
+        };
+
+        const scheduleMeasure = () => {
+            if (animationFrame !== null) {
+                window.cancelAnimationFrame(animationFrame);
+            }
+
+            animationFrame = window.requestAnimationFrame(measure);
+        };
+
+        measure();
+
+        const resizeObserver = new ResizeObserver(scheduleMeasure);
+        resizeObserver.observe(canvas);
+
+        requiredAnchors.forEach((anchor) => {
+            resizeObserver.observe(anchor.closest('li'));
+            anchor.closest('li').addEventListener(
+                'transitionend',
+                scheduleMeasure,
+            );
+        });
+
+        window.addEventListener('resize', scheduleMeasure);
+        const settleTimer = window.setTimeout(measure, 340);
+
+        return () => {
+            window.clearTimeout(settleTimer);
+            window.removeEventListener('resize', scheduleMeasure);
+            requiredAnchors.forEach((anchor) => {
+                anchor.closest('li').removeEventListener(
+                    'transitionend',
+                    scheduleMeasure,
+                );
+            });
+            resizeObserver.disconnect();
+
+            if (animationFrame !== null) {
+                window.cancelAnimationFrame(animationFrame);
+            }
+        };
+    }, [anchorRefs, canvasRef, step]);
+
+    return geometry;
+}
+
+function StepArrowField({ step, compact = false, desktopGeometry }) {
     const markerId = compact
         ? 'register-step-arrow-mobile'
         : 'register-step-arrow-desktop';
     const activeMarkerId = `${markerId}-active`;
     const mutedMarkerId = `${markerId}-muted`;
-    const paths = compact ? MOBILE_STEP_ARROWS : DESKTOP_STEP_ARROWS;
-    const viewBox = compact ? '0 0 360 96' : '0 0 520 560';
+    const paths = compact
+        ? MOBILE_STEP_ARROWS
+        : desktopGeometry?.paths || [];
+    const viewBox = compact
+        ? '0 0 360 96'
+        : `0 0 ${desktopGeometry?.width || 1} ${desktopGeometry?.height || 1}`;
+    const visiblePaths = compact
+        ? paths.slice(0, Math.min(step, paths.length))
+        : paths;
 
     return (
         <svg
@@ -113,14 +285,13 @@ function StepArrowField({ step, compact = false }) {
                 </marker>
             </defs>
 
-            {paths.slice(0, Math.min(step, paths.length)).map((path, index) => {
+            {visiblePaths.map((path, index) => {
                 const isReached = step > index + 1;
 
                 return (
                     <path
-                        key={path}
+                        key={`${markerId}-${index}`}
                         d={path}
-                        pathLength="1"
                         fill="none"
                         className={`register-step-arrow transition-colors duration-300 ${
                             isReached
@@ -141,7 +312,13 @@ function StepArrowField({ step, compact = false }) {
     );
 }
 
-function StepNode({ node, number, step, compact = false }) {
+function StepNode({
+    node,
+    number,
+    step,
+    compact = false,
+    desktopAnchorRefs,
+}) {
     const isActive = step === number;
     const isDone = step > number;
 
@@ -150,7 +327,7 @@ function StepNode({ node, number, step, compact = false }) {
             aria-current={isActive ? 'step' : undefined}
             className={`absolute z-20 flex flex-col items-center justify-center border-2 text-center transition-all duration-300 ${
                 compact
-                    ? `h-[4.5rem] w-20 px-2 ${node.mobilePosition}`
+                    ? `h-[5.5rem] w-[5.75rem] px-1.5 ${node.mobilePosition}`
                     : `h-28 w-40 px-5 ${node.desktopPosition}`
             } ${node.rotation} bg-brand-primary text-brand-on-primary ${
                 isActive
@@ -161,16 +338,27 @@ function StepNode({ node, number, step, compact = false }) {
             }`}
             style={{ borderRadius: node.shape }}
         >
+            {!compact &&
+                DESKTOP_ANCHORS[number].map((anchor) => (
+                    <span
+                        key={anchor.key}
+                        ref={(element) => {
+                            desktopAnchorRefs.current[anchor.key] = element;
+                        }}
+                        aria-hidden="true"
+                        className={`pointer-events-none absolute h-px w-px opacity-0 ${anchor.className}`}
+                    />
+                ))}
             <span
                 className={`font-display font-extrabold leading-none ${
-                    compact ? 'text-2xl' : 'text-4xl'
+                    compact ? 'text-2xl' : 'text-3xl'
                 }`}
             >
                 {number}
             </span>
             <span
                 className={`mt-1 font-semibold leading-tight ${
-                    compact ? 'text-[0.625rem]' : 'text-sm'
+                    compact ? 'text-[0.55rem]' : 'text-xs'
                 }`}
             >
                 {node.label}
@@ -180,12 +368,20 @@ function StepNode({ node, number, step, compact = false }) {
 }
 
 function StepIndicator({ step }) {
+    const desktopCanvasRef = useRef(null);
+    const desktopAnchorRefs = useRef({});
+    const desktopGeometry = useDesktopArrowGeometry(
+        desktopCanvasRef,
+        desktopAnchorRefs,
+        step,
+    );
+
     return (
         <aside
             aria-label="Progreso del registro"
             className="relative mb-8 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mb-0 lg:min-h-[35rem] lg:translate-x-6 lg:self-stretch xl:translate-x-10 2xl:translate-x-14"
         >
-            <div className="relative h-24 w-full lg:hidden">
+            <div className="relative h-28 w-full lg:hidden">
                 <StepArrowField step={step} compact />
                 <ol className="absolute inset-0">
                     {STEP_NODES.map((node, index) => (
@@ -200,8 +396,14 @@ function StepIndicator({ step }) {
                 </ol>
             </div>
 
-            <div className="relative hidden h-full min-h-[35rem] w-full lg:block">
-                <StepArrowField step={step} />
+            <div
+                ref={desktopCanvasRef}
+                className="relative hidden h-full min-h-[35rem] w-full lg:block"
+            >
+                <StepArrowField
+                    step={step}
+                    desktopGeometry={desktopGeometry}
+                />
                 <ol className="absolute inset-0">
                     {STEP_NODES.map((node, index) => (
                         <StepNode
@@ -209,6 +411,7 @@ function StepIndicator({ step }) {
                             node={node}
                             number={index + 1}
                             step={step}
+                            desktopAnchorRefs={desktopAnchorRefs}
                         />
                     ))}
                 </ol>
@@ -280,7 +483,19 @@ export default function Register({ plans, whatsappSalesNumber }) {
         return `$${Number(plan.price).toLocaleString('es-AR')}`;
     };
 
-    const formatLimit = (value) => (value === null ? 'Ilimitado' : value);
+    const formatCapacity = (plan) => {
+        if (plan.is_custom) return 'Capacidad a medida';
+
+        const barberias = `${plan.max_barberias} ${
+            plan.max_barberias === 1 ? 'barbería' : 'barberías'
+        }`;
+        const barberos =
+            plan.max_barberos === null
+                ? 'Barberos sin límite'
+                : `Hasta ${plan.max_barberos} barberos`;
+
+        return `${barberias} · ${barberos}`;
+    };
 
     const errorFor = (field) => errors[field] || stepErrors[field];
 
@@ -351,16 +566,34 @@ export default function Register({ plans, whatsappSalesNumber }) {
 
     return (
         <>
-            <GuestLayout registerBackground maxWidth="sm:max-w-[1440px]">
+            <GuestLayout
+                registerBackground
+                maxWidth="min-w-0 sm:max-w-[1440px]"
+            >
                 <Head title="Crear cuenta" />
 
-                <div className="mx-auto grid w-full max-w-[30rem] lg:max-w-none lg:grid-cols-[minmax(0,30rem)_minmax(16rem,1fr)] lg:grid-rows-[auto_1fr] lg:gap-x-20 xl:gap-x-32">
-                    <div className="mb-8 text-center lg:col-start-1 lg:row-start-1">
+                <div
+                    className={`mx-auto grid min-w-0 w-full max-w-[30rem] grid-cols-[minmax(0,1fr)] lg:max-w-none lg:grid-rows-[auto_1fr] ${
+                        step === 2
+                            ? 'lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-x-12 xl:gap-x-20'
+                            : 'lg:grid-cols-[minmax(0,30rem)_minmax(16rem,1fr)] lg:gap-x-20 xl:gap-x-32'
+                    }`}
+                >
+                    <div
+                        className={`mb-8 text-center lg:col-start-1 lg:row-start-1 ${
+                            step === 2
+                                ? 'lg:-translate-x-[clamp(0rem,calc(26.667vw-24rem),8rem)]'
+                                : ''
+                        }`}
+                    >
                         <h1 className="font-display text-4xl font-extrabold tracking-[-0.03em] text-brand-text sm:text-[2.625rem]">
                             Creá tu cuenta en Estilus Barber
                         </h1>
                         <p className="mt-3 text-base leading-7 text-brand-text-secondary">
-                            ¿Todavía dudás? Tenés 14 días de prueba gratis.
+                            ¿Todavía dudás?{' '}
+                            <span className="pricing-wavy-underline login-wavy-underline font-semibold">
+                                Tenés 14 días de prueba gratis.
+                            </span>
                         </p>
                     </div>
 
@@ -368,7 +601,11 @@ export default function Register({ plans, whatsappSalesNumber }) {
 
                     <form
                         onSubmit={submit}
-                        className="lg:col-start-1 lg:row-start-2"
+                        className={`min-w-0 lg:col-start-1 lg:row-start-2 ${
+                            step === 2
+                                ? 'lg:-translate-x-[clamp(0rem,calc(26.667vw-24rem),8rem)]'
+                                : ''
+                        }`}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter' && step < 3)
                                 e.preventDefault();
@@ -432,7 +669,10 @@ export default function Register({ plans, whatsappSalesNumber }) {
                                 className={passwordInputClass}
                                 onChange={(e) => setField('password', e.target.value)}
                             />
-                            <PasswordRequirements password={data.password} />
+                            <PasswordRequirements
+                                password={data.password}
+                                horizontal
+                            />
                             <InputError message={errorFor('password')} className="mt-2" />
                         </div>
 
@@ -463,14 +703,16 @@ export default function Register({ plans, whatsappSalesNumber }) {
                 )}
 
                 {step === 2 && (
-                    <div>
-                        <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="mr-auto w-full max-w-[50rem]">
+                        <div className="grid gap-3 sm:grid-cols-2">
                             {plans.map((plan) => {
                                 const selected = data.plan_id === plan.id;
+                                const guidance = PLAN_GUIDANCE[plan.slug];
+
                                 return (
                                     <label
                                         key={plan.id}
-                                        className={`relative flex cursor-pointer flex-col rounded-brand-lg border-2 p-6 text-left transition-all duration-150 ${
+                                        className={`relative flex h-full cursor-pointer flex-col rounded-brand-lg border-2 p-3.5 text-left transition-all duration-150 focus-within:ring-2 focus-within:ring-brand-text focus-within:ring-offset-2 ${
                                             selected
                                                 ? 'border-brand-primary bg-brand-primary-soft shadow-brand-card'
                                                 : 'border-brand-border bg-brand-surface hover:border-brand-primary-muted'
@@ -485,81 +727,69 @@ export default function Register({ plans, whatsappSalesNumber }) {
                                             className="sr-only"
                                         />
                                         {selected && (
-                                            <span className="absolute right-4 top-4 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-brand-on-primary">
+                                            <span className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-brand-primary text-brand-on-primary">
                                                 <IconCheck className="h-3 w-3" stroke={3} />
                                             </span>
                                         )}
-                                        <span className="text-base font-bold text-brand-text">
+                                        <span className="pr-7 text-base font-bold text-brand-text">
                                             {plan.name}
                                         </span>
-                                        <span className="mt-3 font-display text-3xl font-extrabold tracking-[-0.04em] text-brand-text">
+                                        <span className="mt-1.5 font-display text-2xl font-extrabold tracking-[-0.04em] text-brand-text">
                                             {formatPrice(plan)}
                                             {!plan.is_custom && (
-                                                <span className="ml-1 text-base font-medium text-brand-text-secondary">
+                                                <span className="ml-1 text-sm font-medium text-brand-text-secondary">
                                                     /mes
                                                 </span>
                                             )}
                                         </span>
-                                        <span className="mt-3 text-sm leading-6 text-brand-text-secondary">
-                                            {formatLimit(plan.max_barberias)} barbería
-                                            {plan.max_barberias !== 1 ? 's' : ''} ·{' '}
-                                            {formatLimit(plan.max_barberos)} barbero
-                                            {plan.max_barberos !== 1 ? 's' : ''}
-                                        </span>
-
-                                        {plan.included_items?.length > 0 && (
-                                            <ul className="mt-3 space-y-1 border-t border-brand-border-subtle pt-3">
-                                                {plan.included_items.map((item, i) => (
-                                                    <li
-                                                        key={i}
-                                                        className="flex items-start gap-2 text-sm leading-6 text-brand-text-secondary"
-                                                    >
-                                                        <IconCheck
-                                                            className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-primary"
-                                                            stroke={2.6}
-                                                        />
-                                                        <span>{item}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
+                                        <p className="mt-2 text-[11px] leading-4 text-brand-text-secondary lg:hidden xl:block xl:text-xs xl:leading-[1.15rem]">
+                                            {guidance?.summary}
+                                        </p>
+                                        <p className="mt-2 hidden text-[11px] leading-4 text-brand-text-secondary lg:block xl:hidden">
+                                            {formatCapacity(plan)}
+                                        </p>
+                                        <p className="mt-2 border-t border-brand-border-subtle pt-2 text-[11px] font-semibold leading-4 text-brand-text xl:text-xs xl:leading-[1.15rem]">
+                                            {guidance?.decision}
+                                        </p>
                                     </label>
                                 );
                             })}
                         </div>
                         <InputError message={errorFor('plan_id')} className="mt-3" />
 
-                        <div className="mt-8">
+                        <div className="mt-4 lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:items-start lg:gap-x-4">
                             <AuthLabel
                                 htmlFor="coupon_code"
                                 value="Código de cupón (opcional)"
-                                className={authLabelClass}
+                                className={`${authLabelClass} lg:mb-0 lg:mt-3 lg:text-sm`}
                             />
-                            <AuthTextInput
-                                id="coupon_code"
-                                name="coupon_code"
-                                value={data.coupon_code}
-                                error={couponStatus === 'invalid'}
-                                placeholder="Ej: BIENVENIDA20"
-                                className={authInputClass}
-                                onChange={(e) => setField('coupon_code', e.target.value.toUpperCase())}
-                            />
-                            {couponStatus === 'checking' && (
-                                <p className="mt-1.5 text-xs text-brand-text-secondary">Validando cupón…</p>
-                            )}
-                            {couponStatus === 'valid' && (
-                                <p className="mt-1.5 flex items-center gap-1 text-xs font-medium text-brand-success">
-                                    <IconCheck className="h-3.5 w-3.5" stroke={2.6} />
-                                    {couponMessage}
-                                </p>
-                            )}
-                            {couponStatus === 'invalid' && (
-                                <p className="mt-1.5 flex items-center gap-1 text-xs font-medium text-brand-danger">
-                                    <IconX className="h-3.5 w-3.5" stroke={2.6} />
-                                    {couponMessage}
-                                </p>
-                            )}
-                            <InputError message={errors.coupon_code} className="mt-2" />
+                            <div className="min-w-0">
+                                <AuthTextInput
+                                    id="coupon_code"
+                                    name="coupon_code"
+                                    value={data.coupon_code}
+                                    error={couponStatus === 'invalid'}
+                                    placeholder="Ej: BIENVENIDA20"
+                                    className="min-h-[46px] px-4 py-2.5 text-sm"
+                                    onChange={(e) => setField('coupon_code', e.target.value.toUpperCase())}
+                                />
+                                {couponStatus === 'checking' && (
+                                    <p className="mt-1.5 text-xs text-brand-text-secondary">Validando cupón…</p>
+                                )}
+                                {couponStatus === 'valid' && (
+                                    <p className="mt-1.5 flex items-center gap-1 text-xs font-medium text-brand-success">
+                                        <IconCheck className="h-3.5 w-3.5" stroke={2.6} />
+                                        {couponMessage}
+                                    </p>
+                                )}
+                                {couponStatus === 'invalid' && (
+                                    <p className="mt-1.5 flex items-center gap-1 text-xs font-medium text-brand-danger">
+                                        <IconX className="h-3.5 w-3.5" stroke={2.6} />
+                                        {couponMessage}
+                                    </p>
+                                )}
+                                <InputError message={errors.coupon_code} className="mt-2" />
+                            </div>
                         </div>
                     </div>
                 )}
@@ -587,7 +817,13 @@ export default function Register({ plans, whatsappSalesNumber }) {
                     </div>
                 )}
 
-                <div className="mt-10 flex items-center justify-between gap-4">
+                <div
+                    className={`flex items-center justify-between gap-4 ${
+                        step === 2
+                            ? 'mr-auto mt-4 w-full max-w-[50rem]'
+                            : 'mt-10'
+                    }`}
+                >
                     {step > 1 ? (
                         <button type="button" onClick={goBack} className={secondaryButtonClass}>
                             <IconArrowLeft className="h-5 w-5" stroke={2.4} />
@@ -596,7 +832,7 @@ export default function Register({ plans, whatsappSalesNumber }) {
                     ) : (
                         <Link
                             href={route('login')}
-                            className="text-base font-semibold text-brand-link underline hover:text-brand-link-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
+                            className="pricing-wavy-underline login-wavy-underline text-base font-semibold text-brand-link hover:text-brand-link-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
                         >
                             ¿Ya tenés cuenta?
                         </Link>

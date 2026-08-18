@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function BubbleMenu({
     logo,
+    mobileLogo,
     homeHref = '#inicio',
     logoAriaLabel = 'Ir al inicio',
     onMenuClick,
@@ -295,18 +296,21 @@ export default function BubbleMenu({
                     href={homeHref}
                     aria-label={logoAriaLabel}
                     onClick={() => closeMenu()}
-                    className="bubble-menu-logo pointer-events-auto inline-flex h-[52px] items-center justify-center gap-2 rounded-full px-3.5 text-brand-text shadow-brand-floating transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none sm:h-16 sm:px-6"
+                    className="bubble-menu-logo pointer-events-auto inline-flex h-[52px] items-center justify-center gap-2 rounded-full px-2.5 text-brand-text shadow-brand-floating transition-transform duration-200 hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none sm:h-16 sm:px-6"
                     style={{
                         backgroundColor: menuBg,
                         color: menuContentColor,
                     }}
                 >
                     {typeof logo === 'string' ? (
-                        <img
-                            src={logo}
-                            alt=""
-                            className="block h-7 w-auto object-contain sm:h-9"
-                        />
+                        <picture>
+                            <source media="(min-width: 640px)" srcSet={logo} />
+                            <img
+                                src={mobileLogo || logo}
+                                alt=""
+                                className="block h-9 w-auto object-contain sm:h-12"
+                            />
+                        </picture>
                     ) : (
                         logo
                     )}

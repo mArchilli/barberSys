@@ -43,6 +43,7 @@ export default function Navbar({
         <header className="relative z-[1001] h-[76px]">
             <BubbleMenu
                 logo="/images/estilus-barber-logo.png"
+                mobileLogo="/images/estilus-barber-isologo.png"
                 homeHref={homeHref}
                 logoAriaLabel={`${brandName} - Ir al inicio`}
                 items={menuItems}
