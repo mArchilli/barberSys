@@ -175,10 +175,12 @@ export default function HeroSection({
                     </h1>
 
                     <p className="order-3 mt-5 max-w-[36rem] text-[15px] leading-6 text-brand-text-secondary sm:order-none sm:text-lg sm:leading-8">
-                        Registrá servicios, medí la productividad de tus
-                        barberos y conocé la rentabilidad real de tu negocio
-                        mes a mes desde una interfaz clara, rápida y pensada
-                        para usarse todos los días.
+                        Estilus es tu aliado número uno en la barbería,
+                        registrá turnos, cortes, servicios, medí la
+                        productividad de tus barberos y conocé realmente
+                        cuánto estás ganando mes a mes desde una interfaz
+                        clara, rápida y pensada para usarse todos los días,
+                        desde cualquier lugar.
                     </p>
 
                     <div className="order-4 mt-6 flex w-full flex-col items-stretch gap-2 min-[360px]:grid min-[360px]:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] sm:order-none sm:mt-8 sm:flex sm:w-auto sm:grid-cols-none sm:flex-row sm:gap-3">

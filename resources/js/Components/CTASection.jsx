@@ -1,4 +1,3 @@
-import BrandMark from '@/Components/BrandMark';
 import { Link } from '@inertiajs/react';
 import {
     IconArrowUpRight,
@@ -170,7 +169,7 @@ function EstilusCore({ compact = false, elementRef }) {
         <div
             ref={elementRef}
             className={[
-                'absolute left-1/2 z-30 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center border-2 border-brand-bg/80 bg-brand-nav-bg text-center shadow-brand-floating',
+                'absolute left-1/2 z-30 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center border-2 border-brand-bg/80 bg-brand-nav-bg shadow-brand-floating',
                 compact
                     ? 'top-[55%] h-36 w-[11.5rem] sm:h-44 sm:w-56'
                     : 'top-[52%] h-[13rem] w-[18rem]',
@@ -180,21 +179,14 @@ function EstilusCore({ compact = false, elementRef }) {
                     '46% 54% 58% 42% / 57% 43% 57% 43%',
             }}
         >
-            <BrandMark
-                className={
-                    compact
-                        ? 'h-12 w-12 text-brand-primary'
-                        : 'h-16 w-16 text-brand-primary'
-                }
+            <img
+                src="/images/estilus-barber-logo-blanco.png"
+                alt=""
+                aria-hidden="true"
+                width="2216"
+                height="710"
+                className={compact ? 'h-auto w-32 sm:w-40' : 'h-auto w-52'}
             />
-            <span
-                className={[
-                    'mt-2 font-display font-extrabold tracking-[-0.04em] text-brand-bg',
-                    compact ? 'text-4xl' : 'text-5xl',
-                ].join(' ')}
-            >
-                Estilus
-            </span>
         </div>
     );
 }
@@ -469,8 +461,10 @@ export default function CTASection({
                         id="estilus-cta-heading"
                         className="text-[2.1rem] leading-[1.02] text-brand-nav-bg sm:text-5xl lg:text-[3.65rem]"
                     >
-                        Si querés ver cómo Estilus ordena tu barbería. probalo
-                        gratis 2 semanas.
+                        Si querés ver cómo Estilus ordena tu barbería.{' '}
+                        <span className="pricing-wavy-underline">
+                            probalo gratis 2 semanas.
+                        </span>
                     </h2>
 
                     <CTAButton

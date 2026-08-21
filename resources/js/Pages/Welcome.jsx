@@ -156,7 +156,7 @@ export default function Welcome({ auth, canLogin, canRegister, plans, whatsappSa
                 <SectionOrganicAccent />
                 <FeaturesSection
                     cta={{
-                        label: 'Probar Estilus',
+                        label: 'Probar Estilus Barber',
                         href: ctaHref,
                         inertia: ctaHref !== '#',
                     }}

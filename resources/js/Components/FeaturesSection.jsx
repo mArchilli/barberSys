@@ -16,9 +16,9 @@ export const PRODUCT_TOUR_FEATURES = [
         category: 'Control',
         title: 'Toda tu barbería en una sola vista',
         description:
-            'Revisá facturación, actividad y métricas clave desde un panel pensado para decidir rápido y con información clara.',
+            'Revisá tu facturación, productividad, ganancias y más métricas clave desde un panel pensado para decidir rápido y con información clara.',
         benefits: [
-            'Indicadores en tiempo real',
+            'Número en tiempo real',
             'Vista general del negocio',
         ],
         image: '/images/estilus-dashboard-desktop.jpg',
@@ -33,8 +33,8 @@ export const PRODUCT_TOUR_FEATURES = [
         category: 'Finanzas',
         title: 'Sabé cuánto te queda realmente',
         description:
-            'Ingresos, sueldos, comisiones y gastos reunidos para mostrarte la rentabilidad real de tu barbería.',
-        benefits: ['Ganancia neta real', 'Evolución por período'],
+            'Ingresos, sueldos, comisiones y gastos reunidos para mostrarte realmente cuánto estás ganando en tu barbería.',
+        benefits: ['Ganancia neta real', 'Arqueo de caja'],
         image: '/images/features/finanzas.png',
         imageAlt:
             'Panel de Finanzas de Estilus con resultado neto, facturación, sueldos, gastos y evolución del período',
@@ -47,7 +47,7 @@ export const PRODUCT_TOUR_FEATURES = [
         category: 'Equipo de trabajo',
         title: 'Medí el rendimiento de cada barbero',
         description:
-            'Creá perfiles, definí sueldos fijos o comisiones y compará el rendimiento de tu equipo desde un solo lugar.',
+            'Creá los perfiles de tus barberos, definí sus sueldos fijos o comisiones y compará el rendimiento de tu equipo desde un solo lugar.',
         benefits: ['Sueldos y comisiones', 'Productividad individual'],
         image: '/images/features/barberos.png',
         imageAlt:
@@ -497,7 +497,7 @@ function DesktopProductTour({
 
 export default function FeaturesSection({
     cta = {
-        label: 'Probar Estilus',
+        label: 'Probar Estilus Barber',
         href: '#',
         inertia: false,
     },
@@ -569,9 +569,9 @@ export default function FeaturesSection({
                     </div>
 
                     <p className="mt-6 max-w-[38rem] text-[15px] leading-6 text-brand-text-secondary sm:text-base sm:leading-7 xl:mt-0 xl:pb-1 xl:text-lg xl:leading-8">
-                        Estilus reúne operación, equipo y finanzas para que
-                        tomes decisiones con información real, no con
-                        suposiciones.
+                        Estilus es tu comodín todo en uno. Reúne turnos,
+                        operación, cortes, equipo y finanzas para que tomes
+                        decisiones con información real, no con suposiciones.
                     </p>
                 </header>
 

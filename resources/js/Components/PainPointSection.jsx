@@ -226,10 +226,10 @@ export default function PainPointSection() {
                         </h2>
 
                         <p className="mt-7 max-w-[35rem] text-base leading-7 text-brand-text/70 sm:text-lg sm:leading-8">
-                            Cuando los servicios, los pagos y las comisiones
-                            están repartidos entre cuadernos, excel, notas y
-                            memoria, cerrar los números se vuelve una
-                            adivinanza.
+                            Cuando los cortes, los pagos y las comisiones de los
+                            barberos están repartidos entre cuadernos, Excel,
+                            notas de tu celular y tu memoria, cerrar los números
+                            se vuelve una adivinanza.
                         </p>
 
                     </div>

@@ -4,7 +4,7 @@ import { IconArrowLeft } from '@tabler/icons-react';
 
 function OrganicLoginBackground() {
     return (
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 -z-10 hidden overflow-hidden lg:block">
             <svg
                 aria-hidden="true"
                 focusable="false"
@@ -31,7 +31,7 @@ function OrganicLoginBackground() {
 
 function OrganicRegisterBackground() {
     return (
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 -z-10 hidden overflow-hidden lg:block">
             <svg
                 aria-hidden="true"
                 focusable="false"
@@ -42,6 +42,16 @@ function OrganicRegisterBackground() {
                 <path
                     fill="currentColor"
                     d="M650 0C716 62 762 145 748 240C729 371 774 446 888 514C1017 590 1088 712 1118 900H0V0H650Z"
+                />
+                <path
+                    fill="currentColor"
+                    d="M1070 0C1082 61 1138 92 1237 92H1338C1401 92 1419 174 1481 207C1521 229 1563 239 1600 244V0H1070Z"
+                    className="hidden lg:block"
+                />
+                <path
+                    fill="currentColor"
+                    d="M1312 900C1329 844 1368 803 1386 746C1405 683 1388 596 1411 555C1438 508 1509 505 1600 526V900H1312Z"
+                    className="hidden lg:block"
                 />
             </svg>
         </div>
@@ -55,9 +65,9 @@ export default function GuestLayout({
     registerBackground = false,
 }) {
     const layoutClassName = organicBackground
-        ? 'landing-theme relative isolate flex min-h-screen flex-col overflow-hidden bg-brand-bg px-5 pb-10 pt-36 sm:justify-center sm:px-8 sm:py-28 lg:px-12 lg:py-24'
+        ? 'landing-theme relative isolate flex min-h-screen flex-col overflow-hidden bg-white px-5 pb-10 pt-36 sm:px-8 sm:pb-14 sm:pt-36 lg:justify-center lg:bg-brand-bg lg:px-12 lg:py-24'
         : registerBackground
-          ? 'landing-theme relative isolate flex min-h-screen flex-col items-center overflow-hidden bg-brand-primary px-5 pb-10 pt-36 sm:px-8 sm:pb-14 sm:pt-36 lg:justify-center lg:bg-brand-bg lg:px-12 lg:py-16'
+          ? 'landing-theme relative isolate flex min-h-screen flex-col items-center overflow-hidden bg-white px-5 pb-10 pt-36 sm:px-8 sm:pb-14 sm:pt-36 lg:justify-center lg:bg-brand-bg lg:px-12 lg:py-16'
           : 'relative isolate flex min-h-screen flex-col items-center overflow-hidden bg-brand-bg px-4 py-10 sm:justify-center sm:py-14';
 
     return (
@@ -79,7 +89,7 @@ export default function GuestLayout({
                     <Link
                         href="/"
                         aria-label="Ir al inicio de Estilus Barber"
-                        className="absolute left-4 top-4 transition-opacity duration-200 hover:opacity-75 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-4 motion-reduce:transition-none sm:left-6 sm:top-6 lg:left-[30%] lg:top-[38%] lg:-translate-x-1/2 lg:-translate-y-1/2"
+                        className="absolute right-4 top-5 translate-x-0 transition-opacity duration-200 hover:opacity-75 focus:outline-none focus-visible:rounded-brand-sm focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-4 motion-reduce:transition-none sm:right-8 sm:top-7 lg:left-[30%] lg:right-auto lg:top-[38%] lg:-translate-x-1/2 lg:-translate-y-1/2"
                     >
                         <img
                             src="/images/estilus-barber-logo.png"
@@ -93,7 +103,7 @@ export default function GuestLayout({
                     <Link
                         href="/"
                         aria-label="Volver al sitio"
-                        className="absolute left-4 top-[88px] inline-flex h-12 w-12 items-center justify-center text-brand-text transition-all duration-200 hover:-translate-x-1 hover:text-brand-link focus:outline-none focus-visible:rounded-brand-sm focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-4 motion-reduce:transform-none motion-reduce:transition-none sm:left-[400px] sm:top-8 lg:left-10 lg:top-8"
+                        className="absolute left-4 top-7 inline-flex h-12 w-12 items-center justify-center text-brand-text transition-all duration-200 hover:-translate-x-1 hover:text-brand-link focus:outline-none focus-visible:rounded-brand-sm focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-4 motion-reduce:transform-none motion-reduce:transition-none sm:left-6 sm:top-12 lg:left-10 lg:top-8"
                     >
                         <IconArrowLeft
                             className="h-10 w-10 lg:h-12 lg:w-12"
@@ -106,21 +116,21 @@ export default function GuestLayout({
                     <Link
                         href="/"
                         aria-label="Ir al inicio de Estilus Barber"
-                        className="absolute right-5 top-5 transition-opacity duration-200 hover:opacity-75 focus:outline-none focus-visible:rounded-brand-sm focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-4 motion-reduce:transition-none sm:right-8 sm:top-7 lg:right-10 lg:top-8"
+                        className="absolute right-4 top-5 translate-x-0 transition-opacity duration-200 hover:opacity-75 focus:outline-none focus-visible:rounded-brand-sm focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-4 motion-reduce:transition-none sm:right-8 sm:top-7 lg:left-[73%] lg:right-auto lg:top-[33%] lg:-translate-x-1/2 lg:-translate-y-1/2"
                     >
                         <img
                             src="/images/estilus-barber-logo.png"
                             alt="Estilus Barber"
                             width="752"
                             height="185"
-                            className="h-auto w-[190px] sm:w-[250px] lg:w-[300px]"
+                            className="h-auto w-[260px] sm:w-[360px] lg:w-[520px] xl:w-[600px]"
                         />
                     </Link>
 
                     <Link
                         href="/"
                         aria-label="Volver al sitio"
-                        className="absolute left-4 top-[88px] inline-flex h-12 w-12 items-center justify-center text-brand-text transition-all duration-200 hover:-translate-x-1 hover:text-brand-link focus:outline-none focus-visible:rounded-brand-sm focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-4 motion-reduce:transform-none motion-reduce:transition-none sm:left-[400px] sm:top-8 lg:left-10 lg:top-8"
+                        className="absolute left-4 top-7 inline-flex h-12 w-12 items-center justify-center text-brand-text transition-all duration-200 hover:-translate-x-1 hover:text-brand-link focus:outline-none focus-visible:rounded-brand-sm focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-4 motion-reduce:transform-none motion-reduce:transition-none sm:left-6 sm:top-12 lg:left-10 lg:top-8"
                     >
                         <IconArrowLeft
                             className="h-10 w-10 lg:h-12 lg:w-12"

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Barberia;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
@@ -47,6 +48,21 @@ class UsersTestSeeder extends Seeder
                 'ends_at' => null,
                 'mp_preapproval_id' => null,
                 'mp_preapproval_plan_id' => null,
+            ]
+        );
+
+        // El dashboard de owner siempre trabaja sobre una barbería concreta.
+        // Sin esta relación, /dashboard termina en el selector vacío y la
+        // cuenta sembrada no tiene ningún dashboard al cual ingresar.
+        Barberia::updateOrCreate(
+            [
+                'owner_id' => $owner->id,
+                'name' => 'Barbería Plan 3',
+            ],
+            [
+                'address' => 'Sucursal de prueba',
+                'active' => true,
+                'deactivated_at' => null,
             ]
         );
 

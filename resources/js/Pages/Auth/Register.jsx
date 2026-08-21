@@ -5,19 +5,13 @@ import PasswordInput from '@/Components/PasswordInput';
 import PasswordRequirements, {
     PASSWORD_REGEX,
 } from '@/Components/PasswordRequirements';
-import WhatsAppButton from '@/Components/WhatsAppButton';
+import WaveTransition from '@/Components/WaveTransition';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { PLAN_GUIDANCE } from '@/planGuidance';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { IconArrowLeft, IconArrowRight, IconCheck, IconX } from '@tabler/icons-react';
 import axios from 'axios';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-
-const STEPS = [
-    'Completá tus datos',
-    'Elegí tu plan (todos tienen 14 días gratis)',
-    'Configurá tu barbería dentro del sistema',
-];
+import { useEffect, useState } from 'react';
 
 const primaryButtonClass =
     'inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-brand-pill bg-brand-nav-bg px-7 text-base font-bold text-brand-text-on-dark shadow-brand-card transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-text focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-text focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none';
@@ -29,398 +23,13 @@ const authLabelClass = 'mb-2 font-display text-base';
 const authInputClass = 'min-h-[52px] px-5 py-3 text-base';
 const passwordInputClass = 'min-h-[52px] px-5 py-3 pr-12 text-base';
 
-const STEP_NODES = [
-    {
-        label: STEPS[0],
-        desktopPosition: 'left-[20%] top-[3%]',
-        mobilePosition: 'left-0 top-3',
-        rotation: '-rotate-2',
-        shape: '43% 57% 48% 52% / 56% 44% 56% 44%',
-    },
-    {
-        label: STEPS[1],
-        desktopPosition: 'right-0 top-[37%]',
-        mobilePosition: 'left-1/2 top-0 -translate-x-1/2',
-        rotation: 'rotate-2',
-        shape: '58% 42% 55% 45% / 44% 57% 43% 56%',
-    },
-    {
-        label: STEPS[2],
-        desktopPosition: 'bottom-[2%] right-0',
-        mobilePosition: 'right-0 top-3',
-        rotation: '-rotate-1',
-        shape: '48% 52% 39% 61% / 57% 43% 58% 42%',
-    },
-];
-
-const MOBILE_STEP_ARROWS = [
-    'M80 45 C101 25 122 62 140 45',
-    'M220 45 C240 63 260 26 280 45',
-];
-
-const DESKTOP_ANCHORS = {
-    1: [
-        {
-            key: 'one-to-two-start',
-            className: 'right-[-2px] top-[44%] -translate-y-1/2',
-        },
-    ],
-    2: [
-        {
-            key: 'one-to-two-end',
-            className: 'left-[-2px] top-[44%] -translate-y-1/2',
-        },
-        {
-            key: 'two-to-three-start',
-            className: 'bottom-[-2px] left-[45%] -translate-x-1/2',
-        },
-    ],
-    3: [
-        {
-            key: 'two-to-three-end',
-            className: 'left-[48%] top-[-2px] -translate-x-1/2',
-        },
-    ],
+const stepHeadings = {
+    1: '¡Empecemos a crear tu barbería!',
+    2: 'Elegí el plan que más se parezca a tu negocio.',
+    3: '¿Cómo se llama tu barbería?',
 };
 
-const EMPTY_DESKTOP_ARROW_GEOMETRY = {
-    width: 1,
-    height: 1,
-    paths: [],
-};
-
-const roundCoordinate = (value) => Math.round(value * 10) / 10;
-
-function getAnchorPoint(anchor, canvasRect) {
-    const rect = anchor.getBoundingClientRect();
-
-    return {
-        x: roundCoordinate(rect.left - canvasRect.left + rect.width / 2),
-        y: roundCoordinate(rect.top - canvasRect.top + rect.height / 2),
-    };
-}
-
-function createDesktopArrowPaths(anchorRefs, canvasRect) {
-    const firstStart = getAnchorPoint(
-        anchorRefs['one-to-two-start'],
-        canvasRect,
-    );
-    const firstEnd = getAnchorPoint(
-        anchorRefs['one-to-two-end'],
-        canvasRect,
-    );
-    const secondStart = getAnchorPoint(
-        anchorRefs['two-to-three-start'],
-        canvasRect,
-    );
-    const secondEnd = getAnchorPoint(
-        anchorRefs['two-to-three-end'],
-        canvasRect,
-    );
-    const firstDx = firstEnd.x - firstStart.x;
-    const firstDy = firstEnd.y - firstStart.y;
-    const secondDy = secondEnd.y - secondStart.y;
-
-    return [
-        [
-            `M${firstStart.x} ${firstStart.y}`,
-            `C${roundCoordinate(firstStart.x + firstDx * 0.3)} ${firstStart.y}`,
-            `${roundCoordinate(firstEnd.x - firstDx * 0.3)} ${roundCoordinate(firstEnd.y - firstDy * 0.15)}`,
-            `${firstEnd.x} ${firstEnd.y}`,
-        ].join(' '),
-        [
-            `M${secondStart.x} ${secondStart.y}`,
-            `C${secondStart.x} ${roundCoordinate(secondStart.y + secondDy * 0.33)}`,
-            `${secondEnd.x} ${roundCoordinate(secondEnd.y - secondDy * 0.33)}`,
-            `${secondEnd.x} ${secondEnd.y}`,
-        ].join(' '),
-    ];
-}
-
-function useDesktopArrowGeometry(canvasRef, anchorRefs, step) {
-    const [geometry, setGeometry] = useState(EMPTY_DESKTOP_ARROW_GEOMETRY);
-
-    useLayoutEffect(() => {
-        const canvas = canvasRef.current;
-        const anchors = anchorRefs.current;
-        const requiredAnchors = [
-            anchors['one-to-two-start'],
-            anchors['one-to-two-end'],
-            anchors['two-to-three-start'],
-            anchors['two-to-three-end'],
-        ];
-
-        if (!canvas || requiredAnchors.some((anchor) => !anchor)) {
-            return undefined;
-        }
-
-        let animationFrame = null;
-
-        const measure = () => {
-            const canvasRect = canvas.getBoundingClientRect();
-            const nextGeometry = {
-                width: roundCoordinate(canvasRect.width),
-                height: roundCoordinate(canvasRect.height),
-                paths: createDesktopArrowPaths(anchors, canvasRect),
-            };
-
-            setGeometry((currentGeometry) => {
-                if (
-                    currentGeometry.width === nextGeometry.width &&
-                    currentGeometry.height === nextGeometry.height &&
-                    currentGeometry.paths.every(
-                        (path, index) => path === nextGeometry.paths[index],
-                    )
-                ) {
-                    return currentGeometry;
-                }
-
-                return nextGeometry;
-            });
-        };
-
-        const scheduleMeasure = () => {
-            if (animationFrame !== null) {
-                window.cancelAnimationFrame(animationFrame);
-            }
-
-            animationFrame = window.requestAnimationFrame(measure);
-        };
-
-        measure();
-
-        const resizeObserver = new ResizeObserver(scheduleMeasure);
-        resizeObserver.observe(canvas);
-
-        requiredAnchors.forEach((anchor) => {
-            resizeObserver.observe(anchor.closest('li'));
-            anchor.closest('li').addEventListener(
-                'transitionend',
-                scheduleMeasure,
-            );
-        });
-
-        window.addEventListener('resize', scheduleMeasure);
-        const settleTimer = window.setTimeout(measure, 340);
-
-        return () => {
-            window.clearTimeout(settleTimer);
-            window.removeEventListener('resize', scheduleMeasure);
-            requiredAnchors.forEach((anchor) => {
-                anchor.closest('li').removeEventListener(
-                    'transitionend',
-                    scheduleMeasure,
-                );
-            });
-            resizeObserver.disconnect();
-
-            if (animationFrame !== null) {
-                window.cancelAnimationFrame(animationFrame);
-            }
-        };
-    }, [anchorRefs, canvasRef, step]);
-
-    return geometry;
-}
-
-function StepArrowField({ step, compact = false, desktopGeometry }) {
-    const markerId = compact
-        ? 'register-step-arrow-mobile'
-        : 'register-step-arrow-desktop';
-    const activeMarkerId = `${markerId}-active`;
-    const mutedMarkerId = `${markerId}-muted`;
-    const paths = compact
-        ? MOBILE_STEP_ARROWS
-        : desktopGeometry?.paths || [];
-    const viewBox = compact
-        ? '0 0 360 96'
-        : `0 0 ${desktopGeometry?.width || 1} ${desktopGeometry?.height || 1}`;
-    const visiblePaths = compact
-        ? paths.slice(0, Math.min(step, paths.length))
-        : paths;
-
-    return (
-        <svg
-            aria-hidden="true"
-            viewBox={viewBox}
-            preserveAspectRatio="none"
-            className="pointer-events-none absolute inset-0 z-10 h-full w-full overflow-visible"
-        >
-            <defs>
-                <marker
-                    id={activeMarkerId}
-                    markerWidth="11"
-                    markerHeight="11"
-                    refX="9"
-                    refY="5.5"
-                    orient="auto"
-                    markerUnits="userSpaceOnUse"
-                >
-                    <path
-                        d="M1 1L9 5.5L1 10"
-                        fill="none"
-                        className="stroke-brand-nav-bg"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    />
-                </marker>
-                <marker
-                    id={mutedMarkerId}
-                    markerWidth="11"
-                    markerHeight="11"
-                    refX="9"
-                    refY="5.5"
-                    orient="auto"
-                    markerUnits="userSpaceOnUse"
-                >
-                    <path
-                        d="M1 1L9 5.5L1 10"
-                        fill="none"
-                        className="stroke-brand-nav-bg opacity-25"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    />
-                </marker>
-            </defs>
-
-            {visiblePaths.map((path, index) => {
-                const isReached = step > index + 1;
-
-                return (
-                    <path
-                        key={`${markerId}-${index}`}
-                        d={path}
-                        fill="none"
-                        className={`register-step-arrow transition-colors duration-300 ${
-                            isReached
-                                ? 'stroke-brand-nav-bg'
-                                : 'stroke-brand-nav-bg/25'
-                        }`}
-                        strokeWidth={compact ? 2.5 : 3}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        markerEnd={`url(#${
-                            isReached ? activeMarkerId : mutedMarkerId
-                        })`}
-                        vectorEffect="non-scaling-stroke"
-                    />
-                );
-            })}
-        </svg>
-    );
-}
-
-function StepNode({
-    node,
-    number,
-    step,
-    compact = false,
-    desktopAnchorRefs,
-}) {
-    const isActive = step === number;
-    const isDone = step > number;
-
-    return (
-        <li
-            aria-current={isActive ? 'step' : undefined}
-            className={`absolute z-20 flex flex-col items-center justify-center border-2 text-center transition-all duration-300 ${
-                compact
-                    ? `h-[5.5rem] w-[5.75rem] px-1.5 ${node.mobilePosition}`
-                    : `h-28 w-40 px-5 ${node.desktopPosition}`
-            } ${node.rotation} bg-brand-primary text-brand-on-primary ${
-                isActive
-                    ? 'scale-[1.06] border-brand-nav-bg shadow-brand-floating'
-                    : isDone
-                      ? 'border-brand-nav-bg shadow-brand-card'
-                      : 'border-brand-nav-bg/35 shadow-none'
-            }`}
-            style={{ borderRadius: node.shape }}
-        >
-            {!compact &&
-                DESKTOP_ANCHORS[number].map((anchor) => (
-                    <span
-                        key={anchor.key}
-                        ref={(element) => {
-                            desktopAnchorRefs.current[anchor.key] = element;
-                        }}
-                        aria-hidden="true"
-                        className={`pointer-events-none absolute h-px w-px opacity-0 ${anchor.className}`}
-                    />
-                ))}
-            <span
-                className={`font-display font-extrabold leading-none ${
-                    compact ? 'text-2xl' : 'text-3xl'
-                }`}
-            >
-                {number}
-            </span>
-            <span
-                className={`mt-1 font-semibold leading-tight ${
-                    compact ? 'text-[0.55rem]' : 'text-xs'
-                }`}
-            >
-                {node.label}
-            </span>
-        </li>
-    );
-}
-
-function StepIndicator({ step }) {
-    const desktopCanvasRef = useRef(null);
-    const desktopAnchorRefs = useRef({});
-    const desktopGeometry = useDesktopArrowGeometry(
-        desktopCanvasRef,
-        desktopAnchorRefs,
-        step,
-    );
-
-    return (
-        <aside
-            aria-label="Progreso del registro"
-            className="relative mb-8 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mb-0 lg:min-h-[35rem] lg:translate-x-6 lg:self-stretch xl:translate-x-10 2xl:translate-x-14"
-        >
-            <div className="relative h-28 w-full lg:hidden">
-                <StepArrowField step={step} compact />
-                <ol className="absolute inset-0">
-                    {STEP_NODES.map((node, index) => (
-                        <StepNode
-                            key={`mobile-${node.label}`}
-                            node={node}
-                            number={index + 1}
-                            step={step}
-                            compact
-                        />
-                    ))}
-                </ol>
-            </div>
-
-            <div
-                ref={desktopCanvasRef}
-                className="relative hidden h-full min-h-[35rem] w-full lg:block"
-            >
-                <StepArrowField
-                    step={step}
-                    desktopGeometry={desktopGeometry}
-                />
-                <ol className="absolute inset-0">
-                    {STEP_NODES.map((node, index) => (
-                        <StepNode
-                            key={`desktop-${node.label}`}
-                            node={node}
-                            number={index + 1}
-                            step={step}
-                            desktopAnchorRefs={desktopAnchorRefs}
-                        />
-                    ))}
-                </ol>
-            </div>
-        </aside>
-    );
-}
-
-export default function Register({ plans, whatsappSalesNumber }) {
+export default function Register({ plans }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -432,11 +41,6 @@ export default function Register({ plans, whatsappSalesNumber }) {
     });
 
     const [step, setStep] = useState(1);
-    const whatsappHref =
-        `https://wa.me/${whatsappSalesNumber ?? ''}?text=` +
-        encodeURIComponent(
-            'Hola Estilus, necesito ayuda para crear mi cuenta.',
-        );
     const [stepErrors, setStepErrors] = useState({});
     const [couponStatus, setCouponStatus] = useState('idle');
     const [couponMessage, setCouponMessage] = useState('');
@@ -580,28 +184,36 @@ export default function Register({ plans, whatsappSalesNumber }) {
                     }`}
                 >
                     <div
-                        className={`mb-8 text-center lg:col-start-1 lg:row-start-1 ${
+                        className={`mb-2 text-center lg:col-start-1 lg:row-start-1 lg:mb-8 ${
                             step === 2
                                 ? 'lg:-translate-x-[clamp(0rem,calc(26.667vw-24rem),8rem)]'
                                 : ''
                         }`}
                     >
-                        <h1 className="font-display text-4xl font-extrabold tracking-[-0.03em] text-brand-text sm:text-[2.625rem]">
-                            Creá tu cuenta en Estilus Barber
+                        <h1 className="font-display text-[2.625rem] font-extrabold leading-[0.98] tracking-[-0.035em] text-brand-text sm:text-5xl lg:text-[3.25rem]">
+                            {stepHeadings[step]}
                         </h1>
-                        <p className="mt-3 text-base leading-7 text-brand-text-secondary">
-                            ¿Todavía dudás?{' '}
-                            <span className="pricing-wavy-underline login-wavy-underline font-semibold">
-                                Tenés 14 días de prueba gratis.
-                            </span>
-                        </p>
+                        {step === 1 && (
+                            <p className="mt-3 text-base leading-7 text-brand-text-secondary">
+                                ¿Todavía dudás? No te vamos a pedir ninguna
+                                tarjeta al crear la cuenta y, además,{' '}
+                                <span className="pricing-wavy-underline login-wavy-underline font-semibold">
+                                    tenés 14 días de prueba gratis.
+                                </span>
+                            </p>
+                        )}
                     </div>
 
-                    <StepIndicator step={step} />
+                    <div className="relative left-1/2 w-screen -translate-x-1/2 lg:hidden">
+                        <WaveTransition
+                            fromClassName="text-white"
+                            toClassName="bg-brand-primary"
+                        />
+                    </div>
 
                     <form
                         onSubmit={submit}
-                        className={`min-w-0 lg:col-start-1 lg:row-start-2 ${
+                        className={`relative isolate -mb-10 min-w-0 pb-10 pt-5 before:absolute before:-bottom-[100vh] before:left-1/2 before:top-0 before:-z-10 before:w-screen before:-translate-x-1/2 before:bg-brand-primary sm:-mb-14 sm:pb-14 lg:col-start-1 lg:row-start-2 lg:mb-0 lg:pb-0 lg:pt-0 lg:before:hidden ${
                             step === 2
                                 ? 'lg:-translate-x-[clamp(0rem,calc(26.667vw-24rem),8rem)]'
                                 : ''
@@ -858,10 +470,6 @@ export default function Register({ plans, whatsappSalesNumber }) {
                     </form>
                 </div>
             </GuestLayout>
-            <WhatsAppButton
-                href={whatsappHref}
-                label="Consultar por WhatsApp sobre el registro"
-            />
         </>
     );
 }
